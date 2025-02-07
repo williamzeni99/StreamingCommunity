@@ -18,7 +18,7 @@ from StreamingCommunity.Util.os import internet_manager
 
 
 # Variable
-TQDM_USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
+USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
 
 
 class M3U8_Ts_Estimator:
@@ -36,14 +36,14 @@ class M3U8_Ts_Estimator:
         self.lock = threading.Lock()
         self.speed = {"upload": "N/A", "download": "N/A"}
 
-        if TQDM_USE_LARGE_BAR:
-            logging.debug("TQDM_USE_LARGE_BAR is True, starting speed capture thread")
+        if USE_LARGE_BAR:
+            logging.debug("USE_LARGE_BAR is True, starting speed capture thread")
             self.speed_thread = threading.Thread(target=self.capture_speed)
             self.speed_thread.daemon = True
             self.speed_thread.start()
 
         else:
-            logging.debug("TQDM_USE_LARGE_BAR is False, speed capture thread not started")
+            logging.debug("USE_LARGE_BAR is False, speed capture thread not started")
 
     def add_ts_file(self, size: int, size_download: int, duration: float):
         """Add a file size to the list of file sizes."""
@@ -114,7 +114,7 @@ class M3U8_Ts_Estimator:
             units_file_downloaded = downloaded_file_size_str.split(' ')[1]
             units_file_total_size = file_total_size.split(' ')[1]
             
-            if TQDM_USE_LARGE_BAR:
+            if USE_LARGE_BAR:
                 speed_data = self.speed['download'].split(" ")
                 
                 if len(speed_data) >= 2:

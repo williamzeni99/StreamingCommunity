@@ -38,7 +38,7 @@ from .proxyes import main_test_proxy
 
 # Config
 TQDM_DELAY_WORKER = config_manager.get_float('M3U8_DOWNLOAD', 'tqdm_delay')
-TQDM_USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
+USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
 REQUEST_MAX_RETRY = config_manager.get_int('REQUESTS', 'max_retry')
 REQUEST_VERIFY = False
 THERE_IS_PROXY_LIST = os_manager.check_file("list_proxy.txt")
@@ -378,7 +378,7 @@ class M3U8_Segments:
         """
         Generate platform-appropriate progress bar format.
         """
-        if not TQDM_USE_LARGE_BAR:
+        if not USE_LARGE_BAR:
             return (
                 f"{Colors.YELLOW}Proc{Colors.WHITE}: "
                 f"{Colors.RED}{{percentage:.2f}}% "

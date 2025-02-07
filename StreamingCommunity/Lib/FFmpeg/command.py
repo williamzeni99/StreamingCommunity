@@ -30,7 +30,7 @@ FFMPEG_DEFAULT_PRESET = config_manager.get("M3U8_CONVERSION", "default_preset")
 
 
 # Variable
-TQDM_USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
+USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
 FFMPEG_PATH = os_summary.ffmpeg_path
 
 
@@ -100,7 +100,7 @@ def join_video(video_path: str, out_path: str, codec: M3U8_Codec = None):
         subprocess.run(ffmpeg_cmd, check=True)
     else:
 
-        if TQDM_USE_LARGE_BAR:
+        if USE_LARGE_BAR:
             capture_ffmpeg_real_time(ffmpeg_cmd, "[cyan]Join video")
             print()
 
@@ -196,7 +196,7 @@ def join_audios(video_path: str, audio_tracks: List[Dict[str, str]], out_path: s
         subprocess.run(ffmpeg_cmd, check=True)
     else:
 
-        if TQDM_USE_LARGE_BAR:
+        if USE_LARGE_BAR:
             capture_ffmpeg_real_time(ffmpeg_cmd, "[cyan]Join audio")
             print()
 
@@ -251,7 +251,7 @@ def join_subtitle(video_path: str, subtitles_list: List[Dict[str, str]], out_pat
         subprocess.run(ffmpeg_cmd, check=True)
     else:
 
-        if TQDM_USE_LARGE_BAR:
+        if USE_LARGE_BAR:
             capture_ffmpeg_real_time(ffmpeg_cmd, "[cyan]Join subtitle")
             print()
 

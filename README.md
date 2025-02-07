@@ -352,7 +352,6 @@ The configuration file is divided into several main sections:
 ```json
 {
     "tqdm_delay": 0.01,
-    "tqdm_use_large_bar": true,
     "default_video_workser": 12,
     "default_audio_workser": 12,
     "cleanup_tmp_folder": true
@@ -360,7 +359,6 @@ The configuration file is divided into several main sections:
 ```
 
 - `tqdm_delay`: Delay between progress bar updates
-- `tqdm_use_large_bar`: Use detailed progress bar (recommended for desktop) set to false for mobile
 - `default_video_workser`: Number of threads for video download
   * Can be changed from terminal with `--default_video_worker <number>`
     <br/><br/>
@@ -370,9 +368,6 @@ The configuration file is divided into several main sections:
     <br/><br/>
 
 - `cleanup_tmp_folder`: Remove temporary .ts files after download
-
-> [!IMPORTANT]
-> Set `tqdm_use_large_bar` to `false` when using Termux or terminals with limited width to prevent network monitoring issues
 
 
 
@@ -532,17 +527,17 @@ python3 telegram_bot.py
 
 # Website Status 
 
-| Website            | Status |
-|:-------------------|:------:|
-| [1337xx](https://1337xx.to/) |   ✅   |
-| [AltadefinizioneGratis](https://altadefinizionegratis.pro/) |   ✅   |
-| [AnimeUnity](https://animeunity.so/) |   ✅   |
-| [Ilcorsaronero](https://ilcorsaronero.link/) |   ✅   |
-| [CB01New](https://cb01new.media/) |   ✅   |
-| [DDLStreamItaly](https://ddlstreamitaly.co/) |   ✅   |
-| [GuardaSerie](https://guardaserie.meme/) |   ✅   |
-| [MostraGuarda](https://mostraguarda.stream/) |   ✅   |
-| [StreamingCommunity](https://streamingcommunity.paris/) |   ✅   |
+| Website            | Status | Command |
+|:-------------------|:------:|:--------:|
+| [1337xx](https://1337xx.to/) |   ✅   | -133 |
+| [AltadefinizioneGratis](https://altadefinizionegratis.pro/) |   ✅   | -ALT |
+| [AnimeUnity](https://animeunity.so/) |   ✅   | -ANI |
+| [Ilcorsaronero](https://ilcorsaronero.link/) | ✅ | `-ILC` |
+| [CB01New](https://cb01new.media/) |   ✅   | -CB0 |
+| [DDLStreamItaly](https://ddlstreamitaly.co/) |   ✅   | -DDL |
+| [GuardaSerie](https://guardaserie.meme/) |   ✅   | -GUA |
+| [MostraGuarda](https://mostraguarda.stream/) |   ✅   | -MOS |
+| [StreamingCommunity](https://streamingcommunity.paris/) |   ✅   | -STR |
 
 
 # Tutorials 
@@ -554,7 +549,8 @@ python3 telegram_bot.py
 
 # To Do 
 
-- Finish [website API](https://github.com/Arrowar/StreamingCommunity/tree/test_gui_1)
+- To Finish [website API](https://github.com/Arrowar/StreamingCommunity/tree/test_gui_1)
+- To finish [website API 2](https://github.com/hydrosh/StreamingCommunity/tree/test_gui_1)
 
 # Contributing
 

@@ -1,7 +1,6 @@
 # 11.03.24
 
 import os
-import sys
 import logging
 
 
@@ -78,16 +77,12 @@ def download_episode(index_select: int, scrape_serie: ScrapeSerieAnime, video_so
         os_manager.create_path(mp4_path)                                                            
 
         # Start downloading
-        r_proc = MP4_downloader(
+        path, kill_handler = MP4_downloader(
             url=str(video_source.src_mp4).strip(),
             path=os.path.join(mp4_path, title_name)
         )
         
-        if r_proc != None:
-            console.print("[green]Result: ")
-            console.print(r_proc)
-
-        return os.path.join(mp4_path, title_name)
+        return path, kill_handler 
 
     else:
         logging.error(f"Skip index: {index_select} cant find info with api.")
@@ -101,6 +96,8 @@ def download_series(select_title: MediaItem):
         - tv_id (int): The ID of the TV series.
         - tv_name (str): The name of the TV series.
     """
+    start_message()
+    
     if TELEGRAM_BOT:
         bot = get_bot_instance()
 
@@ -134,15 +131,16 @@ def download_series(select_title: MediaItem):
 
     # Download selected episodes
     if len(list_episode_select) == 1 and last_command != "*":
-        download_episode(list_episode_select[0]-1, scrape_serie, video_source)[0]
+        path, _ = download_episode(list_episode_select[0]-1, scrape_serie, video_source)[0]
+        return path
 
     # Download all other episodes selecter
     else:
-        kill_handler=bool(False)
+        kill_handler = False
         for i_episode in list_episode_select:
             if kill_handler:
-                break
-            kill_handler= download_episode(i_episode-1, scrape_serie, video_source)[1]
+                break            
+            _, kill_handler = download_episode(i_episode-1, scrape_serie, video_source)
 	
     if TELEGRAM_BOT:
         bot.send_message(f"Finito di scaricare tutte le serie e episodi", None)

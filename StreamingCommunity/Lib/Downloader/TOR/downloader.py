@@ -29,7 +29,7 @@ PASSWORD = str(config_manager.get_dict('DEFAULT', 'config_qbit_tor')['pass'])
 
 
 # Config
-TQDM_USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
+USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
 REQUEST_TIMEOUT = config_manager.get_float('REQUESTS', 'timeout')
 
 
@@ -163,12 +163,13 @@ class TOR_downloader:
             try:
             
                 # Custom bar for mobile and pc
-                if TQDM_USE_LARGE_BAR:
+                if USE_LARGE_BAR:
                     bar_format = (
                         f"{Colors.YELLOW}[TOR] {Colors.WHITE}({Colors.CYAN}video{Colors.WHITE}): "
                         f"{Colors.RED}{{percentage:.2f}}% {Colors.MAGENTA}{{bar}} {Colors.WHITE}[ "
                         f"{Colors.YELLOW}{{elapsed}} {Colors.WHITE}< {Colors.CYAN}{{remaining}}{{postfix}} {Colors.WHITE}]"
                     )
+
                 else:
                     bar_format = (
                         f"{Colors.YELLOW}Proc{Colors.WHITE}: "
@@ -216,7 +217,7 @@ class TOR_downloader:
                         average_internet_unit = average_internet_str.split(' ')[1]
 
                         # Update the progress bar's postfix
-                        if TQDM_USE_LARGE_BAR:
+                        if USE_LARGE_BAR:
                             pbar.set_postfix_str(
                                 f"{Colors.WHITE}[ {Colors.GREEN}{downloaded_size} {Colors.WHITE}< {Colors.GREEN}{total_size} {Colors.RED}{total_size_unit} "
                                 f"{Colors.WHITE}| {Colors.CYAN}{average_internet} {Colors.RED}{average_internet_unit}"

@@ -5,6 +5,7 @@ import re
 import sys
 import signal
 import logging
+from functools import partial
 
 
 # External libraries
@@ -32,15 +33,17 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Config
 GET_ONLY_LINK = config_manager.get_bool('M3U8_PARSER', 'get_only_link')
-TQDM_USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
 REQUEST_TIMEOUT = config_manager.get_float('REQUESTS', 'timeout')
 
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
 
-#Ending constant
-KILL_HANDLER = bool(False)
-   
+
+def signal_handler(signum, frame, kill_handler):
+    """Signal handler for graceful interruption"""
+    kill_handler[0] = True
+    print("\nReceived interrupt signal. Completing current download...")
+
 
 def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = None):
     """
@@ -88,32 +91,32 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
         logging.error(f"Error preparing headers: {header_err}")
         console.print(f"[bold red]Error preparing headers: {header_err}[/bold red]")
         return None
+    
+    temp_path = f"{path}.temp"
+    kill_handler = [False]  # Using list for mutable state
+    original_handler = signal.signal(signal.SIGINT, partial(signal_handler, kill_handler=kill_handler))
 
     try:
         # Create a custom transport that bypasses SSL verification
         transport = httpx.HTTPTransport(
-            verify=False,
+            verify=False, 
             http2=True
         )
         
         # Download with streaming and progress tracking
-        with httpx.Client(transport=transport, timeout=httpx.Timeout(60.0)) as client:
+        with httpx.Client(transport=transport, timeout=httpx.Timeout(60)) as client:
             with client.stream("GET", url, headers=headers, timeout=REQUEST_TIMEOUT) as response:
                 response.raise_for_status()
-                
-                # Get total file size
                 total = int(response.headers.get('content-length', 0))
                 
-                # Handle empty streams
                 if total == 0:
                     console.print("[bold red]No video stream found.[/bold red]")
                     return None
 
-                # Create progress bar
                 progress_bar = tqdm(
                     total=total,
-                    ascii='âââ',
-                    bar_format=f"{Colors.YELLOW}[MP4] {Colors.WHITE}({Colors.CYAN}video{Colors.WHITE}): "
+                    ascii='░▒█',
+                    bar_format=f"{Colors.YELLOW}[MP4]{Colors.WHITE}: "
                                f"{Colors.RED}{{percentage:.2f}}% {Colors.MAGENTA}{{bar}} {Colors.WHITE}[ "
                                f"{Colors.YELLOW}{{n_fmt}}{Colors.WHITE} / {Colors.RED}{{total_fmt}} {Colors.WHITE}] "
                                f"{Colors.YELLOW}{{elapsed}} {Colors.WHITE}< {Colors.CYAN}{{remaining}} {Colors.WHITE}| "
@@ -124,42 +127,30 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
                     mininterval=0.05
                 )
 
-                # Ensure directory exists
-                os.makedirs(os.path.dirname(path), exist_ok=True)
+                downloaded = 0
+                with open(temp_path, 'wb') as file, progress_bar as bar:
+                    try:
+                        for chunk in response.iter_bytes(chunk_size=1024):
+                            if kill_handler[0]:
+                                console.print("\n[bold yellow]Interrupting download...[/bold yellow]")
+                                return None, True
+                            
+                            if chunk:
+                                size = file.write(chunk)
+                                downloaded += size
+                                bar.update(size)
 
-
-                def signal_handler(*args):
-                    """
-                    Signal handler for SIGINT
+                    except KeyboardInterrupt:
+                        console.print("\n[bold red]Download interrupted by user.[/bold red]")
+                        if os.path.exists(temp_path):
+                            os.remove(temp_path)
+                        return None, True
                     
-                    Parameters:
-                        - args (tuple): The signal arguments (to prevent errors).
-                    """
-                    if(downloaded<total/2):   
-                        raise KeyboardInterrupt
-                    else:
-                        console.print("[bold green]Download almost completed, will exit next[/bold green]")
-                        print("KILL_HANDLER: ", KILL_HANDLER)
+        # Rename temp file to final file
+        if os.path.exists(temp_path):
+            os.rename(temp_path, path)
 
-
-                # Download file
-                with open(path, 'wb') as file, progress_bar as bar:
-                    downloaded = 0
-                    #Test check stop download
-                    #atexit.register(quit_gracefully)
-
-                    for chunk in response.iter_bytes(chunk_size=1024):
-                        signal.signal(signal.SIGINT,signal_handler)
-                        if chunk:
-                            size = file.write(chunk)
-                            downloaded += size
-                            bar.update(size)
-                            # Optional: Add a check to stop download if needed
-                            # if downloaded > MAX_DOWNLOAD_SIZE:
-                            #     break
-
-        # Post-download processing
-        if os.path.exists(path) and os.path.getsize(path) > 0:
+        if os.path.exists(path):
             console.print(Panel(
                 f"[bold green]Download completed![/bold green]\n"
                 f"[cyan]File size: [bold red]{internet_manager.format_file_size(os.path.getsize(path))}[/bold red]\n"
@@ -172,18 +163,19 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
                 message = f"Download completato\nDimensione: {internet_manager.format_file_size(os.path.getsize(path))}\nDurata: {print_duration_table(path, description=False, return_string=True)}\nTitolo: {os.path.basename(path.replace('.mp4', ''))}"
                 clean_message = re.sub(r'\[[a-zA-Z]+\]', '', message)
                 bot.send_message(clean_message, None)
-              
-            return path
 
+            return path, kill_handler[0]
         else:
             console.print("[bold red]Download failed or file is empty.[/bold red]")
-            return None
+            return None, kill_handler[0]
 
     except Exception as e:
-        logging.error(f"Unexpected error during download: {e}")
+        logging.error(f"Unexpected error: {e}")
         console.print(f"[bold red]Unexpected Error: {e}[/bold red]")
-        return None
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        return None, kill_handler[0]
     
-    except KeyboardInterrupt:   
-        console.print("[bold red]Download stopped by user.[/bold red]")
-        return None
+    finally:
+        # Restore original signal handler
+        signal.signal(signal.SIGINT, original_handler)

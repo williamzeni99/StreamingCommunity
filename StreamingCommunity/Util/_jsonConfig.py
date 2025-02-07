@@ -3,7 +3,6 @@
 import os
 import sys
 import json
-import httpx
 import logging
 from typing import Any, List
 
