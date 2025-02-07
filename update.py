@@ -126,7 +126,7 @@ def download_and_extract_latest_commit():
             'Accept': 'application/vnd.github.v3+json',
             'User-Agent': f'{__title__}-updater'
         }
-        response = httpx.get(api_url, headers=headers, timeout=max_timeout)
+        response = httpx.get(api_url, headers=headers, timeout=max_timeout, follow_redirects=True)
 
         if response.status_code == 200:
             commit_info = response.json()[0]
