@@ -2,6 +2,7 @@
 
 import os
 import logging
+from typing import Tuple
 
 
 # Internal utilities
@@ -29,7 +30,7 @@ KILL_HANDLER = bool(False)
 
 
 
-def download_episode(index_select: int, scrape_serie: ScrapeSerieAnime, video_source: VideoSourceAnime) -> tuple[str,bool]:
+def download_episode(index_select: int, scrape_serie: ScrapeSerieAnime, video_source: VideoSourceAnime) -> Tuple[str,bool]:
     """
     Downloads the selected episode.
 

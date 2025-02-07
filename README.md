@@ -25,7 +25,7 @@
     <img src="https://img.shields.io/pypi/dm/streamingcommunity?style=for-the-badge" alt="PyPI Downloads"/>
   </a>
   <a href="https://github.com/Arrowar/StreamingCommunity">
-    <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Arrowar/StreamingCommunity/main/Test/Media/loc-badge.json&style=for-the-badge" alt="Lines of Code"/>
+    <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Arrowar/StreamingCommunity/main/.github/media/loc-badge.json&style=for-the-badge" alt="Lines of Code"/>
   </a>
 </p>
 

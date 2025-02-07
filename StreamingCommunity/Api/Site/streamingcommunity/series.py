@@ -2,6 +2,7 @@
 
 import os
 import sys
+from typing import Tuple
 
 
 # Internal utilities
@@ -27,7 +28,7 @@ from StreamingCommunity.Api.Player.vixcloud import VideoSource
 from .costant import SITE_NAME, SERIES_FOLDER, TELEGRAM_BOT
 
 
-def download_video(index_season_selected: int, index_episode_selected: int, scrape_serie: ScrapeSerie, video_source: VideoSource) -> tuple[str,bool]:
+def download_video(index_season_selected: int, index_episode_selected: int, scrape_serie: ScrapeSerie, video_source: VideoSource) -> Tuple[str,bool]:
     """
     Download a single episode video.
 

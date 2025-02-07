@@ -9,7 +9,7 @@ jsbeautifier
 pathvalidate
 pycryptodomex
 googlesearch-python
-fake-useragent
+fake-useragent<2.0.0
 qbittorrent-api
 python-qbittorrent
 Pillow

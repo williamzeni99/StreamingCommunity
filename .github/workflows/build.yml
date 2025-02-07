@@ -1,80 +1,130 @@
-name: Build with PyInstaller
+name: Build or Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_pypi:
+        description: 'Pubblicare su PyPI (true) o compilare eseguibili? (false)'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+  push:
+    tags:
+      - "*"  # Il workflow si eseguirà quando viene fatto un push con qualsiasi tag
 
 jobs:
-  build:
-    runs-on: windows-latest
+  publish:
+    if: github.event.inputs.publish_pypi == 'true'  # Solo se publish_pypi è true
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Recupera tutti i tag e la cronologia dei commit
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Get the latest tag
+        id: get_latest_tag
+        run: echo "latest_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
-    - name: Cache Python dependencies
-      uses: actions/cache@v4
-      with:
-        path: C:\Users\runneradmin\AppData\Local\pip\Cache
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install -r requirements.txt
-        python -m pip install fake-useragent==1.1.3 pyinstaller
+      - name: Install packaging dependencies
+        run: |
+          echo "Installing packaging dependencies"
+          python -m pip install --upgrade pip
+          python -m pip install setuptools wheel twine
 
-    - name: Build executable with PyInstaller
-      shell: bash
-      run: |
-        set -e
-        pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=fake_useragent --hidden-import=qbittorrentapi \
-                    --hidden-import=qbittorrent --hidden-import=googlesearch --hidden-import=bs4 --hidden-import=httpx \
-                    --hidden-import=rich --hidden-import=tqdm --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode \
-                    --hidden-import=jsbeautifier --hidden-import=pathvalidate --hidden-import=Cryptodome.Cipher \
-                    --hidden-import=Cryptodome.Cipher.AES --hidden-import=Cryptodome.Util --hidden-import=Cryptodome.Util.Padding \
-                    --hidden-import=Cryptodome.Random --hidden-import=Pillow --hidden-import=pyTelegramBotAPI \
-                    --additional-hooks-dir=pyinstaller/hooks --add-data "StreamingCommunity;StreamingCommunity" \
-                    --name=StreamingCommunity --icon="Test/Media/62809003.ico" test_run.py
+      - name: Build package
+        run: |
+          echo "Building the package"
+          python setup.py sdist bdist_wheel
 
-    - name: Verify build output
-      shell: bash
-      run: |
-        if [ ! -f "dist/StreamingCommunity.exe" ]; then
-          echo "Errore: il file dist/StreamingCommunity.exe non esiste!"
-          exit 1
-        fi
+      - name: Upload to PyPI
+        env:
+          TWINE_USERNAME: __token__  # Usa '__token__' per l'autenticazione con PyPI
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          echo "Uploading package to PyPI"
+          twine upload dist/*
 
-    - name: Upload executable as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: StreamingCommunity
-        path: dist/StreamingCommunity.exe
+  build:
+    if: github.event.inputs.publish_pypi == 'false'  # Solo se publish_pypi è false
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]  # Compila per Windows e Linux
+    runs-on: ${{ matrix.os }}
 
-    - name: Get latest tag from GitHub
-      id: get_latest_tag
-      shell: bash
-      run: |
-        TAG=$(curl -s https://api.github.com/repos/Arrowar/StreamingCommunity/releases/latest | jq -r '.tag_name')
-        if [[ "$TAG" == "null" || -z "$TAG" ]]; then
-          echo "Nessun tag trovato, impostazione di default a v1.0.0"
-          TAG="v1.0.0"
-        fi
-        echo "Latest tag: $TAG"
-        echo "latest_tag=$TAG" >> $GITHUB_ENV
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Recupera tutti i tag e la cronologia dei commit
 
-    - name: Create or update GitHub release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ env.latest_tag }}
-        files: dist/StreamingCommunity.exe
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get the latest tag
+        id: get_latest_tag
+        run: echo "latest_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies"
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pyinstaller
+          python -m pip install fake-useragent==1.1.3  # Aggiunta dipendenza fake-useragent
+
+      - name: Build executable with PyInstaller (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: cmd
+        run: |
+            echo "Building Windows executable with PyInstaller"
+            pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=fake_useragent --hidden-import=qbittorrentapi --hidden-import=qbittorrent --hidden-import=googlesearch --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode --hidden-import=jsbeautifier --hidden-import=pathvalidate --hidden-import=Cryptodome.Cipher --hidden-import=Cryptodome.Cipher.AES --hidden-import=Cryptodome.Util --hidden-import=Cryptodome.Util.Padding --hidden-import=Cryptodome.Random --hidden-import=Pillow --hidden-import=pyTelegramBotAPI --additional-hooks-dir=pyinstaller/hooks --add-data "StreamingCommunity;StreamingCommunity" --name=StreamingCommunity --icon=".github/media/logo.ico" test_run.py
+
+      - name: Build executable with PyInstaller (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          echo "Building Linux executable with PyInstaller"
+          pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=fake_useragent --hidden-import=qbittorrentapi \
+                      --hidden-import=qbittorrent --hidden-import=googlesearch --hidden-import=bs4 --hidden-import=httpx \
+                      --hidden-import=rich --hidden-import=tqdm --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode \
+                      --hidden-import=jsbeautifier --hidden-import=pathvalidate --hidden-import=Cryptodome.Cipher \
+                      --hidden-import=Cryptodome.Cipher.AES --hidden-import=Cryptodome.Util --hidden-import=Cryptodome.Util.Padding \
+                      --hidden-import=Cryptodome.Random --hidden-import=Pillow --hidden-import=pyTelegramBotAPI \
+                      --additional-hooks-dir=pyinstaller/hooks --add-data "StreamingCommunity:StreamingCommunity" \
+                      --name=StreamingCommunity test_run.py
+
+      - name: Upload executable (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: StreamingCommunity-Windows
+          path: dist/StreamingCommunity.exe
+
+      - name: Upload executable (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: StreamingCommunity-Linux
+          path: dist/StreamingCommunity
+
+      - name: Create or update release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.latest_tag }}  # Usa l'ultimo tag come nome del release
+          files: |
+            dist/StreamingCommunity.exe
+            dist/StreamingCommunity
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

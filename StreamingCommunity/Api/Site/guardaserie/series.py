@@ -2,6 +2,7 @@
 
 import os
 import sys
+from typing import Tuple
 
 
 # Internal utilities
@@ -26,7 +27,7 @@ from .costant import SERIES_FOLDER
 
 
 
-def download_video(index_season_selected: int, index_episode_selected: int, scape_info_serie: GetSerieInfo) -> str:
+def download_video(index_season_selected: int, index_episode_selected: int, scape_info_serie: GetSerieInfo) -> Tuple[str,bool]:
     """
     Download a single episode video.
 
@@ -37,6 +38,7 @@ def download_video(index_season_selected: int, index_episode_selected: int, scap
 
     Return:
         - str: output path
+        - bool: kill handler status
     """
     start_message()
     index_season_selected = dynamic_format_number(index_season_selected)

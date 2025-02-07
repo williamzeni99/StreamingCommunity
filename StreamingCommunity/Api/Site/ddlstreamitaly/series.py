@@ -3,6 +3,7 @@
 import os
 import sys
 from urllib.parse import urlparse
+from typing import Tuple
 
 
 # Internal utilities
@@ -28,7 +29,7 @@ from .costant import SERIES_FOLDER
 
 
 
-def download_video(index_episode_selected: int, scape_info_serie: GetSerieInfo, video_source: VideoSource) -> tuple[str,bool]:
+def download_video(index_episode_selected: int, scape_info_serie: GetSerieInfo, video_source: VideoSource) -> Tuple[str,bool]:
     """
     Download a single episode video.
 
