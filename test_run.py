@@ -18,4 +18,4 @@ if TELEGRAM_BOT:
     main(script_id)
 
 else:
-    main(0)
+    main()

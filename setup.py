@@ -10,7 +10,7 @@ with open("requirements.txt", "r", encoding="utf-8-sig") as f:
 
 setup(
     name="StreamingCommunity",
-    version="2.5.6",
+    version="2.5.7",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     author="Lovi-0",

@@ -178,7 +178,7 @@ def force_exit():
     os._exit(0)
   
 
-def main(script_id):
+def main(script_id = 0):
 
     if TELEGRAM_BOT:
         bot = get_bot_instance()

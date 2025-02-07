@@ -461,7 +461,7 @@ class OsSummary:
             optional_libraries = [line.strip().split("=")[0] for line in open(requirements_file, 'r', encoding='utf-8-sig')]
             
             for lib in optional_libraries:
-                installed_version = self.get_library_version(lib)
+                installed_version = self.get_library_version(lib.split("<")[0])
                 if 'not installed' in installed_version:
                     user_response = msg.ask(f"{lib} is not installed. Do you want to install it? (yes/no)", default="y")
                     if user_response.lower().strip() in ["yes", "y"]:

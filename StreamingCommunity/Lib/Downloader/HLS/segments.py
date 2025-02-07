@@ -391,8 +391,7 @@ class M3U8_Segments:
                 f"{Colors.YELLOW}[HLS] {Colors.WHITE}({Colors.CYAN}{description}{Colors.WHITE}): "
                 f"{Colors.RED}{{percentage:.2f}}% "
                 f"{Colors.MAGENTA}{{bar}} "
-                f"{Colors.WHITE}[ {Colors.YELLOW}{{n_fmt}}{Colors.WHITE} / {Colors.RED}{{total_fmt}} {Colors.WHITE}] "
-                f"{Colors.YELLOW}{{elapsed}} {Colors.WHITE}< {Colors.CYAN}{{remaining}}{{postfix}} {Colors.WHITE}]"
+                f"{Colors.WHITE}[ {Colors.YELLOW}{{elapsed}}{Colors.WHITE} < {Colors.CYAN}{{remaining}}{Colors.WHITE}{{postfix}}{Colors.WHITE} ]"
             )
     
     def _get_worker_count(self, stream_type: str) -> int:
