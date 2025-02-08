@@ -384,7 +384,6 @@ class M3U8_Segments:
             return (
                 f"{Colors.YELLOW}Proc{Colors.WHITE}: "
                 f"{Colors.RED}{{percentage:.2f}}% "
-                f"{Colors.WHITE}| "
                 f"{Colors.CYAN}{{remaining}}{{postfix}} {Colors.WHITE}]"
             )
             

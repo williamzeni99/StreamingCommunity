@@ -202,20 +202,26 @@ class OsManager:
         """
 
         try:
-            # List all files in the folder
-            files_in_folder = os.listdir(folder_path)
-
-            # Iterate over each file in the folder
-            for file_name in files_in_folder:
-                file_path = os.path.join(folder_path, file_name)
-
-                # Check if the file is not the one to keep and is a regular file
-                if file_name != keep_file and os.path.isfile(file_path):
-                    os.remove(file_path)  # Delete the file
-
+            # First, try to make all files writable
+            for root, dirs, files in os.walk(self.temp_dir):
+                for dir_name in dirs:
+                    dir_path = os.path.join(root, dir_name)
+                    os.chmod(dir_path, 0o755)  # rwxr-xr-x
+                for file_name in files:
+                    file_path = os.path.join(root, file_name)
+                    os.chmod(file_path, 0o644)  # rw-r--r--
+            
+            # Then remove the directory tree
+            shutil.rmtree(self.temp_dir, ignore_errors=True)
+            
+            # If directory still exists after rmtree, try force remove
+            if os.path.exists(self.temp_dir):
+                import subprocess
+                subprocess.run(['rm', '-rf', self.temp_dir], check=True)
+                
         except Exception as e:
-            logging.error(f"An error occurred: {e}")
-            raise
+            logging.error(f"Failed to cleanup temporary directory: {str(e)}")
+            pass
 
     def check_file(self, file_path: str) -> bool:
         """
