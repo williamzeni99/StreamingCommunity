@@ -260,12 +260,13 @@ class DownloadManager:
 
         if result.get('stopped', False):
             self.stopped = True
+        
         return self.stopped
 
     def download_audio(self, audio: Dict):
         """Downloads audio segments for a specific language track."""
-        if self.stopped:
-            return True
+        #if self.stopped:
+        #    return True
 
         audio_full_url = self.url_fixer.generate_full_url(audio['uri'])
         audio_tmp_dir = os.path.join(self.temp_dir, 'audio', audio['language'])
@@ -280,8 +281,8 @@ class DownloadManager:
 
     def download_subtitle(self, sub: Dict):
         """Downloads and saves subtitle file for a specific language."""
-        if self.stopped:
-            return True
+        #if self.stopped:
+        #    return True
 
         raw_content = self.client.request(sub['uri'])
         if raw_content:
@@ -301,30 +302,35 @@ class DownloadManager:
         """
         Downloads all selected streams (video, audio, subtitles).
         """
+        return_stopped = False
+
         video_file = os.path.join(self.temp_dir, 'video', '0.ts')
         if not os.path.exists(video_file):
             if self.download_video(video_url):
-                return True
+                if not return_stopped:
+                    return_stopped = True
 
         for audio in audio_streams:
-            if self.stopped:
-                break
+            #if self.stopped:
+            #    break
 
             audio_file = os.path.join(self.temp_dir, 'audio', audio['language'], '0.ts')
             if not os.path.exists(audio_file):
                 if self.download_audio(audio):
-                    return True
+                    if not return_stopped:
+                        return_stopped = True
 
         for sub in sub_streams:
-            if self.stopped:
-                break
+            #if self.stopped:
+            #    break
 
             sub_file = os.path.join(self.temp_dir, 'subs', f"{sub['language']}.vtt")
             if not os.path.exists(sub_file):
                 if self.download_subtitle(sub):
-                    return True
+                    if not return_stopped:
+                        return_stopped = True
 
-        return self.stopped
+        return return_stopped
 
 
 class MergeManager:
@@ -414,6 +420,8 @@ class HLS_Downloader:
                 - is_master: Whether the M3U8 was a master playlist
             Or raises an exception if there's an error
         """
+        console.print(f"[cyan]You can safely stop the download with [bold]Ctrl+c[bold] [cyan] \n")
+        
         if TELEGRAM_BOT:
             bot = get_bot_instance()
 

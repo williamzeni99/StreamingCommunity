@@ -158,10 +158,10 @@ class M3U8_Segments:
         """
         def interrupt_handler(signum, frame):
             if not self.interrupt_flag.is_set():
-                console.log("\n[red] Stopping download gracefully...")
-                self.interrupt_flag.set()
+                console.print("\n[red]- Stopping download gracefully...")
+                #self.interrupt_flag.set()              IN MODO DA NON TERMINARE SUBITO 
                 self.download_interrupted = True
-                self.stop_event.set()
+                #self.stop_event.set()                  IN MODO DA NON TERMINARE SUBITO 
 
         if threading.current_thread() is threading.main_thread():
             signal.signal(signal.SIGINT, interrupt_handler)
@@ -315,7 +315,8 @@ class M3U8_Segments:
             unit='s',
             ascii='░▒█',
             bar_format=self._get_bar_format(description),
-            mininterval=0.05
+            mininterval=0.05,
+            file=sys.stdout,        # Using file=sys.stdout to force in-place updates because sys.stderr may not support carriage returns in this environment.
         )
 
         try:

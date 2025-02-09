@@ -124,7 +124,8 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
                     unit='iB',
                     unit_scale=True,
                     desc='Downloading',
-                    mininterval=0.05
+                    mininterval=0.05,
+                    file=sys.stdout,                # Using file=sys.stdout to force in-place updates because sys.stderr may not support carriage returns in this environment.
                 )
 
                 downloaded = 0

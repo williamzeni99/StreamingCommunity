@@ -4,6 +4,8 @@ import os
 import sys
 import logging
 import importlib
+from pathlib import Path
+from typing import Dict, List, Any
 
 
 # External library
@@ -11,7 +13,6 @@ from rich.console import Console
 from rich.table import Table
 from rich.prompt import Prompt
 from rich.style import Style
-from typing import Dict, List, Any
 
 
 # Internal utilities
@@ -24,13 +25,12 @@ from StreamingCommunity.Util._jsonConfig import config_manager
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
 
+
 class TVShowManager:
     def __init__(self):
-        """
-        Initialize TVShowManager with provided column information.
-        """
+        """Initialize TVShowManager with default values."""
         self.console = Console()
-        self.tv_shows: List[Dict[str, Any]] = []  # List to store TV show data as dictionaries
+        self.tv_shows: List[Dict[str, Any]] = []
         self.slice_start: int = 0
         self.slice_end: int = 5
         self.step: int = self.slice_end
@@ -55,7 +55,7 @@ class TVShowManager:
         """
         self.column_info = column_info
 
-    def add_tv_show(self, tv_show: Dict[str, Any]):
+    def add_tv_show(self, tv_show: Dict[str, Any]) -> None:
         """
         Add a TV show to the list of TV shows.
 
@@ -64,7 +64,7 @@ class TVShowManager:
         """
         self.tv_shows.append(tv_show)
 
-    def display_data(self, data_slice: List[Dict[str, Any]]):
+    def display_data(self, data_slice: List[Dict[str, Any]]) -> None:
         """
         Display TV show data in a tabular format.
 
@@ -76,21 +76,17 @@ class TVShowManager:
         # Add columns dynamically based on provided column information
         for col_name, col_style in self.column_info.items():
             color = col_style.get("color", None)
-            if color:
-                style = Style(color=color)
-            else:
-                style = None
+            style = Style(color=color) if color else None
             table.add_column(col_name, style=style, justify='center')
 
         # Add rows dynamically based on available TV show data
         for entry in data_slice:
-            # Create row data while handling missing keys
-            row_data = [entry.get(col_name, '') for col_name in self.column_info.keys()]
+            row_data = [str(entry.get(col_name, '')) for col_name in self.column_info.keys()]
             table.add_row(*row_data)
 
         self.console.print(table)
 
-    def run_back_command(self, research_func: dict):
+    def run_back_command(self, research_func: dict) -> None:
         """
         Executes a back-end search command by dynamically importing a module and invoking its search function.
 
@@ -99,46 +95,33 @@ class TVShowManager:
                 - 'folder' (str): The absolute path to the directory containing the module to be executed.
         """
         try:
-
             # Get site name from folder
-            site_name = (os.path.basename(research_func['folder']))
+            site_name = Path(research_func['folder']).name
 
             # Find the project root directory
             current_path = research_func['folder']
             while not os.path.exists(os.path.join(current_path, 'StreamingCommunity')):
                 current_path = os.path.dirname(current_path)
             
-            # Add project root to Python path
             project_root = current_path
-            #print(f"[DEBUG] Project Root: {project_root}")
-            
             if project_root not in sys.path:
                 sys.path.insert(0, project_root)
             
             # Import using full absolute import
             module_path = f'StreamingCommunity.Api.Site.{site_name}'
-            #print(f"[DEBUG] Importing module: {module_path}")
-            
-            # Import the module
             module = importlib.import_module(module_path)
             
-            # Get the search function
+            # Get and call the search function
             search_func = getattr(module, 'search')
-            
-            # Call the search function with the search string
             search_func(None)
             
         except Exception as e:
             self.console.print(f"[red]Error during search: {e}")
+            logging.exception("Error during search execution")
             
-            # Print detailed traceback
-            import traceback
-            traceback.print_exc()
-        
-        # Optionally remove the path if you want to clean up
-        if project_root in sys.path:
-            sys.path.remove(project_root)
-
+        finally:
+            if project_root in sys.path:
+                sys.path.remove(project_root)
 
     def run(self, force_int_input: bool = False, max_int_input: int = 0) -> str:
         """
@@ -152,121 +135,92 @@ class TVShowManager:
             str: Last command executed before breaking out of the loop.
         """
         total_items = len(self.tv_shows)
-        last_command = ""  # Variable to store the last command executed
+        last_command = ""
+        is_telegram = config_manager.get_bool('DEFAULT', 'telegram_bot')
+        bot = get_bot_instance() if is_telegram else None
 
-        if TELEGRAM_BOT:
-          bot = get_bot_instance()
-          
         while True:
             start_message()
-
-            # Display table
             self.display_data(self.tv_shows[self.slice_start:self.slice_end])
 
             # Find research function from call stack
-            research_func = None
-            for reverse_fun in get_call_stack():
-                if reverse_fun['function'] == 'search' and reverse_fun['script'] == '__init__.py':
-                    research_func = reverse_fun
-                    logging.info(f"Found research_func: {research_func}")
+            research_func = next((
+                f for f in get_call_stack()
+                if f['function'] == 'search' and f['script'] == '__init__.py'
+            ), None)
 
-            # Handling user input for loading more items or quitting
+            # Handle pagination and user input
             if self.slice_end < total_items:
                 self.console.print(f"\n[green]Press [red]Enter [green]for next page, [red]'q' [green]to quit, or [red]'back' [green]to search.")
 
                 if not force_int_input:
-                    if TELEGRAM_BOT:
-                      self.console.print(f"\n[cyan]Insert media index [yellow](e.g., 1), [red]* [cyan]to download all media, "
-                          "[yellow](e.g., 1-2) [cyan]for a range of media, or [yellow](e.g., 3-*) [cyan]to download from a specific index to the end")
-                      key = bot.ask(
-                          "select_title_episode",
-                          f"Inserisci l'indice dei media (ad esempio, 1), * per scaricare tutti i media, (ad esempio, 1-2) per un intervallo di media, o (ad esempio, 3-*) per scaricare dal un indice specifico fino alla fine.",
-                          None
-                      )
-                    else:
-                      key = Prompt.ask(
-                        "\n[cyan]Insert media index [yellow](e.g., 1), [red]* [cyan]to download all media, "
-                        "[yellow](e.g., 1-2) [cyan]for a range of media, or [yellow](e.g., 3-*) [cyan]to download from a specific index to the end"
-                    )
+                    prompt_msg = ("\n[cyan]Insert media index [yellow](e.g., 1), [red]* [cyan]to download all media, "
+                                "[yellow](e.g., 1-2) [cyan]for a range of media, or [yellow](e.g., 3-*) [cyan]to download from a specific index to the end")
                     
-                else:
-                    choices = [str(i) for i in range(0, max_int_input)]
-                    choices.extend(["q", "quit", "b", "back"])
-                    if TELEGRAM_BOT:
-                      self.console.print(f"[cyan]Insert media [red]index")
-                      key = bot.ask(
-                        "select_title",
-                        f"Scegli il contenuto da scaricare:\n📺 Serie TV - 🎞️ Film - 🌀 Anime\noppure `back` per tornare indietro",
-                        None
-                      )
+                    if is_telegram:
+                        key = bot.ask("select_title_episode", prompt_msg, None)
                     else:
-                      key = Prompt.ask("[cyan]Insert media [red]index", choices=choices, show_choices=False)
-                        
+                        key = Prompt.ask(prompt_msg)
+                else:
+                    choices = [str(i) for i in range(max_int_input + 1)] + ["q", "quit", "b", "back"]
+                    prompt_msg = "[cyan]Insert media [red]index"
+                    telegram_msg = "Scegli il contenuto da scaricare:\n📺 Serie TV - 🎞️ Film - 🌀 Anime\noppure `back` per tornare indietro"
+                    
+                    if is_telegram:
+                        key = bot.ask("select_title", telegram_msg, None)
+                    else:
+                        key = Prompt.ask(prompt_msg, choices=choices, show_choices=False)
+
                 last_command = key
 
-                if key.lower() == "q" or key.lower() == "quit":
+                if key.lower() in ["q", "quit"]:
                     break
-
                 elif key == "":
                     self.slice_start += self.step
                     self.slice_end += self.step
                     if self.slice_end > total_items:
                         self.slice_end = total_items
-
-                elif (key.lower() == "b" or key.lower() == "back") and research_func:
+                elif (key.lower() in ["b", "back"]) and research_func:
                     self.run_back_command(research_func)
-
                 else:
                     break
 
             else:
-                # Last slice, ensure all remaining items are shown
-                self.console.print(f"\n [green]You've reached the end. [red]Enter [green]for first page, [red]'q' [green]to quit, or [red]'back' [green]to search.")
+                # Last page handling
+                self.console.print(f"\n[green]You've reached the end. [red]Enter [green]for first page, [red]'q' [green]to quit, or [red]'back' [green]to search.")
+                
                 if not force_int_input:
-                    if TELEGRAM_BOT:
-                      self.console.print(f"\n[cyan]Insert media index [yellow](e.g., 1), [red]* [cyan]to download all media, "
-                          "[yellow](e.g., 1-2) [cyan]for a range of media, or [yellow](e.g., 3-*) [cyan]to download from a specific index to the end")
-                      key = bot.ask(
-                          "select_title_episode",
-                          f"Inserisci l'indice dei media (ad esempio, 1), * per scaricare tutti i media, (ad esempio, 1-2) per un intervallo di media, o (ad esempio, 3-*) per scaricare dal un indice specifico fino alla fine.",
-                          None
-                      )
+                    prompt_msg = ("\n[cyan]Insert media index [yellow](e.g., 1), [red]* [cyan]to download all media, "
+                                "[yellow](e.g., 1-2) [cyan]for a range of media, or [yellow](e.g., 3-*) [cyan]to download from a specific index to the end")
+                    
+                    if is_telegram:
+                        key = bot.ask("select_title_episode", prompt_msg, None)
                     else:
-                      key = Prompt.ask(
-                          "\n[cyan]Insert media index [yellow](e.g., 1), [red]* [cyan]to download all media, "
-                          "[yellow](e.g., 1-2) [cyan]for a range of media, or [yellow](e.g., 3-*) [cyan]to download from a specific index to the end"
-                      )
-
+                        key = Prompt.ask(prompt_msg)
                 else:
-                    choices = [str(i) for i in range(0, max_int_input)]
-                    choices.extend(["q", "quit", "b", "back"])
-
-                    if TELEGRAM_BOT:
-                      self.console.print(f"[cyan]Insert media [red]index")
-                      key = bot.ask(
-                        "select_title",
-                        f"Scegli il contenuto da scaricare:\n📺 Serie TV - 🎞️ Film - 🌀 Anime\n oppure `back` per tornare indietro",
-                        None
-                      )
+                    choices = [str(i) for i in range(max_int_input + 1)] + ["q", "quit", "b", "back"]
+                    prompt_msg = "[cyan]Insert media [red]index"
+                    telegram_msg = "Scegli il contenuto da scaricare:\n📺 Serie TV - 🎞️ Film - 🌀 Anime\noppure `back` per tornare indietro"
+                    
+                    if is_telegram:
+                        key = bot.ask("select_title", telegram_msg, None)
                     else:
-                      key = Prompt.ask("[cyan]Insert media [red]index", choices=choices, show_choices=False)
-                        
+                        key = Prompt.ask(prompt_msg, choices=choices, show_choices=False)
+
                 last_command = key
 
-                if key.lower() == "q" or key.lower() == "quit":
+                if key.lower() in ["q", "quit"]:
                     break
-
                 elif key == "":
                     self.slice_start = 0
                     self.slice_end = self.step
-
-                elif (key.lower() == "b" or key.lower() == "back") and research_func:
+                elif (key.lower() in ["b", "back"]) and research_func:
                     self.run_back_command(research_func)
-
                 else:
                     break
-            
+
         return last_command
 
-    def clear(self):
+    def clear(self) -> None:
+        """Clear all TV shows data."""
         self.tv_shows = []
