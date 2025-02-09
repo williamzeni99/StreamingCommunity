@@ -22,7 +22,7 @@
         "telegram_bot": false
     },
     "REQUESTS": {
-        "timeout": 25,
+        "timeout": 20,
         "max_retry": 8,
         "proxy_start_min": 0.1,
         "proxy_start_max": 0.5
@@ -40,8 +40,8 @@
         "download_subtitle": true,
         "merge_subs": true,
         "specific_list_subtitles": [
-            "eng",
-            "spa"
+            "ita",
+            "eng"
         ],
         "cleanup_tmp_folder": true
     },

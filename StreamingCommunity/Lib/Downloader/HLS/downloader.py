@@ -283,11 +283,17 @@ class DownloadManager:
         if self.stopped:
             return True
 
-        content = self.client.request(sub['uri'])
-        if content:
+        raw_content = self.client.request(sub['uri'])
+        if raw_content:
             sub_path = os.path.join(self.temp_dir, 'subs', f"{sub['language']}.vtt")
-            with open(sub_path, 'w', encoding='utf-8') as f:
-                f.write(content)
+
+            subtitle_parser = M3U8_Parser()
+            subtitle_parser.parse_data(sub['uri'], raw_content)
+
+            with open(sub_path, 'wb') as f:
+                vtt_url = subtitle_parser.subtitle[-1]
+                vtt_content = self.client.request(vtt_url, True)
+                f.write(vtt_content)
 
         return self.stopped
 
