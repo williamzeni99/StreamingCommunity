@@ -3,7 +3,7 @@
 import sys
 import logging
 import subprocess
-from typing import List, Dict
+from typing import List, Dict, Tuple, Optional
 
 
 # Internal utilities
@@ -32,6 +32,62 @@ FFMPEG_DEFAULT_PRESET = config_manager.get("M3U8_CONVERSION", "default_preset")
 # Variable
 USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
 FFMPEG_PATH = os_summary.ffmpeg_path
+
+
+
+def check_subtitle_encoders() -> Tuple[Optional[bool], Optional[bool]]:
+    """
+    Executes 'ffmpeg -encoders' and checks if 'mov_text' and 'webvtt' encoders are available.
+    
+    Returns:
+        Tuple[Optional[bool], Optional[bool]]: A tuple containing (mov_text_supported, webvtt_supported)
+            Returns (None, None) if the FFmpeg command fails
+    """
+    try:
+        result = subprocess.run(
+            [FFMPEG_PATH, '-encoders'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        # Check for encoder presence in output
+        output = result.stdout
+        mov_text_supported = "mov_text" in output
+        webvtt_supported = "webvtt" in output
+        
+        return mov_text_supported, webvtt_supported
+        
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing 'ffmpeg -encoders': {e}")
+        return None, None
+
+
+def select_subtitle_encoder() -> Optional[str]:
+    """
+    Determines the best available subtitle encoder to use.
+    Prefers mov_text over webvtt if both are available.
+ 
+    Returns:
+        Optional[str]: Name of the best available encoder ('mov_text' or 'webvtt')
+            or None if no supported encoder is found
+    """
+    mov_text_supported, webvtt_supported = check_subtitle_encoders()
+    
+    # Return early if check failed
+    if mov_text_supported is None:
+        return None
+        
+    # Prioritize mov_text over webvtt
+    if mov_text_supported:
+        logging.info("Using 'mov_text' as the subtitle encoder.")
+        return "mov_text"
+    elif webvtt_supported:
+        logging.info("Using 'webvtt' as the subtitle encoder.")
+        return "webvtt"
+    
+    logging.error("No supported subtitle encoder found.")
+    return None
 
 
 def join_video(video_path: str, out_path: str, codec: M3U8_Codec = None):
@@ -238,9 +294,9 @@ def join_subtitle(video_path: str, subtitles_list: List[Dict[str, str]], out_pat
 
     # Add output Parameters
     if USE_CODEC:
-        ffmpeg_cmd.extend(['-c:v', 'copy', '-c:a', 'copy', '-c:s', 'mov_text'])
+        ffmpeg_cmd.extend(['-c:v', 'copy', '-c:a', 'copy', '-c:s', select_subtitle_encoder()])
     else:
-        ffmpeg_cmd.extend(['-c', 'copy', '-c:s', 'mov_text'])
+        ffmpeg_cmd.extend(['-c', 'copy', '-c:s', select_subtitle_encoder()])
 
     # Overwrite
     ffmpeg_cmd += [out_path, "-y"]
