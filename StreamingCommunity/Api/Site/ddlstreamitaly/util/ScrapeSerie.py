@@ -20,12 +20,11 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Variable
-from ..costant import COOKIE
 max_timeout = config_manager.get_int("REQUESTS", "timeout")
 
 
 class GetSerieInfo:
-    def __init__(self, dict_serie: MediaItem) -> None:
+    def __init__(self, dict_serie: MediaItem, cookies) -> None:
         """
         Initializes the GetSerieInfo object with default values.
 
@@ -33,7 +32,7 @@ class GetSerieInfo:
             - dict_serie (MediaItem): Dictionary containing series information (optional).
         """
         self.headers = {'user-agent': get_headers()}
-        self.cookies = COOKIE
+        self.cookies = cookies
         self.url = dict_serie.url
         self.tv_name = None
         self.list_episodes = None

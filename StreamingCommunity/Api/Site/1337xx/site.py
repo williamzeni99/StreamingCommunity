@@ -13,12 +13,12 @@ from StreamingCommunity.Util.table import TVShowManager
 
 
 # Logic class
+from StreamingCommunity.Api.Template.config_loader import site_constant
 from StreamingCommunity.Api.Template.Util import search_domain
 from StreamingCommunity.Api.Template.Class.SearchType import MediaManager
 
 
 # Variable
-from .costant import SITE_NAME, DOMAIN_NOW
 media_search_manager = MediaManager()
 table_show_manager = TVShowManager()
 max_timeout = config_manager.get_int("REQUESTS", "timeout")
@@ -39,15 +39,15 @@ def title_search(word_to_search: str) -> int:
     table_show_manager.clear()
 
     # Find new domain if prev dont work
-    domain_to_use = DOMAIN_NOW
+    domain_to_use = site_constant.DOMAIN_NOW
 
     if not disable_searchDomain:
-        domain_to_use, base_url = search_domain(SITE_NAME, f"https://{SITE_NAME}.{DOMAIN_NOW}")
+        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, f"https://{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}")
 
     # Construct the full site URL and load the search page
     try:
         response = httpx.get(
-            url=f"https://{SITE_NAME}.{domain_to_use}/search/{word_to_search}/1/", 
+            url=f"https://{site_constant.SITE_NAME}.{domain_to_use}/search/{word_to_search}/1/", 
             headers={'user-agent': get_headers()}, 
             follow_redirects=True,
             timeout=max_timeout
@@ -55,7 +55,7 @@ def title_search(word_to_search: str) -> int:
         response.raise_for_status()
 
     except Exception as e:
-        console.print(f"Site: {SITE_NAME}, request search error: {e}")
+        console.print(f"Site: {site_constant.SITE_NAME}, request search error: {e}")
 
     # Create soup and find table
     soup = BeautifulSoup(response.text, "html.parser")
@@ -71,6 +71,7 @@ def title_search(word_to_search: str) -> int:
                 'date': tr.find_all("td")[-3].get_text(strip=True).replace("'", ""),
                 'size': tr.find_all("td")[-2].get_text(strip=True)
             }
+            media_search_manager.add_media(title_info)
 
         except Exception as e:
             print(f"Error parsing a film entry: {e}")
