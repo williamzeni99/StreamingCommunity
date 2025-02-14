@@ -111,19 +111,19 @@ def download_series(select_title: MediaItem):
     console.print(f"[cyan]Episodes find: [red]{episoded_count}")
 
     if site_constant.TELEGRAM_BOT:
-        console.print(f"\n[cyan]Insert media [red]index [yellow]or [red](*) [cyan]to download all media [yellow]or [red][1-2] [cyan]or [red][3-*] [cyan]for a range of media")
+        console.print(f"\n[cyan]Insert media [red]index [yellow]or [red]* [cyan]to download all media [yellow]or [red]1-2 [cyan]or [red]3-* [cyan]for a range of media")
         bot.send_message(f"Episodi trovati: {episoded_count}", None)
 
         last_command = bot.ask(
             "select_title",
-            f"Inserisci l'indice del media o (*) per scaricare tutti i media, oppure [1-2] o [3-*] per un intervallo di media.",
+            f"Inserisci l'indice del media o * per scaricare tutti i media, oppure 1-2 o 3-* per un intervallo di media.",
             None
         )
 
     else:
 
         # Prompt user to select an episode index
-        last_command = msg.ask("\n[cyan]Insert media [red]index [yellow]or [red](*) [cyan]to download all media [yellow]or [red][1-2] [cyan]or [red][3-*] [cyan]for a range of media")
+        last_command = msg.ask("\n[cyan]Insert media [red]index [yellow]or [red]* [cyan]to download all media [yellow]or [red]1-2 [cyan]or [red]3-* [cyan]for a range of media")
 
     # Manage user selection
     list_episode_select = manage_selection(last_command, episoded_count)
