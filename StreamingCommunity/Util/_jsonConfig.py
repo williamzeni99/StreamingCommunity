@@ -24,7 +24,7 @@ class ConfigManager:
             - file_path (str, optional): The path to the configuration file. Default is 'config.json'.
         """
         if getattr(sys, 'frozen', False):
-            base_path = Path(sys._MEIPASS)
+            base_path = os.path.join(".")
         else:
             base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
         self.file_path = os.path.join(base_path, file_name) 
