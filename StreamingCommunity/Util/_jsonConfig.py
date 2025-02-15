@@ -8,6 +8,14 @@ from pathlib import Path
 from typing import Any, List
 
 
+# External library
+from rich.console import Console
+
+
+# Variable
+console = Console()
+
+
 class ConfigManager:
     def __init__(self, file_name: str = 'config.json') -> None:
         """Initialize the ConfigManager.
@@ -15,9 +23,14 @@ class ConfigManager:
         Parameters:
             - file_path (str, optional): The path to the configuration file. Default is 'config.json'.
         """
-        self.file_path = Path(__file__).parent.parent.parent / file_name
+        if getattr(sys, 'frozen', False):
+            base_path = Path(sys._MEIPASS)
+        else:
+            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+        self.file_path = os.path.join(base_path, file_name) 
         self.config = {}
         self.cache = {}
+        console.print(f"[green]Configuration file path: {self.file_path}[/green]")
 
     def read_config(self) -> None:
         """Read the configuration file."""

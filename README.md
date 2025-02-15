@@ -564,14 +564,13 @@ python3 telegram_bot.py
 | Website            | Status | Command |
 |:-------------------|:------:|:--------:|
 | [1337xx](https://1337xx.to/) |   ✅   | -133 |
-| [AltadefinizioneGratis](https://altadefinizionegratis.pro/) |   ✅   | -ALT |
 | [AnimeUnity](https://animeunity.so/) |   ✅   | -ANI |
 | [Ilcorsaronero](https://ilcorsaronero.link/) | ✅ | `-ILC` |
 | [CB01New](https://cb01new.gold/) |   ✅   | -CB0 |
 | [DDLStreamItaly](https://ddlstreamitaly.co/) |   ✅   | -DDL |
 | [GuardaSerie](https://guardaserie.now/) |   ✅   | -GUA |
 | [MostraGuarda](https://mostraguarda.stream/) |   ✅   | -MOS |
-| [StreamingCommunity](https://streamingcommunity.paris/) |   ✅   | -STR |
+| [StreamingCommunity](https://streamingcommunity.lu/) |   ✅   | -STR |
 
 
 # Tutorials

@@ -1,6 +1,6 @@
 # 23.11.24
 
-from typing import Dict, Any, List, Union
+from typing import Dict, Any, List, Union, List, Optional
 
 
 class Episode:
@@ -65,6 +65,25 @@ class EpisodeManager:
         return f"EpisodeManager(num_episodes={len(self.episodes)})"
 
 
+class SeasonData:
+    def __init__(self, data: Dict[str, Any]):
+        self.id: int = data.get('id', 0)
+        self.number: int = data.get('number', 0)
+
+    def __str__(self):
+        return f"SeasonData(id={self.id}, number={self.number}, name='{self.name}'"
+
+class SeasonManager:
+    def __init__(self):
+        self.seasons: List[SeasonData] = []
+    
+    def add_season(self, season_data):
+        season = SeasonData(season_data)
+        self.seasons.append(season)
+        
+    def get_season_by_number(self, number: int) -> Optional[Dict]:
+        return self.seasons[number]
+
 class Season:
     def __init__(self, season_data: Dict[str, Union[int, str, None]]):
         self.season_data = season_data
@@ -78,7 +97,12 @@ class Season:
         self.plot: str = season_data.get('plot', '')
         self.type: str = season_data.get('type', '')
         self.seasons_count: int = season_data.get('seasons_count', 0)
+        
         self.episodes: EpisodeManager = EpisodeManager()
+
+        self.seasonsData: SeasonManager = SeasonManager()
+        for element in season_data['seasons']:
+            self.seasonsData.add_season(element)
         
 
 class Stream:

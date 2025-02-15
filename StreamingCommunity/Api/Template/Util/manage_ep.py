@@ -6,7 +6,7 @@ from typing import List
 
 
 # Internal utilities
-from StreamingCommunity.Util.console import console
+from StreamingCommunity.Util.console import console, msg
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util._jsonConfig import config_manager
 from StreamingCommunity.Util.table import TVShowManager
@@ -47,28 +47,33 @@ def manage_selection(cmd_insert: str, max_count: int) -> List[int]:
     Returns:
         list_selection (List[int]): List of selected items.
     """
-    list_selection = []
-    logging.info(f"Command insert: {cmd_insert}, end index: {max_count + 1}")
+    while True:
+        list_selection = []
+        logging.info(f"Command insert: {cmd_insert}, end index: {max_count + 1}")
 
-    # For a single number (e.g., '5')
-    if cmd_insert.isnumeric():
-        list_selection.append(int(cmd_insert))
+        # For a single number (e.g., '5')
+        if cmd_insert.isnumeric():
+            list_selection.append(int(cmd_insert))
+            break
 
-    # For a range (e.g., '5-12')
-    elif "-" in cmd_insert:
-        start, end = map(str.strip, cmd_insert.split('-'))
-        start = int(start)
-        end = int(end) if end.isnumeric() else max_count
+        # For a range (e.g., '5-12')
+        elif "-" in cmd_insert:
+            try:
+                start, end = map(str.strip, cmd_insert.split('-'))
+                start = int(start)
+                end = int(end) if end.isnumeric() else max_count
+                list_selection = list(range(start, end + 1))
+                break
+            except ValueError:
+                pass
 
-        list_selection = list(range(start, end + 1))
-        
-    # For all items ('*')
-    elif cmd_insert == "*":
-        list_selection = list(range(1, max_count + 1))
+        # For all items ('*')
+        elif cmd_insert == "*":
+            list_selection = list(range(1, max_count + 1))
+            break
 
-    else:
-        raise ValueError("Invalid input format")
-
+        cmd_insert = msg.ask("[red]Invalid input. Please enter a valid command: ")
+    
     logging.info(f"List return: {list_selection}")
     return list_selection
 

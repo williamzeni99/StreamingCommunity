@@ -1,7 +1,6 @@
 # 17.09.24
 
 import os
-import sys
 import logging
 
 
@@ -15,6 +14,7 @@ from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
 from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.table import TVShowManager, get_call_stack
 from StreamingCommunity.Lib.Downloader import HLS_Downloader
 
 
@@ -53,8 +53,13 @@ def download_film(movie_details: Json_film) -> str:
         raise
 
     if "not found" in str(response.text):
-        logging.error(f"Cant find in the server, Element: {movie_details}")
-        raise
+        logging.error(f"Cant find in the server: {movie_details.title}.")
+        
+        research_func = next((
+                f for f in get_call_stack()
+                if f['function'] == 'search' and f['script'] == '__init__.py'
+            ), None)
+        TVShowManager.run_back_command(research_func)
 
     # Extract supervideo url
     soup = BeautifulSoup(response.text, "html.parser")

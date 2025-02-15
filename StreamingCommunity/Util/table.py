@@ -85,8 +85,9 @@ class TVShowManager:
             table.add_row(*row_data)
 
         self.console.print(table)
-
-    def run_back_command(self, research_func: dict) -> None:
+    
+    @staticmethod
+    def run_back_command(research_func: dict) -> None:
         """
         Executes a back-end search command by dynamically importing a module and invoking its search function.
 
@@ -116,8 +117,7 @@ class TVShowManager:
             search_func(None)
             
         except Exception as e:
-            self.console.print(f"[red]Error during search: {e}")
-            logging.exception("Error during search execution")
+            logging.error("Error during search execution")
             
         finally:
             if project_root in sys.path:
@@ -181,7 +181,7 @@ class TVShowManager:
                     if self.slice_end > total_items:
                         self.slice_end = total_items
                 elif (key.lower() in ["b", "back"]) and research_func:
-                    self.run_back_command(research_func)
+                    TVShowManager.run_back_command(research_func)
                 else:
                     break
 
@@ -215,7 +215,7 @@ class TVShowManager:
                     self.slice_start = 0
                     self.slice_end = self.step
                 elif (key.lower() in ["b", "back"]) and research_func:
-                    self.run_back_command(research_func)
+                    TVShowManager.run_back_command(research_func)
                 else:
                     break
 

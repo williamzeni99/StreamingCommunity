@@ -13,7 +13,7 @@ from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
 
 # Logic class
 from StreamingCommunity.Api.Template.config_loader import site_constant
-from .site import get_version_and_domain, title_search, table_show_manager, media_search_manager
+from .site import title_search, table_show_manager, media_search_manager
 from .film import download_film
 from .series import download_series
 
@@ -52,9 +52,7 @@ def search(string_to_search: str = None, get_onylDatabase: bool = False):
         if string_to_search is None:
             string_to_search = msg.ask(f"\n[purple]Insert word to search in [green]{site_constant.SITE_NAME}").strip()
 
-    # Get site domain and version and get result of the search
-    site_version, domain = get_version_and_domain()
-    len_database = title_search(quote_plus(string_to_search), domain)
+    len_database = title_search(quote_plus(string_to_search))
 
     # Return list of elements
     if get_onylDatabase:
@@ -66,7 +64,7 @@ def search(string_to_search: str = None, get_onylDatabase: bool = False):
         select_title = get_select_title(table_show_manager, media_search_manager)
         
         if select_title.type == 'tv':
-            download_series(select_title, site_version)
+            download_series(select_title)
         
         else:
             download_film(select_title)

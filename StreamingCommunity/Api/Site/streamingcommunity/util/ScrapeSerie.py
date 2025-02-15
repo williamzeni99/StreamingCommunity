@@ -32,16 +32,14 @@ class ScrapeSerie:
         self.base_name = site_name
         self.domain = config_manager.get_dict('SITE', self.base_name)['domain']
 
-    def setup(self, version: str = None, media_id: int = None, series_name: str = None):
+    def setup(self, media_id: int = None, series_name: str = None):
         """
         Set up the scraper with specific media details.
         
         Args:
-            version (str, optional): Site version for request headers
             media_id (int, optional): Unique identifier for the media
             series_name (str, optional): Name of the TV series
         """
-        self.version = version
         self.media_id = media_id
 
         # If series name is provided, initialize series-specific managers
@@ -70,18 +68,6 @@ class ScrapeSerie:
             soup = BeautifulSoup(response.text, "html.parser")
             json_response = json.loads(soup.find("div", {"id": "app"}).get("data-page"))
             self.version = json_response['version']
-                  
-            """
-            response = httpx.post(
-                url=f'https://{self.base_name}.{self.domain}/api/titles/preview/{self.media_id}', 
-                headers={'User-Agent': get_headers()}
-            )
-            response.raise_for_status()
-            
-
-            # Extract seasons from JSON response
-            json_response = response.json()
-            """
 
             # Collect info about season
             self.season_manager = Season(json_response.get("props").get("title"))
