@@ -147,8 +147,8 @@ def download_series(select_season: MediaItem) -> None:
     start_message()
 
     # Init class
-    scrape_serie = ScrapeSerie(site_constant.SITE_NAME)
-    video_source = VideoSource(site_constant.SITE_NAME, True)
+    scrape_serie = ScrapeSerie(site_constant.FULL_URL)
+    video_source = VideoSource(site_constant.FULL_URL, True)
 
     # Setup video source
     scrape_serie.setup(select_season.id, select_season.slug)

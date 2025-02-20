@@ -20,17 +20,16 @@ max_timeout = config_manager.get_int("REQUESTS", "timeout")
 
 
 class ScrapeSerie:
-    def __init__(self, site_name: str):
+    def __init__(self, url):
         """
         Initialize the ScrapeSerie class for scraping TV series information.
         
         Args:
-            site_name (str): Name of the streaming site to scrape from
+            - url (str): The URL of the streaming site.
         """
         self.is_series = False
         self.headers = {'user-agent': get_headers()}
-        self.base_name = site_name
-        self.domain = config_manager.get_dict('SITE', self.base_name)['domain']
+        self.url = url
 
     def setup(self, media_id: int = None, series_name: str = None):
         """
@@ -58,7 +57,7 @@ class ScrapeSerie:
         """
         try:
             response = httpx.get(
-                url=f"https://{self.base_name}.{self.domain}/titles/{self.media_id}-{self.series_name}",
+                url=f"{self.url}/titles/{self.media_id}-{self.series_name}",
                 headers=self.headers,
                 timeout=max_timeout
             )
@@ -88,7 +87,7 @@ class ScrapeSerie:
         """
         try:
             response = httpx.get(
-                url=f'https://{self.base_name}.{self.domain}/titles/{self.media_id}-{self.series_name}/stagione-{number_season}', 
+                url=f'{self.url}/titles/{self.media_id}-{self.series_name}/stagione-{number_season}', 
                 headers={
                     'User-Agent': get_headers(),
                     'x-inertia': 'true', 

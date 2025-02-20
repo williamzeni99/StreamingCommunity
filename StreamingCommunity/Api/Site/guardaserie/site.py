@@ -1,5 +1,7 @@
 # 09.06.24
 
+import sys
+
 # External libraries
 import httpx
 from bs4 import BeautifulSoup
@@ -42,12 +44,18 @@ def title_search(word_to_search: str) -> int:
     domain_to_use = site_constant.DOMAIN_NOW
 
     if not disable_searchDomain:
-        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, f"https://{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}")
+        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
+
+    if domain_to_use is None or base_url is None:
+        console.print("[bold red]❌ Error: Unable to determine valid domain or base URL.[/bold red]")
+        console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
+        sys.exit(1)
 
     # Send request to search for titles
+    print(f"{site_constant.FULL_URL}/?story={word_to_search}&do=search&subaction=search")
     try:
         response = httpx.get(
-            url=f"https://guardaserie.{domain_to_use}/?story={word_to_search}&do=search&subaction=search", 
+            url=f"{site_constant.FULL_URL}/?story={word_to_search}&do=search&subaction=search", 
             headers={'user-agent': get_headers()}, 
             timeout=max_timeout
         )
@@ -58,19 +66,17 @@ def title_search(word_to_search: str) -> int:
 
     # Create soup and find table
     soup = BeautifulSoup(response.text, "html.parser")
-    table_content = soup.find('div', class_="mlnew-list")
+    table_content = soup.find('div', class_="recent-posts")
 
-    for serie_div in table_content.find_all('div', class_='mlnew'):
+    for serie_div in table_content.find_all('div', class_='post-thumb'):
         try:
             
-            title = serie_div.find('div', class_='mlnh-2').find("h2").get_text(strip=True)
-            link = serie_div.find('div', class_='mlnh-2').find('a')['href']
-            imdb_rating = serie_div.find('span', class_='mlnh-imdb').get_text(strip=True)
+            title = serie_div.find('a').get("title")
+            link = serie_div.find('a').get("href")
 
             serie_info = {
                 'name': title,
-                'url': link,
-                'score': imdb_rating
+                'url': link
             }
 
             media_search_manager.add_media(serie_info)

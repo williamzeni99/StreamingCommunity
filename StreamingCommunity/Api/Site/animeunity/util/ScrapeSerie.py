@@ -18,18 +18,17 @@ max_timeout = config_manager.get_int("REQUESTS", "timeout")
 
 
 
-class ScrapeSerieAnime():
-    def __init__(self, site_name: str):
+class ScrapeSerieAnime:
+    def __init__(self, url: str):
         """
         Initialize the media scraper for a specific website.
         
         Args:
-            site_name (str): Name of the streaming site to scrape
+            url (str): Url of the streaming site
         """
         self.is_series = False
         self.headers = {'user-agent': get_headers()}
-        self.base_name = site_name
-        self.domain = config_manager.get_dict('SITE', self.base_name)['domain']
+        self.url = url
 
     def setup(self, version: str = None, media_id: int = None, series_name: str = None):
         self.version = version
@@ -50,7 +49,7 @@ class ScrapeSerieAnime():
         try:
 
             response = httpx.get(
-                url=f"https://www.{self.base_name}.{self.domain}/info_api/{self.media_id}/", 
+                url=f"{self.url}/info_api/{self.media_id}/", 
                 headers=self.headers, 
                 timeout=max_timeout
             )
@@ -81,7 +80,7 @@ class ScrapeSerieAnime():
             }
 
             response = httpx.get(
-                url=f"https://www.{self.base_name}.{self.domain}/info_api/{self.media_id}/{index_ep}", 
+                url=f"{self.url}/info_api/{self.media_id}/{index_ep}", 
                 headers=self.headers, 
                 params=params, 
                 timeout=max_timeout

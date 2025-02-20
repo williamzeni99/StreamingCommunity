@@ -1,5 +1,6 @@
 # 10.12.23
 
+import sys
 import logging
 
 
@@ -42,7 +43,7 @@ def get_token(site_name: str, domain: str) -> dict:
 
     # Send a GET request to the specified URL composed of the site name and domain
     response = httpx.get(
-        url=f"https://www.{site_name}.{domain}", 
+        url=site_constant.FULL_URL,
         timeout=max_timeout
     )
     response.raise_for_status()
@@ -113,7 +114,12 @@ def title_search(title: str) -> int:
     domain_to_use = site_constant.DOMAIN_NOW
     
     if not disable_searchDomain:
-        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, f"https://www.{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}")
+        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
+
+    if domain_to_use is None or base_url is None:
+        console.print("[bold red]❌ Error: Unable to determine valid domain or base URL.[/bold red]")
+        console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
+        sys.exit(1)
     
     data = get_token(site_constant.SITE_NAME, domain_to_use)
 
@@ -138,7 +144,7 @@ def title_search(title: str) -> int:
     # Send a POST request to the API endpoint for live search
     try:
         response = httpx.post(
-            url=f'https://www.{site_constant.SITE_NAME}.{domain_to_use}/livesearch', 
+            url=f'{site_constant.FULL_URL}/livesearch', 
             cookies=cookies, 
             headers=headers, 
             json=json_data,

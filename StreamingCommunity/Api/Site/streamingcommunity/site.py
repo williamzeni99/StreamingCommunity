@@ -1,5 +1,7 @@
 # 10.12.23
 
+import sys
+
 
 # External libraries
 import httpx
@@ -40,7 +42,12 @@ def title_search(title_search: str) -> int:
     domain_to_use = site_constant
 
     if not disable_searchDomain:
-        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, f"https://{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}")
+        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
+
+    if domain_to_use is None or base_url is None:
+        console.print("[bold red]❌ Error: Unable to determine valid domain or base URL.[/bold red]")
+        console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
+        sys.exit(1)
 
     if site_constant.TELEGRAM_BOT:
         bot = get_bot_instance()
@@ -50,7 +57,7 @@ def title_search(title_search: str) -> int:
     
     try:
         response = httpx.get(
-            url=f"https://{site_constant.SITE_NAME}.{domain_to_use}/api/search?q={title_search.replace(' ', '+')}", 
+            url=f"{site_constant.FULL_URL}/api/search?q={title_search.replace(' ', '+')}", 
             headers={'user-agent': get_headers()}, 
             timeout=max_timeout
         )

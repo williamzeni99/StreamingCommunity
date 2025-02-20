@@ -23,17 +23,16 @@ max_timeout = config_manager.get_int("REQUESTS", "timeout")
 
 
 class VideoSource:
-    def __init__(self, site_name: str,  is_series: bool):
+    def __init__(self, url: str, is_series: bool):
         """
         Initialize video source for streaming site.
         
         Args:
-            site_name (str): Name of streaming site
-            is_series (bool): Flag for series or movie content
+            - url (str): The URL of the streaming site.
+            - is_series (bool): Flag for series or movie content
         """
         self.headers = {'user-agent': get_headers()}
-        self.base_name = site_name
-        self.domain = config_manager.get_dict('SITE', self.base_name)['domain']
+        self.url = url
         self.is_series = is_series
 
     def setup(self, media_id: int):
@@ -64,7 +63,7 @@ class VideoSource:
 
             # Make a request to get iframe source
             response = httpx.get(
-                url=f"https://{self.base_name}.{self.domain}/iframe/{self.media_id}", 
+                url=f"{self.url}/iframe/{self.media_id}", 
                 params=params, 
                 timeout=max_timeout
             )
@@ -185,7 +184,7 @@ class VideoSource:
         }
 
         # API request to get video details
-        video_api_url = f'https://{self.base_name}.{self.domain}/api/video/{scws_id}'
+        video_api_url = f'{self.url}/api/video/{scws_id}'
         response = httpx.get(video_api_url, headers=headers)
 
         if response.status_code == 200:
@@ -197,7 +196,7 @@ class VideoSource:
 
             # Request download link generation for each track
             download_response = httpx.post(
-                url=f'https://{self.base_name}.{self.domain}/api/download/generate_link?scws_id={track["video_id"]}&rendition={track["quality"]}',
+                url=f'{self.url}/api/download/generate_link?scws_id={track["video_id"]}&rendition={track["quality"]}',
                 headers={
                     'referer': url_to_download,
                     'user-agent': get_headers(),
@@ -220,18 +219,17 @@ class VideoSource:
 
 
 class VideoSourceAnime(VideoSource):
-    def __init__(self, site_name: str):
+    def __init__(self, url: str):
         """
         Initialize anime-specific video source.
         
         Args:
-            site_name (str): Name of anime streaming site
+            - url (str): The URL of the streaming site.
         
         Extends base VideoSource with anime-specific initialization
         """
         self.headers = {'user-agent': get_headers()}
-        self.base_name = site_name
-        self.domain = config_manager.get_dict('SITE', self.base_name)['domain']
+        self.url = url
         self.src_mp4 = None
 
     def get_embed(self, episode_id: int):
@@ -247,7 +245,7 @@ class VideoSourceAnime(VideoSource):
         try:
 
             response = httpx.get(
-                url=f"https://www.{self.base_name}.{self.domain}/embed-url/{episode_id}", 
+                url=f"{self.url}/embed-url/{episode_id}", 
                 headers=self.headers, 
                 timeout=max_timeout
             )

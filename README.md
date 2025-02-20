@@ -31,7 +31,8 @@
 
 # 📋 Table of Contents
 
-- 🌐 [Website available](#website-status)
+- 🌐 [Website available](https://www.npoint.io/docs/e67633acc3816cc70132)
+- 🔄 [Update Domains](#update-domains)
 - 🛠️ [Installation](#installation)
     - 📦 [PyPI Installation](#1-pypi-installation)
     - 🔄 [Automatic Installation](#2-automatic-installation)
@@ -58,17 +59,14 @@
 # Installation
 
 <p align="center">
-  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_win.exe">
+  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_win.exe" style="margin: 0 20px;">
     <img src="https://img.shields.io/badge/-Windows-blue.svg?style=for-the-badge&logo=windows" alt="Windows">
   </a>
-  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_mac">
+  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_mac" style="margin: 0 20px;">
     <img src="https://img.shields.io/badge/-macOS-black.svg?style=for-the-badge&logo=apple" alt="macOS">
   </a>
-  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_linux">
+  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_linux" style="margin: 0 20px;">
     <img src="https://img.shields.io/badge/-Linux-orange.svg?style=for-the-badge&logo=linux" alt="Linux">
-  </a>
-  <a href="https://github.com/Arrowar/StreamingCommunity/releases">
-    <img src="https://img.shields.io/badge/-All_Versions-lightgrey.svg?style=for-the-badge" alt="All Versions">
   </a>
 </p>
 
@@ -450,6 +448,33 @@ You can download VLC Media Player from the [official website](https://www.videol
 - `get_only_link`: Return M3U8 playlist/index URL instead of downloading
 
 
+## 🔄 Update Domains
+
+To update the domains for the supported websites:
+
+1. Visit the configuration endpoint: https://www.npoint.io/docs/e67633acc3816cc70132
+
+2. You'll find a JSON structure similar to:
+   ```json
+   {
+      "altadefinizione": {
+          "domain": "si",
+          "full_url": "https://altadefinizione.si/"
+      }, 
+      ...
+   }
+   ```
+
+3. Update the following fields for each website as needed:
+   - `domain`: The new domain extension
+   - `full_url`: The complete URL including the new domain
+
+4. Save your changes on the npoint.io interface
+
+5. Re-run the script to use the updated domain information
+
+Note: The script will automatically fetch the latest domain information from the configuration endpoint when executed.
+
 # COMMAND
 
 - Download a specific season by entering its number.
@@ -558,20 +583,6 @@ Start the bot from the folder /StreamingCommunity/TelegramHelp
 ```bash
 python3 telegram_bot.py
 ```
-
-# Website Status
-
-| Website            | Status | Command |
-|:-------------------|:------:|:--------:|
-| [1337xx](https://1337xx.to/) |   ✅   | -133 |
-| [AnimeUnity](https://animeunity.so/) |   ✅   | -ANI |
-| [Ilcorsaronero](https://ilcorsaronero.link/) | ✅ | `-ILC` |
-| [CB01New](https://cb01new.gold/) |   ✅   | -CB0 |
-| [DDLStreamItaly](https://ddlstreamitaly.co/) |   ✅   | -DDL |
-| [GuardaSerie](https://guardaserie.now/) |   ✅   | -GUA |
-| [MostraGuarda](https://mostraguarda.stream/) |   ✅   | -MOS |
-| [StreamingCommunity](https://streamingcommunity.lu/) |   ✅   | -STR |
-
 
 # Tutorials
 

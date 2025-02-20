@@ -1,5 +1,7 @@
 # 02.07.24
 
+import sys
+
 # External libraries
 import httpx
 from bs4 import BeautifulSoup
@@ -42,12 +44,17 @@ def title_search(word_to_search: str) -> int:
     domain_to_use = site_constant.DOMAIN_NOW
 
     if not disable_searchDomain:
-        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, f"https://{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}")
+        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
+
+    if domain_to_use is None or base_url is None:
+        console.print("[bold red]❌ Error: Unable to determine valid domain or base URL.[/bold red]")
+        console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
+        sys.exit(1)
 
     # Construct the full site URL and load the search page
     try:
         response = httpx.get(
-            url=f"https://{site_constant.SITE_NAME}.{domain_to_use}/search/{word_to_search}/1/", 
+            url=f"{site_constant.FULL_URL}/search/{word_to_search}/1/", 
             headers={'user-agent': get_headers()}, 
             follow_redirects=True,
             timeout=max_timeout

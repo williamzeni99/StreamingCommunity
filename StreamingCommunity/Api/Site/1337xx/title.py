@@ -41,9 +41,8 @@ def download_title(select_title: MediaItem):
     os_manager.create_path(mp4_path)                                                                    
 
     # Make request to page with magnet
-    full_site_name = f"{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}"
     response = httpx.get(
-        url="https://" + full_site_name + select_title.url, 
+        url=f"{site_constant.FULL_URL}{select_title.url}",
         headers={
             'user-agent': get_headers()
         }, 

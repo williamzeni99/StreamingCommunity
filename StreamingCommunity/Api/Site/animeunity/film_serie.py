@@ -85,6 +85,7 @@ def download_episode(index_select: int, scrape_serie: ScrapeSerieAnime, video_so
 
     else:
         logging.error(f"Skip index: {index_select} cant find info with api.")
+        return None, True
 
 
 def download_series(select_title: MediaItem):
@@ -100,8 +101,8 @@ def download_series(select_title: MediaItem):
     if site_constant.TELEGRAM_BOT:
         bot = get_bot_instance()
 
-    scrape_serie = ScrapeSerieAnime(site_constant.SITE_NAME)
-    video_source = VideoSourceAnime(site_constant.SITE_NAME)
+    scrape_serie = ScrapeSerieAnime(site_constant.FULL_URL)
+    video_source = VideoSourceAnime(site_constant.FULL_URL)
 
     # Set up video source
     scrape_serie.setup(None, select_title.id, select_title.slug)
@@ -160,8 +161,8 @@ def download_film(select_title: MediaItem):
     """
 
     # Init class
-    scrape_serie = ScrapeSerieAnime(site_constant.SITE_NAME)
-    video_source = VideoSourceAnime(site_constant.SITE_NAME)
+    scrape_serie = ScrapeSerieAnime(site_constant.FULL_URL)
+    video_source = VideoSourceAnime(site_constant.FULL_URL)
 
     # Set up video source
     scrape_serie.setup(None, select_title.id, select_title.slug)

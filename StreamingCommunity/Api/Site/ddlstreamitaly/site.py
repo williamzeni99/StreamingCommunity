@@ -1,5 +1,6 @@
 # 09.06.24
 
+import sys
 import logging
 
 
@@ -45,12 +46,17 @@ def title_search(word_to_search: str) -> int:
     domain_to_use = site_constant.DOMAIN_NOW
     
     if not disable_searchDomain:
-        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, f"https://{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}")
+        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
+
+    if domain_to_use is None or base_url is None:
+        console.print("[bold red]❌ Error: Unable to determine valid domain or base URL.[/bold red]")
+        console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
+        sys.exit(1)
 
     # Send request to search for titles
     try:
         response = httpx.get(
-            url=f"https://{site_constant.SITE_NAME}.{domain_to_use}/search/?&q={word_to_search}&quick=1&type=videobox_video&nodes=11", 
+            url=f"{site_constant.FULL_URL}/search/?&q={word_to_search}&quick=1&type=videobox_video&nodes=11", 
             headers={'user-agent': get_headers()},
             timeout=max_timeout
         )

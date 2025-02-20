@@ -44,7 +44,7 @@ def download_film(movie_details: Json_film) -> str:
     
     # Make request to main site
     try:
-        url = f"https://{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}/set-movie-a/{movie_details.imdb_id}"
+        url = f"{site_constant.FULL_URL}/set-movie-a/{movie_details.imdb_id}"
         response = httpx.get(url, headers={'User-Agent': get_headers()})
         response.raise_for_status()
 

@@ -84,7 +84,7 @@ jobs:
         shell: pwsh
         run: |
           pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=ua_generator `
-            --hidden-import=qbittorrentapi --hidden-import=qbittorrent --hidden-import=googlesearch `
+            --hidden-import=qbittorrentapi --hidden-import=qbittorrent `
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm `
             --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode `
             --hidden-import=jsbeautifier --hidden-import=pathvalidate `
@@ -99,7 +99,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=ua_generator \
-            --hidden-import=qbittorrentapi --hidden-import=qbittorrent --hidden-import=googlesearch \
+            --hidden-import=qbittorrentapi --hidden-import=qbittorrent \
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm \
             --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode \
             --hidden-import=jsbeautifier --hidden-import=pathvalidate \
@@ -114,7 +114,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=ua_generator \
-            --hidden-import=qbittorrentapi --hidden-import=qbittorrent --hidden-import=googlesearch \
+            --hidden-import=qbittorrentapi --hidden-import=qbittorrent \
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm \
             --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode \
             --hidden-import=jsbeautifier --hidden-import=pathvalidate \

@@ -8,7 +8,6 @@ unidecode
 jsbeautifier
 pathvalidate
 pycryptodomex
-googlesearch-python
 ua-generator
 qbittorrent-api
 python-qbittorrent

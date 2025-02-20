@@ -27,6 +27,7 @@ from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance, Teleg
 
 
 # Config
+SHOW_TRENDING = config_manager.get_bool('DEFAULT', 'show_trending')
 CLOSE_CONSOLE = config_manager.get_bool('DEFAULT', 'not_close')
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
@@ -134,10 +135,10 @@ def initialize():
         sys.exit(0)
 
     # Trending tmbd
-    print()
-    tmdb.display_trending_films()
-    tmdb.display_trending_tv_shows()
-
+    if SHOW_TRENDING:
+        print()
+        tmdb.display_trending_films()
+        tmdb.display_trending_tv_shows()
 
     # Attempting GitHub update
     try:

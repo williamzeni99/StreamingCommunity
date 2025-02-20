@@ -49,9 +49,10 @@ class GetSerieInfo:
             response.raise_for_status()
 
             soup = BeautifulSoup(response.text, "html.parser")
+
             table_content = soup.find('div', class_="tt_season")
             seasons_number = len(table_content.find_all("li"))
-            self.tv_name = soup.find("h1", class_="front_title").get_text(strip=True)
+            self.tv_name = soup.find("h1", class_="entry-title").get_text(strip=True)
 
             return seasons_number
 

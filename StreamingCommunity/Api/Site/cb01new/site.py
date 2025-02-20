@@ -1,11 +1,14 @@
 # 03.07.24
 
+import sys
+
 # External libraries
 import httpx
 from bs4 import BeautifulSoup
 
 
 # Internal utilities
+from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util._jsonConfig import config_manager
 from StreamingCommunity.Util.headers import get_headers
 from StreamingCommunity.Util.table import TVShowManager
@@ -41,10 +44,15 @@ def title_search(word_to_search: str) -> int:
     domain_to_use = site_constant.DOMAIN_NOW
     
     if not disable_searchDomain:
-        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, f"https://{site_constant.SITE_NAME}.{site_constant.DOMAIN_NOW}")
+        domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
+
+    if domain_to_use is None or base_url is None:
+        console.print("[bold red]❌ Error: Unable to determine valid domain or base URL.[/bold red]")
+        console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
+        sys.exit(1)
 
     response = httpx.get(
-        url=f"https://{site_constant.SITE_NAME}.{domain_to_use}/?s={word_to_search}",
+        url=f"{site_constant.FULL_URL}/?s={word_to_search}",
         headers={'user-agent': get_headers()},
         timeout=max_timeout
     )

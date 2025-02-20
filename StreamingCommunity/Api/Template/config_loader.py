@@ -33,7 +33,11 @@ class SiteConstant:
     
     @property
     def DOMAIN_NOW(self):
-        return config_manager.get_dict('SITE', self.SITE_NAME)['domain']
+        return config_manager.get_site(self.SITE_NAME, 'domain')
+    
+    @property
+    def FULL_URL(self):
+        return config_manager.get_site(self.SITE_NAME, 'full_url').rstrip('/')
     
     @property
     def SERIES_FOLDER(self):
@@ -59,7 +63,7 @@ class SiteConstant:
     @property
     def COOKIE(self):
         try:
-            return config_manager.get_dict('SITE', self.SITE_NAME)['extra']
+            return config_manager.get_dict('SITE_EXTRA', self.SITE_NAME)
         except KeyError:
             return None
     
