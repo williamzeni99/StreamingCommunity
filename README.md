@@ -31,7 +31,6 @@
 
 # 📋 Table of Contents
 
-- 🌐 [Website available](https://www.npoint.io/docs/e67633acc3816cc70132)
 - 🔄 [Update Domains](#update-domains)
 - 🛠️ [Installation](#installation)
     - 📦 [PyPI Installation](#1-pypi-installation)
@@ -448,32 +447,39 @@ You can download VLC Media Player from the [official website](https://www.videol
 - `get_only_link`: Return M3U8 playlist/index URL instead of downloading
 
 
-## 🔄 Update Domains
+## Update Domains
 
-To update the domains for the supported websites:
+There are two ways to update the domains for the supported websites:
 
-1. Visit the configuration endpoint: https://www.npoint.io/docs/e67633acc3816cc70132
+### 1. Using Local Configuration
 
-2. You'll find a JSON structure similar to:
+1. Create a `domains.json` file in the root directory of the project
+
+2. Add your domain configuration in the following format:
    ```json
    {
       "altadefinizione": {
           "domain": "si",
           "full_url": "https://altadefinizione.si/"
-      }, 
+      },
       ...
    }
    ```
+   
+3. Set `use_api` to `false` in the `DEFAULT` section of your `config.json`:
+   ```json
+   {
+      "DEFAULT": {
+         "use_api": false
+      }
+   }
+   ```
 
-3. Update the following fields for each website as needed:
-   - `domain`: The new domain extension
-   - `full_url`: The complete URL including the new domain
+### 2. Using API (Legacy)
 
-4. Save your changes on the npoint.io interface
+The API-based domain updates are currently deprecated. To use it anyway, set `use_api` to `true` in your `config.json` file.
 
-5. Re-run the script to use the updated domain information
-
-Note: The script will automatically fetch the latest domain information from the configuration endpoint when executed.
+Note: If `use_api` is set to `false` and no `domains.json` file is found, the script will raise an error.
 
 # COMMAND
 

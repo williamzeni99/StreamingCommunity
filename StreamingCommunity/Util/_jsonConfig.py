@@ -28,11 +28,30 @@ class ConfigManager:
         else:
             base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
         self.file_path = os.path.join(base_path, file_name)
+        self.domains_path = os.path.join(base_path, 'domains.json')
         self.config = {}
         self.configSite = {}
         self.cache = {}
-
+        
+        # Read initial config to get use_api setting
+        self._read_initial_config()
+        
         console.print(f"[bold cyan]📂 Configuration file path:[/bold cyan] [green]{self.file_path}[/green]")
+    
+    def _read_initial_config(self) -> None:
+        """Read initial configuration to get use_api setting."""
+        try:
+            if os.path.exists(self.file_path):
+                with open(self.file_path, 'r') as f:
+                    self.config = json.load(f)
+                self.use_api = self.config.get('DEFAULT', {}).get('use_api', True)
+            else:
+                self.use_api = True  # Default to True if config file doesn't exist
+                console.print("[bold yellow]⚠️ Configuration file not found. Using default settings.[/bold yellow]")
+
+        except Exception as e:
+            self.use_api = True  # Default to True in case of error
+            logging.error(f"❌ Error reading initial configuration: {e}")
 
     def read_config(self) -> None:
         """Read the configuration file."""
@@ -91,20 +110,41 @@ class ConfigManager:
             sys.exit(0)
 
     def update_site_config(self) -> None:
-        """Fetch and update the site configuration with data from the API."""
-        api_url = "https://api.npoint.io/e67633acc3816cc70132"
-        try:
-            console.print("[bold cyan]🌍 Fetching SITE data from API...[/bold cyan]")
-            response = requests.get(api_url)
+        """Fetch and update the site configuration with data from the API or local file."""
+        if self.use_api:
+            headers = {
+                "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2Zm5ncG94d3Jnc3duenl0YWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNTIxNjMsImV4cCI6MjA1NTcyODE2M30.FNTCCMwi0QaKjOu8gtZsT5yQttUW8QiDDGXmzkn89QE",
+                "Authorization": f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2Zm5ncG94d3Jnc3duenl0YWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNTIxNjMsImV4cCI6MjA1NTcyODE2M30.FNTCCMwi0QaKjOu8gtZsT5yQttUW8QiDDGXmzkn89QE",
+                "Content-Type": "application/json"
+            }
 
-            if response.status_code == 200:
-                self.configSite = response.json()  # Store API data in separate configSite
-                console.print("[bold green]✅ SITE data successfully fetched.[/bold green]")
-            else:
-                console.print(f"[bold red]❌ Failed to fetch SITE data. HTTP Status code: {response.status_code}[/bold red]")
+            try:
+                console.print("[bold cyan]🌍 Fetching SITE data from API...[/bold cyan]")
+                response = requests.get("https://zvfngpoxwrgswnzytadh.supabase.co/rest/v1/public", headers=headers)
 
-        except Exception as e:
-            console.print(f"[bold red]❌ Error fetching SITE data: {e}[/bold red]")
+                if response.status_code == 200:
+                    self.configSite = response.json()[0]['data']
+                    console.print("[bold green]✅ SITE data successfully fetched.[/bold green]")
+                else:
+                    console.print(f"[bold red]❌ Failed to fetch SITE data. HTTP Status code: {response.status_code}[/bold red]")
+
+            except Exception as e:
+                console.print(f"[bold red]❌ Error fetching SITE data: {e}[/bold red]")
+        else:
+            try:
+                if os.path.exists(self.domains_path):
+                    console.print("[bold cyan]📖 Reading domains from local file...[/bold cyan]")
+                    with open(self.domains_path, 'r') as f:
+                        self.configSite = json.load(f)
+                    console.print("[bold green]✅ Domains loaded successfully from local file.[/bold green]")
+                else:
+                    error_msg = "❌ domains.json not found and API usage is disabled"
+                    console.print(f"[bold red]{error_msg}[/bold red]")
+                    raise FileNotFoundError(error_msg)
+
+            except Exception as e:
+                console.print(f"[bold red]❌ Error reading domains file: {e}[/bold red]")
+                raise
 
     def read_key(self, section: str, key: str, data_type: type = str, from_site: bool = False) -> Any:
         """Read a key from the configuration.

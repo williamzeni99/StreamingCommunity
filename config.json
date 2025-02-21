@@ -17,6 +17,7 @@
             "user": "admin",
             "pass": "adminadmin"
         },
+        "use_api": true,
         "add_siteName": false,
         "disable_searchDomain": false,
         "not_close": false,
