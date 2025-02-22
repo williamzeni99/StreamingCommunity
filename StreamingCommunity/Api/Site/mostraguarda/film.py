@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.table import TVShowManager, get_call_stack
 from StreamingCommunity.Lib.Downloader import HLS_Downloader
 
@@ -45,7 +45,7 @@ def download_film(movie_details: Json_film) -> str:
     # Make request to main site
     try:
         url = f"{site_constant.FULL_URL}/set-movie-a/{movie_details.imdb_id}"
-        response = httpx.get(url, headers={'User-Agent': get_headers()})
+        response = httpx.get(url, headers={'User-Agent': get_userAgent()})
         response.raise_for_status()
 
     except:

@@ -13,7 +13,7 @@ import httpx
 from .version import __version__, __author__, __title__
 from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 
 
 
@@ -31,14 +31,14 @@ def update():
     try:
         response_reposity = httpx.get(
             url=f"https://api.github.com/repos/{__author__}/{__title__}", 
-            headers={'user-agent': get_headers()}, 
+            headers={'user-agent': get_userAgent()}, 
             timeout=config_manager.get_int("REQUESTS", "timeout"), 
             follow_redirects=True
         ).json()
 
         response_releases = httpx.get(
             url=f"https://api.github.com/repos/{__author__}/{__title__}/releases",
-            headers={'user-agent': get_headers()}, 
+            headers={'user-agent': get_userAgent()}, 
             timeout=config_manager.get_int("REQUESTS", "timeout"), 
             follow_redirects=True
         ).json()

@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 
 # Internal utilities
 from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 
 
 # Variable
@@ -30,7 +30,7 @@ class VideoSource:
         self.headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7',
-            'User-Agent': get_headers()
+            'User-Agent': get_userAgent()
         }
         self.client = httpx.Client()
         self.url = url

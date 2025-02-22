@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 
 # Internal utilities
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util._jsonConfig import config_manager
 from .Helper.Vixcloud.util import WindowVideo, WindowParameter, StreamsCollection
@@ -31,7 +31,7 @@ class VideoSource:
             - url (str): The URL of the streaming site.
             - is_series (bool): Flag for series or movie content
         """
-        self.headers = {'user-agent': get_headers()}
+        self.headers = {'user-agent': get_userAgent()}
         self.url = url
         self.is_series = is_series
 
@@ -180,7 +180,7 @@ class VideoSource:
         """
         headers = {
             'referer': url_to_download,
-            'user-agent': get_headers(),
+            'user-agent': get_userAgent(),
         }
 
         # API request to get video details
@@ -199,7 +199,7 @@ class VideoSource:
                 url=f'{self.url}/api/download/generate_link?scws_id={track["video_id"]}&rendition={track["quality"]}',
                 headers={
                     'referer': url_to_download,
-                    'user-agent': get_headers(),
+                    'user-agent': get_userAgent(),
                     'x-xsrf-token': config_manager.get("SITE", self.base_name)['extra']['x-xsrf-token']
                 },
                 cookies={
@@ -228,7 +228,7 @@ class VideoSourceAnime(VideoSource):
         
         Extends base VideoSource with anime-specific initialization
         """
-        self.headers = {'user-agent': get_headers()}
+        self.headers = {'user-agent': get_userAgent()}
         self.url = url
         self.src_mp4 = None
 

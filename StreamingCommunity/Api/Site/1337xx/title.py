@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Lib.Downloader import TOR_downloader
 
 
@@ -44,7 +44,7 @@ def download_title(select_title: MediaItem):
     response = httpx.get(
         url=f"{site_constant.FULL_URL}{select_title.url}",
         headers={
-            'user-agent': get_headers()
+            'user-agent': get_userAgent()
         }, 
         follow_redirects=True
     )

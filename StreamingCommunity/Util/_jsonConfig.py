@@ -27,17 +27,79 @@ class ConfigManager:
             base_path = os.path.join(".")
         else:
             base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+            
         self.file_path = os.path.join(base_path, file_name)
         self.domains_path = os.path.join(base_path, 'domains.json')
         self.config = {}
         self.configSite = {}
         self.cache = {}
+        self.reference_config_url = 'https://raw.githubusercontent.com/Arrowar/StreamingCommunity/refs/heads/main/config.json'
         
-        # Read initial config to get use_api setting
+        # Validate and update config before proceeding
+        self._validate_and_update_config()
         self._read_initial_config()
         
         console.print(f"[bold cyan]📂 Configuration file path:[/bold cyan] [green]{self.file_path}[/green]")
-    
+
+    def _validate_and_update_config(self) -> None:
+        """Validate local config against reference config and update missing keys."""
+        try:
+            # Load local config if exists
+            local_config = {}
+            if os.path.exists(self.file_path):
+                with open(self.file_path, 'r') as f:
+                    local_config = json.load(f)
+                console.print("[bold cyan]📖 Local configuration found.[/bold cyan]")
+
+            # Download reference config
+            console.print("[bold cyan]🌍 Downloading reference configuration...[/bold cyan]")
+            response = requests.get(self.reference_config_url)
+            if response.status_code != 200:
+                raise Exception(f"Failed to download reference config. Status code: {response.status_code}")
+            reference_config = response.json()
+
+            # Compare and update missing keys
+            merged_config = self._deep_merge_configs(local_config, reference_config)
+            
+            if merged_config != local_config:
+                # Save the merged config
+                with open(self.file_path, 'w') as f:
+                    json.dump(merged_config, f, indent=4)
+                console.print("[bold green]✅ Configuration updated with missing keys.[/bold green]")
+            else:
+                console.print("[bold green]✅ Configuration is up to date.[/bold green]")
+
+            self.config = merged_config
+
+        except Exception as e:
+            console.print(f"[bold red]❌ Error validating configuration: {e}[/bold red]")
+            if not self.config:
+                # If validation failed and we have no config, download the reference config
+                self.download_requirements(self.reference_config_url, self.file_path)
+                with open(self.file_path, 'r') as f:
+                    self.config = json.load(f)
+
+    def _deep_merge_configs(self, local_config: dict, reference_config: dict) -> dict:
+        """
+        Recursively merge reference config into local config, preserving local values.
+        
+        Args:
+            local_config (dict): The local configuration
+            reference_config (dict): The reference configuration
+            
+        Returns:
+            dict: Merged configuration
+        """
+        merged = local_config.copy()
+        
+        for key, value in reference_config.items():
+            if key not in merged:
+                merged[key] = value
+            elif isinstance(value, dict) and isinstance(merged[key], dict):
+                merged[key] = self._deep_merge_configs(merged[key], value)
+                
+        return merged
+
     def _read_initial_config(self) -> None:
         """Read initial configuration to get use_api setting."""
         try:
@@ -63,13 +125,9 @@ class ConfigManager:
                 with open(self.file_path, 'r') as f:
                     self.config = json.load(f)
                 console.print("[bold green]✅ Configuration file loaded successfully.[/bold green]")
-
             else:
                 console.print("[bold yellow]⚠️ Configuration file not found. Downloading...[/bold yellow]")
-                self.download_requirements(
-                    'https://raw.githubusercontent.com/Arrowar/StreamingCommunity/refs/heads/main/config.json',
-                    self.file_path
-                )
+                self.download_requirements(self.reference_config_url, self.file_path)
 
                 # Load the downloaded config.json into the config attribute
                 with open(self.file_path, 'r') as f:
@@ -84,7 +142,7 @@ class ConfigManager:
         except Exception as e:
             logging.error(f"❌ Error reading configuration file: {e}")
 
-    def download_requirements(self, url: str, filename: str):
+    def download_requirements(self, url: str, filename: str) -> None:
         """
         Download a file from the specified URL if not found locally using requests.
 

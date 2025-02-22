@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 
 # Internal utilities
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util._jsonConfig import config_manager
 
 
@@ -30,7 +30,7 @@ class GetSerieInfo:
         Parameters:
             dict_serie (MediaItem): Dictionary containing series information (optional).
         """
-        self.headers = {'user-agent': get_headers()}
+        self.headers = {'user-agent': get_userAgent()}
         self.url = dict_serie.url
         self.tv_name = None
         self.list_episodes = None

@@ -12,7 +12,7 @@ import httpx
 
 # Internal utilities
 from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.os import os_manager
 
 
@@ -46,7 +46,7 @@ class ProxyManager:
 
         try:
             with httpx.Client(proxies=proxy, verify=False) as client:
-                response = client.get(self.url, timeout=self.timeout, headers={'user-agent': get_headers()})
+                response = client.get(self.url, timeout=self.timeout, headers={'user-agent': get_userAgent()})
 
                 if response.status_code == 200:
                     logging.info(f"Proxy {proxy} is working.")

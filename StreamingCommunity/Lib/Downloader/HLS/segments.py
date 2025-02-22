@@ -22,7 +22,7 @@ from tqdm import tqdm
 # Internal utilities
 from StreamingCommunity.Util.color import Colors
 from StreamingCommunity.Util.console import console
-from StreamingCommunity.Util.headers import get_headers, random_headers
+from StreamingCommunity.Util.headers import get_userAgent, random_headers
 from StreamingCommunity.Util._jsonConfig import config_manager
 from StreamingCommunity.Util.os import os_manager
 
@@ -102,7 +102,7 @@ class M3U8_Segments:
         self.key_base_url = f"{parsed_url.scheme}://{parsed_url.netloc}/"
         
         try:
-            client_params = {'headers': {'User-Agent': get_headers()}, 'timeout': MAX_TIMEOOUT}
+            client_params = {'headers': {'User-Agent': get_userAgent()}, 'timeout': MAX_TIMEOOUT}
             response = httpx.get(url=key_uri, **client_params)
             response.raise_for_status()
 
@@ -145,7 +145,7 @@ class M3U8_Segments:
     def get_info(self) -> None:
         if self.is_index_url:
             try:
-                client_params = {'headers': {'User-Agent': get_headers()}, 'timeout': MAX_TIMEOOUT}
+                client_params = {'headers': {'User-Agent': get_userAgent()}, 'timeout': MAX_TIMEOOUT}
                 response = httpx.get(self.url, **client_params)
                 response.raise_for_status()
                 
@@ -186,8 +186,8 @@ class M3U8_Segments:
 
     def _get_http_client(self, index: int = None):
         client_params = {
-            #'headers': random_headers(self.key_base_url) if hasattr(self, 'key_base_url') else {'User-Agent': get_headers()},
-            'headers': {'User-Agent': get_headers()},
+            #'headers': random_headers(self.key_base_url) if hasattr(self, 'key_base_url') else {'User-Agent': get_userAgent()},
+            'headers': {'User-Agent': get_userAgent()},
             'timeout': SEGMENT_MAX_TIMEOUT,
             'follow_redirects': True,
             'http2': False

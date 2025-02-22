@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 
 # Internal utilities
 from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 
 
 # Variable
@@ -31,7 +31,7 @@ class VideoSource:
         self.redirect_url = None
         self.maxstream_url = None
         self.m3u8_url = None
-        self.headers = {'user-agent': get_headers()}
+        self.headers = {'user-agent': get_userAgent()}
 
     def get_redirect_url(self):
         """
@@ -78,7 +78,7 @@ class VideoSource:
                 logging.warning("Anchor tag not found. Trying the alternative method.")
                 headers = {
                     'origin': 'https://stayonline.pro',
-                    'user-agent': get_headers(),
+                    'user-agent': get_userAgent(),
                     'x-requested-with': 'XMLHttpRequest',
                 }
 

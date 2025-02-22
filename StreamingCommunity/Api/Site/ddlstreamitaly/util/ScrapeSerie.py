@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 
 # Internal utilities
 from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 
 
 # Logic class
@@ -31,7 +31,7 @@ class GetSerieInfo:
         Parameters:
             - dict_serie (MediaItem): Dictionary containing series information (optional).
         """
-        self.headers = {'user-agent': get_headers()}
+        self.headers = {'user-agent': get_userAgent()}
         self.cookies = cookies
         self.url = dict_serie.url
         self.tv_name = None

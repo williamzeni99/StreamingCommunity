@@ -7,7 +7,10 @@ import random
 import ua_generator
 
 
-def get_headers() -> str:
+# Variable
+ua =  ua_generator.generate(device='desktop', browser=('chrome', 'edge'))
+
+def get_userAgent() -> str:
     """
     Generate a random user agent to use in HTTP requests.
 
@@ -18,6 +21,10 @@ def get_headers() -> str:
     # Get a random user agent string from the user agent rotator
     user_agent =  ua_generator.generate().text
     return user_agent
+
+
+def get_headers() -> dict:
+    return ua.headers.get()
 
 
 def random_headers(referer: str = None):

@@ -14,7 +14,7 @@ import httpx
 
 # Internal utilities
 from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.console import console, Panel
 from StreamingCommunity.Util.os import (
     compute_sha1_hash,
@@ -55,7 +55,7 @@ TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 class HLSClient:
     """Client for making HTTP requests to HLS endpoints with retry mechanism."""
     def __init__(self):
-        self.headers = {'User-Agent': get_headers()}
+        self.headers = {'User-Agent': get_userAgent()}
 
     def request(self, url: str, return_content: bool = False) -> Optional[httpx.Response]:
         """

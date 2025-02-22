@@ -10,7 +10,7 @@ import httpx
 # Internal utilities
 from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.table import TVShowManager
 from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
 
@@ -58,7 +58,7 @@ def title_search(title_search: str) -> int:
     try:
         response = httpx.get(
             url=f"{site_constant.FULL_URL}/api/search?q={title_search.replace(' ', '+')}", 
-            headers={'user-agent': get_headers()}, 
+            headers={'user-agent': get_userAgent()}, 
             timeout=max_timeout
         )
         response.raise_for_status()

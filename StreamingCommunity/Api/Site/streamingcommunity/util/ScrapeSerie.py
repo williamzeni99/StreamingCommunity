@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 
 # Internal utilities
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util._jsonConfig import config_manager
 from StreamingCommunity.Api.Player.Helper.Vixcloud.util import Season, EpisodeManager
 
@@ -28,7 +28,7 @@ class ScrapeSerie:
             - url (str): The URL of the streaming site.
         """
         self.is_series = False
-        self.headers = {'user-agent': get_headers()}
+        self.headers = {'user-agent': get_userAgent()}
         self.url = url
 
     def setup(self, media_id: int = None, series_name: str = None):
@@ -89,7 +89,7 @@ class ScrapeSerie:
             response = httpx.get(
                 url=f'{self.url}/titles/{self.media_id}-{self.series_name}/stagione-{number_season}', 
                 headers={
-                    'User-Agent': get_headers(),
+                    'User-Agent': get_userAgent(),
                     'x-inertia': 'true', 
                     'x-inertia-version': self.version,
                 },

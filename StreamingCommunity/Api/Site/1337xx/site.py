@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 # Internal utilities
 from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.table import TVShowManager
 
 
@@ -55,7 +55,7 @@ def title_search(word_to_search: str) -> int:
     try:
         response = httpx.get(
             url=f"{site_constant.FULL_URL}/search/{word_to_search}/1/", 
-            headers={'user-agent': get_headers()}, 
+            headers={'user-agent': get_userAgent()}, 
             follow_redirects=True,
             timeout=max_timeout
         )

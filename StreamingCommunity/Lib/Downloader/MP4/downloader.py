@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 
 # Internal utilities
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.color import Colors
 from StreamingCommunity.Util.console import console, Panel
 from StreamingCommunity.Util._jsonConfig import config_manager
@@ -99,7 +99,7 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
         if headers_:
             headers.update(headers_)
         else:
-            headers['User-Agent'] = get_headers()
+            headers['User-Agent'] = get_userAgent()
 
     except Exception as header_err:
         logging.error(f"Error preparing headers: {header_err}")

@@ -8,7 +8,7 @@ import httpx
 
 
 # Internal utilities
-from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util._jsonConfig import config_manager
 from StreamingCommunity.Api.Player.Helper.Vixcloud.util import EpisodeManager, Episode
 
@@ -27,7 +27,7 @@ class ScrapeSerieAnime:
             url (str): Url of the streaming site
         """
         self.is_series = False
-        self.headers = {'user-agent': get_headers()}
+        self.headers = {'user-agent': get_userAgent()}
         self.url = url
 
     def setup(self, version: str = None, media_id: int = None, series_name: str = None):
