@@ -87,7 +87,7 @@ jobs:
             --hidden-import=qbittorrentapi --hidden-import=qbittorrent `
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm `
             --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode `
-            --hidden-import=jsbeautifier --hidden-import=pathvalidate `
+            --hidden-import=jsbeautifier --hidden-import=six --hidden-import=pathvalidate `
             --hidden-import=Cryptodome.Cipher --hidden-import=Cryptodome.Cipher.AES `
             --hidden-import=Cryptodome.Util --hidden-import=Cryptodome.Util.Padding `
             --hidden-import=Cryptodome.Random --hidden-import=Pillow `
@@ -102,7 +102,7 @@ jobs:
             --hidden-import=qbittorrentapi --hidden-import=qbittorrent \
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm \
             --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode \
-            --hidden-import=jsbeautifier --hidden-import=pathvalidate \
+            --hidden-import=jsbeautifier --hidden-import=six --hidden-import=pathvalidate \
             --hidden-import=Cryptodome.Cipher --hidden-import=Cryptodome.Cipher.AES \
             --hidden-import=Cryptodome.Util --hidden-import=Cryptodome.Util.Padding \
             --hidden-import=Cryptodome.Random --hidden-import=Pillow \
@@ -117,7 +117,7 @@ jobs:
             --hidden-import=qbittorrentapi --hidden-import=qbittorrent \
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm \
             --hidden-import=m3u8 --hidden-import=psutil --hidden-import=unidecode \
-            --hidden-import=jsbeautifier --hidden-import=pathvalidate \
+            --hidden-import=jsbeautifier --hidden-import=six --hidden-import=pathvalidate \
             --hidden-import=Cryptodome.Cipher --hidden-import=Cryptodome.Cipher.AES \
             --hidden-import=Cryptodome.Util --hidden-import=Cryptodome.Util.Padding \
             --hidden-import=Cryptodome.Random --hidden-import=Pillow \
