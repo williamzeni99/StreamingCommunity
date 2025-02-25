@@ -39,45 +39,80 @@ class ConfigManager:
         self._validate_and_update_config()
         self._read_initial_config()
         
-        console.print(f"[bold cyan]Configuration file path:[/bold cyan] [green]{self.file_path}[/green]")
+        console.print(f"[bold cyan]ConfigManager initialized:[/bold cyan] [green]{self.file_path}[/green]")
 
     def _validate_and_update_config(self) -> None:
         """Validate local config against reference config and update missing keys."""
         try:
+
             # Load local config if exists
             local_config = {}
             if os.path.exists(self.file_path):
                 with open(self.file_path, 'r') as f:
                     local_config = json.load(f)
-                console.print("[bold cyan]Local configuration found.[/bold cyan]")
+                console.print(f"[bold cyan]Local configuration loaded:[/bold cyan] [green]{len(local_config)} keys found[/green]")
 
             # Download reference config
-            console.print("[bold cyan]Downloading reference configuration...[/bold cyan]")
-            response = requests.get(self.reference_config_url)
-            if response.status_code != 200:
+            console.print(f"[bold cyan]Downloading reference config from:[/bold cyan] [green]{self.reference_config_url}[/green]")
+            response = requests.get(self.reference_config_url, timeout=10)
+
+            if response.ok:
                 raise Exception(f"Failed to download reference config. Status code: {response.status_code}")
+            
             reference_config = response.json()
+            console.print(f"[bold cyan]Reference config downloaded:[/bold cyan] [green]{len(reference_config)} keys available[/green]")
 
             # Compare and update missing keys
             merged_config = self._deep_merge_configs(local_config, reference_config)
             
             if merged_config != local_config:
+                added_keys = self._get_added_keys(local_config, merged_config)
+
                 # Save the merged config
                 with open(self.file_path, 'w') as f:
                     json.dump(merged_config, f, indent=4)
-                console.print("[bold green]Configuration updated with missing keys.[/bold green]")
+                console.print(f"[bold green]Configuration updated with {len(added_keys)} new keys:[/bold green] {', '.join(added_keys[:5])}{' and more...' if len(added_keys) > 5 else ''}")
+
             else:
                 console.print("[bold green]Configuration is up to date.[/bold green]")
 
             self.config = merged_config
 
         except Exception as e:
-            console.print(f"[bold red]Error validating configuration: {e}[/bold red]")
+            console.print(f"[bold red]Configuration validation error:[/bold red] {str(e)}")
+
             if not self.config:
-                # If validation failed and we have no config, download the reference config
+                console.print("[bold yellow]Falling back to reference configuration...[/bold yellow]")
                 self.download_requirements(self.reference_config_url, self.file_path)
+
                 with open(self.file_path, 'r') as f:
                     self.config = json.load(f)
+
+                console.print(f"[bold green]Reference config loaded successfully with {len(self.config)} keys[/bold green]")
+
+    def _get_added_keys(self, old_config: dict, new_config: dict, prefix="") -> list:
+        """
+        Get list of keys added in the new config compared to old config.
+        
+        Args:
+            old_config (dict): The original configuration
+            new_config (dict): The new configuration
+            prefix (str): Key prefix for nested keys
+            
+        Returns:
+            list: List of added key names
+        """
+        added_keys = []
+        
+        for key, value in new_config.items():
+            full_key = f"{prefix}.{key}" if prefix else key
+            
+            if key not in old_config:
+                added_keys.append(full_key)
+            elif isinstance(value, dict) and isinstance(old_config.get(key), dict):
+                added_keys.extend(self._get_added_keys(old_config[key], value, full_key))
+                
+        return added_keys
 
     def _deep_merge_configs(self, local_config: dict, reference_config: dict) -> dict:
         """
@@ -106,14 +141,17 @@ class ConfigManager:
             if os.path.exists(self.file_path):
                 with open(self.file_path, 'r') as f:
                     self.config = json.load(f)
+
                 self.use_api = self.config.get('DEFAULT', {}).get('use_api', True)
+                console.print(f"[bold cyan]API usage setting:[/bold cyan] [{'green' if self.use_api else 'yellow'}]{self.use_api}[/{'green' if self.use_api else 'yellow'}]")
+
             else:
-                self.use_api = True  # Default to True if config file doesn't exist
-                console.print("[bold yellow]Configuration file not found. Using default settings.[/bold yellow]")
+                self.use_api = True
+                console.print("[bold yellow]Configuration file not found. Using default API setting: True[/bold yellow]")
 
         except Exception as e:
-            self.use_api = True  # Default to True in case of error
-            logging.error(f"Error reading initial configuration: {e}")
+            self.use_api = True
+            console.print("[bold red]Error reading API setting. Using default: True[/bold red]")
 
     def read_config(self) -> None:
         """Read the configuration file."""
@@ -124,23 +162,26 @@ class ConfigManager:
             if os.path.exists(self.file_path):
                 with open(self.file_path, 'r') as f:
                     self.config = json.load(f)
-                console.print("[bold green]Configuration file loaded successfully.[/bold green]")
+                console.print(f"[bold green]Configuration loaded:[/bold green] {len(self.config)} keys, {sum(1 for _ in json.dumps(self.config))} bytes")
+
             else:
-                console.print("[bold yellow]Configuration file not found. Downloading...[/bold yellow]")
+                console.print(f"[bold yellow]Configuration file not found at:[/bold yellow] {self.file_path}")
+                console.print(f"[bold cyan]Downloading from:[/bold cyan] {self.reference_config_url}")
                 self.download_requirements(self.reference_config_url, self.file_path)
 
                 # Load the downloaded config.json into the config attribute
                 with open(self.file_path, 'r') as f:
                     self.config = json.load(f)
-                console.print("[bold green]Configuration file downloaded and saved.[/bold green]")
+                console.print(f"[bold green]Configuration downloaded and saved:[/bold green] {len(self.config)} keys")
 
             # Update site configuration separately
             self.update_site_config()
 
-            console.print("[bold cyan]Configuration file processing complete.[/bold cyan]")
+            console.print("[bold cyan]Configuration processing complete[/bold cyan]")
 
         except Exception as e:
             logging.error(f"Error reading configuration file: {e}")
+            console.print(f"[bold red]Failed to read configuration:[/bold red] {str(e)}")
 
     def download_requirements(self, url: str, filename: str) -> None:
         """
@@ -152,18 +193,23 @@ class ConfigManager:
         """
         try:
             logging.info(f"Downloading {filename} from {url}...")
-            response = requests.get(url)
+            console.print(f"[bold cyan]Downloading file:[/bold cyan] {os.path.basename(filename)}")
+            response = requests.get(url, timeout=10)
 
             if response.status_code == 200:
                 with open(filename, 'wb') as f:
                     f.write(response.content)
-                console.print(f"[bold green]Successfully downloaded {filename}.[/bold green]")
+                file_size = len(response.content) / 1024
+                console.print(f"[bold green]Download successful:[/bold green] {os.path.basename(filename)} ({file_size:.2f} KB)")
                 
             else:
-                logging.error(f"Failed to download {filename}. HTTP Status code: {response.status_code}")
+                error_msg = f"HTTP Status: {response.status_code}, Response: {response.text[:100]}"
+                console.print(f"[bold red]Download failed:[/bold red] {error_msg}")
+                logging.error(f"Failed to download {filename}. {error_msg}")
                 sys.exit(0)
 
         except Exception as e:
+            console.print(f"[bold red]Download error:[/bold red] {str(e)}")
             logging.error(f"Failed to download {filename}: {e}")
             sys.exit(0)
 
@@ -177,33 +223,55 @@ class ConfigManager:
             }
 
             try:
-                console.print("[bold cyan]Fetching SITE data from API...[/bold cyan]")
-                response = requests.get("https://zvfngpoxwrgswnzytadh.supabase.co/rest/v1/public", headers=headers)
+                console.print("[bold cyan]Fetching site data from API...[/bold cyan]")
+                response = requests.get("https://zvfngpoxwrgswnzytadh.supabase.co/rest/v1/public", headers=headers, timeout=10)
 
-                if response.status_code == 200:
-                    self.configSite = response.json()[0]['data']
-                    console.print("[bold green]SITE data successfully fetched.[/bold green]")
+                if response.ok:
+                    data = response.json()
+                    if data and len(data) > 0:
+                        self.configSite = data[0]['data']
+                        
+                        # Display available sites and their domains
+                        site_count = len(self.configSite) if isinstance(self.configSite, dict) else 0
+                        console.print(f"[bold green]Site data fetched:[/bold green] {site_count} streaming services available")
+                        
+                        # List a few sites as examples
+                        if site_count > 0:
+                            examples = list(self.configSite.items())[:3]
+                            sites_info = []
+                            for site, info in examples:
+                                sites_info.append(f"[cyan]{site}[/cyan]: {info.get('full_url', 'N/A')}")
+                            
+                            console.print("[bold cyan]Sample sites:[/bold cyan]")
+                            for info in sites_info:
+                                console.print(f"  {info}")
+                            
+                            if site_count > 3:
+                                console.print(f"  ... and {site_count - 3} more")
+                                
+                    else:
+                        console.print("[bold yellow]API returned empty data set[/bold yellow]")
                 else:
-                    console.print(f"[bold red]Failed to fetch SITE data. HTTP Status code: {response.status_code}[/bold red]")
+                    console.print(f"[bold red]API request failed:[/bold red] HTTP {response.status_code}, {response.text[:100]}")
 
             except Exception as e:
-                console.print(f"[bold red]Error fetching SITE data: {e}[/bold red]")
+                console.print(f"[bold red]API connection error:[/bold red] {str(e)}")
         else:
             try:
                 if os.path.exists(self.domains_path):
-                    console.print("[bold cyan]Reading domains from local file...[/bold cyan]")
+                    console.print(f"[bold cyan]Reading domains from:[/bold cyan] {self.domains_path}")
                     with open(self.domains_path, 'r') as f:
                         self.configSite = json.load(f)
-                    console.print("[bold green]Domains loaded successfully from local file.[/bold green]")
+                    
                 else:
-                    error_msg = "domains.json not found and API usage is disabled"
-                    console.print(f"[bold red]{error_msg}[/bold red]")
+                    error_msg = f"domains.json not found at {self.domains_path} and API usage is disabled"
+                    console.print(f"[bold red]Configuration error:[/bold red] {error_msg}")
                     raise FileNotFoundError(error_msg)
 
             except Exception as e:
-                console.print(f"[bold red]Error reading domains file: {e}[/bold red]")
+                console.print(f"[bold red]Domains file error:[/bold red] {str(e)}")
                 raise
-
+            
     def read_key(self, section: str, key: str, data_type: type = str, from_site: bool = False) -> Any:
         """Read a key from the configuration.
 

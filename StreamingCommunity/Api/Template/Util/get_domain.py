@@ -101,22 +101,9 @@ def validate_url(url, base_url, max_timeout, max_retries=2, sleep=1):
                 console.print(f"[red]Check failed: HTTP {response.status_code}")
                 return False, None
                 
-            # Follow redirects and verify final domain
-            final_response = client.get(url, follow_redirects=True)
-            final_domain = get_base_domain(str(final_response.url))
-            console.print(f"[cyan]Redirect url: [red]{final_response.url}")
-            
-            if final_domain != base_domain:
-                console.print(f"[red]Final domain mismatch: {final_domain} != {base_domain}")
-                return False, None
-                
-            new_tld = get_tld(str(final_response.url))
-            if new_tld != get_tld(url):
-                return True, new_tld
-                
             return True, None
             
-        except (httpx.RequestError, ssl.SSLError) as e:
+        except Exception as e:
             console.print(f"[red]Connection error: {str(e)}")
             time.sleep(sleep)
             continue
@@ -134,7 +121,7 @@ def search_domain(site_name: str, base_url: str, get_first: bool = False):
             tld = redirect_tld or get_tld(base_url)
             config_manager.configSite[site_name]['domain'] = tld
 
-            console.print(f"[green]Successfully validated initial URL")
+            #console.print(f"[green]Successfully validated initial URL")
             return tld, base_url
         
         else:

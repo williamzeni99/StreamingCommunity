@@ -405,8 +405,7 @@ class OsSummary:
         os_info = platform.platform()
         glibc_version = 'glibc ' + '.'.join(map(str, platform.libc_ver()[1]))
 
-        console.print(f"[cyan]Python[white]: [bold red]{python_version} ({python_implementation} {arch}) - {os_info} ({glibc_version})[/bold red]")
-        logging.info(f"Python: {python_version} ({python_implementation} {arch}) - {os_info} ({glibc_version})")
+        console.print(f"[cyan]Python: [bold red]{python_version} ({python_implementation} {arch}) - {os_info} ({glibc_version})[/bold red]")
 
         # FFmpeg detection
         binary_dir = self.get_binary_directory()
@@ -450,7 +449,7 @@ class OsSummary:
             console.log("[red]Can't locate ffmpeg or ffprobe")
             sys.exit(0)
 
-        console.print(f"[cyan]Path[white]: [red]ffmpeg [bold yellow]'{self.ffmpeg_path}'[/bold yellow][white], [red]ffprobe '[bold yellow]{self.ffprobe_path}'[/bold yellow]")
+        console.print(f"[cyan]Path: [red]ffmpeg [bold yellow]'{self.ffmpeg_path}'[/bold yellow][white], [red]ffprobe '[bold yellow]{self.ffprobe_path}'[/bold yellow]")
 
         # Handle requirements.txt
         if not getattr(sys, 'frozen', False):
@@ -475,7 +474,6 @@ class OsSummary:
                 else:
                     logging.info(f"Library: {installed_version}")
 
-            #console.print(f"[cyan]Libraries[white]: [bold red]{', '.join([self.get_library_version(lib) for lib in optional_libraries])}[/bold red]\n")
             logging.info(f"Libraries: {', '.join([self.get_library_version(lib) for lib in optional_libraries])}")
 
 
