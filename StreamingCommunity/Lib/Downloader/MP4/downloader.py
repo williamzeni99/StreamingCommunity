@@ -27,15 +27,10 @@ from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
 from ...FFmpeg import print_duration_table
 
 
-# Suppress SSL warnings
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-
 # Config
+REQUEST_VERIFY = config_manager.get_int('REQUESTS', 'verify')
 GET_ONLY_LINK = config_manager.get_bool('M3U8_PARSER', 'get_only_link')
 REQUEST_TIMEOUT = config_manager.get_float('REQUESTS', 'timeout')
-
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
 
@@ -46,6 +41,7 @@ class InterruptHandler:
         self.last_interrupt_time = 0
         self.kill_download = False
         self.force_quit = False
+
 
 def signal_handler(signum, frame, interrupt_handler, original_handler):
     """Enhanced signal handler for multiple interrupt scenarios"""
@@ -66,6 +62,7 @@ def signal_handler(signum, frame, interrupt_handler, original_handler):
         interrupt_handler.force_quit = True
         console.print("\n[bold red]Force quit activated. Saving partial download...[/bold red]")
         signal.signal(signum, original_handler)
+
 
 def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = None):
     """
@@ -111,7 +108,7 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
     original_handler = signal.signal(signal.SIGINT, partial(signal_handler, interrupt_handler=interrupt_handler, original_handler=signal.getsignal(signal.SIGINT)))
 
     try:
-        transport = httpx.HTTPTransport(verify=False, http2=True)
+        transport = httpx.HTTPTransport(verify=REQUEST_VERIFY, http2=True)
         
         with httpx.Client(transport=transport, timeout=httpx.Timeout(60)) as client:
             with client.stream("GET", url, headers=headers, timeout=REQUEST_TIMEOUT) as response:

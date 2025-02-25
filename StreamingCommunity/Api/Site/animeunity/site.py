@@ -144,12 +144,11 @@ def title_search(title: str) -> int:
     # Send a POST request to the API endpoint for live search
     try:
         response = httpx.post(
-            url=f'{site_constant.FULL_URL}/livesearch', 
+            f'{site_constant.FULL_URL}/livesearch', 
             cookies=cookies, 
             headers=headers, 
             json=json_data,
-            timeout=max_timeout,
-            verify=site_constant.VERIFY
+            timeout=max_timeout
         )
         response.raise_for_status()
 
@@ -176,6 +175,7 @@ def title_search(title: str) -> int:
             })
 
             if site_constant.TELEGRAM_BOT:
+                
                 # Crea una stringa formattata per ogni scelta con numero
                 choice_text = f"{len(choices)} - {dict_title.get('name')} ({dict_title.get('type')}) - Episodi: {dict_title.get('episodes_count')}"
                 choices.append(choice_text)

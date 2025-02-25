@@ -22,10 +22,10 @@ import qbittorrentapi
 
 
 # Tor config
-HOST = str(config_manager.get_dict('DEFAULT', 'config_qbit_tor')['host'])
-PORT = str(config_manager.get_dict('DEFAULT', 'config_qbit_tor')['port'])
-USERNAME = str(config_manager.get_dict('DEFAULT', 'config_qbit_tor')['user'])
-PASSWORD = str(config_manager.get_dict('DEFAULT', 'config_qbit_tor')['pass'])
+HOST = config_manager.get_dict('QBIT_CONFIG', 'host')
+PORT = config_manager.get_dict('QBIT_CONFIG', 'port')
+USERNAME = config_manager.get_dict('QBIT_CONFIG', 'user')
+PASSWORD = config_manager.get_dict('QBIT_CONFIG', 'pass')
 
 
 # Config

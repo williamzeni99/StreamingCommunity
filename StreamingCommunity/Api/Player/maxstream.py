@@ -16,7 +16,7 @@ from StreamingCommunity.Util.headers import get_userAgent
 
 
 # Variable
-max_timeout = config_manager.get_int("REQUESTS", "timeout")
+MAX_TIMEOUT = config_manager.get_int("REQUESTS", "timeout")
 
 
 class VideoSource:
@@ -38,9 +38,7 @@ class VideoSource:
         Sends a request to the initial URL and extracts the redirect URL.
         """
         try:
-
-            # Send a GET request to the initial URL
-            response = httpx.get(self.url, headers=self.headers, follow_redirects=True, timeout=max_timeout)
+            response = httpx.get(self.url, headers=self.headers, follow_redirects=True, timeout=MAX_TIMEOUT)
             response.raise_for_status()
 
             # Extract the redirect URL from the HTML
@@ -63,9 +61,7 @@ class VideoSource:
         Sends a request to the redirect URL and extracts the Maxstream URL.
         """
         try:
-
-            # Send a GET request to the redirect URL
-            response = httpx.get(self.redirect_url, headers=self.headers, follow_redirects=True, timeout=max_timeout)
+            response = httpx.get(self.redirect_url, headers=self.headers, follow_redirects=True, timeout=MAX_TIMEOUT)
             response.raise_for_status()
 
             # Extract the Maxstream URL from the HTML
@@ -89,7 +85,7 @@ class VideoSource:
                 uprot_url = response.json()['data']['value']
 
                 # Retry getting maxtstream url
-                response = httpx.get(uprot_url, headers=self.headers, follow_redirects=True, timeout=max_timeout)
+                response = httpx.get(uprot_url, headers=self.headers, follow_redirects=True, timeout=MAX_TIMEOUT)
                 response.raise_for_status()
                 soup = BeautifulSoup(response.text, "html.parser")
                 maxstream_url = soup.find("a").get("href")
@@ -115,9 +111,7 @@ class VideoSource:
         Sends a request to the Maxstream URL and extracts the .m3u8 file URL.
         """
         try:
-            
-            # Send a GET request to the Maxstream URL
-            response = httpx.get(self.maxstream_url, headers=self.headers, follow_redirects=True, timeout=max_timeout)
+            response = httpx.get(self.maxstream_url, headers=self.headers, follow_redirects=True, timeout=MAX_TIMEOUT)
             response.raise_for_status() 
             soup = BeautifulSoup(response.text, "html.parser")
 

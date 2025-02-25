@@ -106,12 +106,8 @@ class M3U8_Ts_Estimator:
         try:
             self.add_ts_file(total_downloaded * self.total_segments, total_downloaded, duration)
             
-            #downloaded_file_size_str = internet_manager.format_file_size(self.now_downloaded_size)
             file_total_size = self.calculate_total_size()
-            
-            #number_file_downloaded = downloaded_file_size_str.split(' ')[0]
             number_file_total_size = file_total_size.split(' ')[0]
-            #units_file_downloaded = downloaded_file_size_str.split(' ')[1]
             units_file_total_size = file_total_size.split(' ')[1]
             
             if USE_LARGE_BAR:
@@ -126,15 +122,14 @@ class M3U8_Ts_Estimator:
                 
                 retry_count = self.segments_instance.active_retries if self.segments_instance else 0
                 progress_str = (
-                    #f"{Colors.WHITE}[ {Colors.GREEN}{number_file_downloaded} {Colors.WHITE}< "
                     f"{Colors.GREEN}{number_file_total_size} {Colors.RED}{units_file_total_size}"
                     f"{Colors.WHITE} {Colors.CYAN}{average_internet_speed} {Colors.RED}{average_internet_unit}"
                     f"{Colors.WHITE} {Colors.GREEN}CRR {Colors.RED}{retry_count} "
                 )
+                
             else:
                 retry_count = self.segments_instance.active_retries if self.segments_instance else 0
                 progress_str = (
-                    #f"{Colors.WHITE}[ {Colors.GREEN}{number_file_downloaded} {Colors.WHITE}< "
                     f"{Colors.GREEN}{number_file_total_size} {Colors.RED}{units_file_total_size}"
                     f"{Colors.WHITE} {Colors.GREEN}CRR {Colors.RED}{retry_count} "
                 )

@@ -24,8 +24,6 @@ def capture_output(process: subprocess.Popen, description: str) -> None:
         - description (str): Description of the command being executed.
     """
     try:
-
-        # Variable to store the length of the longest progress string
         max_length = 0
 
         for line in iter(process.stdout.readline, ''):
@@ -94,10 +92,7 @@ def parse_output_line(line: str) -> dict:
         dict: A dictionary containing parsed information.
     """
     try:
-
         data = {}
-
-        # Split the line by whitespace and extract key-value pairs
         parts = line.replace("  ", "").replace("= ", "=").split()
 
         for part in parts:
@@ -123,7 +118,7 @@ def terminate_process(process):
         - process (subprocess.Popen): The subprocess to terminate.
     """
     try:
-        if process.poll() is None:  # Check if the process is still running
+        if process.poll() is None:
             process.kill()
     except Exception as e:
         logging.error(f"Failed to terminate process: {e}")
@@ -137,7 +132,6 @@ def capture_ffmpeg_real_time(ffmpeg_command: list, description: str) -> None:
         - ffmpeg_command (list): The command to execute ffmpeg.
         - description (str): Description of the command being executed.
     """
-
     global terminate_flag
 
     # Clear the terminate_flag before starting a new capture
@@ -163,8 +157,8 @@ def capture_ffmpeg_real_time(ffmpeg_command: list, description: str) -> None:
             logging.error(f"Error in ffmpeg process: {e}")
             
         finally:
-            terminate_flag.set()  # Signal the output capture thread to terminate
-            output_thread.join()  # Wait for the output capture thread to complete
+            terminate_flag.set()
+            output_thread.join()
 
     except Exception as e:
         logging.error(f"Failed to start ffmpeg process: {e}")

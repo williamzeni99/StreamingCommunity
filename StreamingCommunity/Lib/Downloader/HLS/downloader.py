@@ -47,7 +47,6 @@ FILTER_CUSTOM_REOLUTION = str(config_manager.get('M3U8_PARSER', 'force_resolutio
 GET_ONLY_LINK = config_manager.get_bool('M3U8_PARSER', 'get_only_link')
 RETRY_LIMIT = config_manager.get_int('REQUESTS', 'max_retry')
 MAX_TIMEOUT = config_manager.get_int("REQUESTS", "timeout")
-
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
 

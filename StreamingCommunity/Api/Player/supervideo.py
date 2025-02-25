@@ -16,7 +16,7 @@ from StreamingCommunity.Util.headers import get_userAgent
 
 
 # Variable
-max_timeout = config_manager.get_int("REQUESTS", "timeout")
+MAX_TIMEOUT = config_manager.get_int("REQUESTS", "timeout")
 
 
 class VideoSource:
@@ -45,40 +45,15 @@ class VideoSource:
         Returns:
             - str: The response content if successful, None otherwise.
         """
-
         try:
-            response = self.client.get(
-                url=url, 
-                headers=self.headers, 
-                follow_redirects=True, 
-                timeout=max_timeout
-            )
+            response = self.client.get(url, headers=self.headers, timeout=MAX_TIMEOUT, follow_redirects=True)
             response.raise_for_status()
             return response.text
         
         except Exception as e:
             logging.error(f"Request failed: {e}")
             return None
-
-    def parse_html(self, html_content: str) -> BeautifulSoup:
-        """
-        Parse the provided HTML content using BeautifulSoup.
-
-        Parameters:
-            - html_content (str): The HTML content to parse.
-
-        Returns:
-            - BeautifulSoup: Parsed HTML content if successful, None otherwise.
-        """
-
-        try:
-            soup = BeautifulSoup(html_content, "html.parser")
-            return soup
-        
-        except Exception as e:
-            logging.error(f"Failed to parse HTML content: {e}")
-            return None
-        
+ 
     def get_iframe(self, soup):
         """
         Extracts the source URL of the second iframe in the provided BeautifulSoup object.
@@ -107,7 +82,7 @@ class VideoSource:
         """
         content = self.make_request(url)
         if content:
-            return self.parse_html(content)
+            return BeautifulSoup(content, "html.parser")
         
         return None
         
@@ -140,7 +115,7 @@ class VideoSource:
                 logging.error("Failed to fetch HTML content.")
                 return None
 
-            soup = self.parse_html(html_content)
+            soup = BeautifulSoup(html_content, "html.parser")
             if not soup:
                 logging.error("Failed to parse HTML content.")
                 return None
@@ -191,4 +166,3 @@ class VideoSource:
         except Exception as e:
             logging.error(f"An error occurred: {e}")
             return None
-        

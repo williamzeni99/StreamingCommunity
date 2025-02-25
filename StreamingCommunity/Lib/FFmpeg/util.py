@@ -83,37 +83,6 @@ def get_video_duration(file_path: str) -> float:
         sys.exit(0)
 
 
-def get_video_duration_s(filename):
-    """
-    Get the duration of a video file using ffprobe.
-
-    Parameters:
-        - filename (str): Path to the video file (e.g., 'sim.mp4')
-
-    Returns:
-        - duration (float): Duration of the video in seconds, or None if an error occurs.
-    """
-    ffprobe_cmd = ['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', filename]
-
-    try:
-        
-        # Run ffprobe command and capture output
-        result = subprocess.run(ffprobe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True)
-        
-        # Extract duration from the output
-        duration_str = result.stdout.strip()
-        duration = float(duration_str)  # Convert duration to float
-        
-        return int(duration)
-    
-    except subprocess.CalledProcessError as e:
-        print(f"Error running ffprobe: {e}")
-        return None
-    except ValueError as e:
-        print(f"Error converting duration to float: {e}")
-        return None
-
-
 def format_duration(seconds: float) -> Tuple[int, int, int]:
     """
     Format duration in seconds into hours, minutes, and seconds.

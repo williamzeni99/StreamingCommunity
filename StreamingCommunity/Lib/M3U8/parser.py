@@ -9,10 +9,6 @@ from m3u8 import loads
 from StreamingCommunity.Util.os import internet_manager
 
 
-# External libraries
-import httpx
-
-
 # Costant
 CODEC_MAPPINGS = {
     "video": {
@@ -79,7 +75,6 @@ class M3U8_Codec:
         Extracted codecs are set as attributes: audio_codec and video_codec.
         """
         try:
-            # Split the codecs string by comma
             codecs_list = self.codecs.split(',')
         except Exception as e:
             logging.error(f"Can't split codec list: {self.codecs} with error {e}")
@@ -407,10 +402,8 @@ class M3U8_Parser:
         Parameters:
             - m3u8_content (str): The content of the M3U8 file.
         """
-
-        # Get obj of the m3u8 text content download, dictionary with video, audio, segments, subtitles
         m3u8_obj = loads(raw_content, uri)
-
+        
         self.__parse_video_info__(m3u8_obj)
         self.__parse_subtitles_and_audio__(m3u8_obj)
         self.__parse_segments__(m3u8_obj)
@@ -469,7 +462,6 @@ class M3U8_Parser:
         Parameters:
             - m3u8_obj: The M3U8 object containing video playlists.
         """
-
         try:
             for playlist in m3u8_obj.playlists:
 
@@ -569,7 +561,6 @@ class M3U8_Parser:
         Parameters:
             - m3u8_obj: The M3U8 object containing segment data.
         """
-
         try:
             for segment in m3u8_obj.segments:
 
@@ -606,13 +597,6 @@ class M3U8_Parser:
         Returns:
             - formatted_duration (str): Formatted duration string with hours, minutes, and seconds if return_string is True.
             - duration_dict (dict): Dictionary with keys 'h', 'm', 's' representing hours, minutes, and seconds respectively if return_string is False.
-
-        Example usage:
-        >>> obj = YourClass(duration=3661)
-        >>> obj.get_duration()
-        '[yellow]1[red]h [yellow]1[red]m [yellow]1[red]s'
-        >>> obj.get_duration(return_string=False)
-        {'h': 1, 'm': 1, 's': 1}
         """
 
         # Calculate hours, minutes, and remaining seconds

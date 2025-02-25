@@ -336,6 +336,5 @@ class ConfigManager:
             print(f"Error writing configuration file: {e}")
 
 
-# Initialize
 config_manager = ConfigManager()
 config_manager.read_config()

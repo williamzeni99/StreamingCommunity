@@ -116,6 +116,7 @@ def print_commit_info(commit_info: dict):
     # Print the table in a panel
     console.print(Panel.fit(table))
 
+
 def download_and_extract_latest_commit():
     """
     Download and extract the latest commit from a GitHub repository.

@@ -22,7 +22,7 @@ from tqdm import tqdm
 # Internal utilities
 from StreamingCommunity.Util.color import Colors
 from StreamingCommunity.Util.console import console
-from StreamingCommunity.Util.headers import get_userAgent, random_headers
+from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util._jsonConfig import config_manager
 from StreamingCommunity.Util.os import os_manager
 
@@ -34,16 +34,12 @@ from ...M3U8 import (
     M3U8_Parser,
     M3U8_UrlFix
 )
-from .proxyes import main_test_proxy
 
 # Config
 TQDM_DELAY_WORKER = config_manager.get_float('M3U8_DOWNLOAD', 'tqdm_delay')
 USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
 REQUEST_MAX_RETRY = config_manager.get_int('REQUESTS', 'max_retry')
-REQUEST_VERIFY = False
-THERE_IS_PROXY_LIST = os_manager.check_file("list_proxy.txt")
-PROXY_START_MIN = config_manager.get_float('REQUESTS', 'proxy_start_min')
-PROXY_START_MAX = config_manager.get_float('REQUESTS', 'proxy_start_max')
+REQUEST_VERIFY = config_manager.get_int('REQUESTS', 'verify')
 DEFAULT_VIDEO_WORKERS = config_manager.get_int('M3U8_DOWNLOAD', 'default_video_workser')
 DEFAULT_AUDIO_WORKERS = config_manager.get_int('M3U8_DOWNLOAD', 'default_audio_workser')
 MAX_TIMEOOUT = config_manager.get_int("REQUESTS", "timeout")
@@ -133,15 +129,6 @@ class M3U8_Segments:
         ]
         self.class_ts_estimator.total_segments = len(self.segments)
 
-        # Proxy
-        if THERE_IS_PROXY_LIST:
-            console.log("[red]Start validation proxy.")
-            self.valid_proxy = main_test_proxy(self.segments[0])
-            console.log(f"[cyan]N. Valid ip: [red]{len(self.valid_proxy)}")
-
-            if len(self.valid_proxy) == 0:
-                sys.exit(0)
-
     def get_info(self) -> None:
         if self.is_index_url:
             try:
@@ -184,18 +171,13 @@ class M3U8_Segments:
         else:
             print("Signal handler must be set in the main thread")
 
-    def _get_http_client(self, index: int = None):
+    def _get_http_client(self):
         client_params = {
-            #'headers': random_headers(self.key_base_url) if hasattr(self, 'key_base_url') else {'User-Agent': get_userAgent()},
             'headers': {'User-Agent': get_userAgent()},
             'timeout': SEGMENT_MAX_TIMEOUT,
             'follow_redirects': True,
             'http2': False
         }
-        
-        if THERE_IS_PROXY_LIST and index is not None and hasattr(self, 'valid_proxy'):
-            client_params['proxies'] = self.valid_proxy[index % len(self.valid_proxy)]
-        
         return httpx.Client(**client_params)
                             
     def download_segment(self, ts_url: str, index: int, progress_bar: tqdm, backoff_factor: float = 1.1) -> None:
@@ -213,7 +195,7 @@ class M3U8_Segments:
                 return
             
             try:
-                with self._get_http_client(index) as client:
+                with self._get_http_client() as client:
                     start_time = time.time()
                     response = client.get(ts_url)
         
@@ -350,7 +332,6 @@ class M3U8_Segments:
 
             # Configure workers and delay
             max_workers = self._get_worker_count(type)
-            delay = max(PROXY_START_MIN, min(PROXY_START_MAX, 1 / (len(self.valid_proxy) + 1))) if THERE_IS_PROXY_LIST else TQDM_DELAY_WORKER
             
             # Download segments with completion verification
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -361,7 +342,7 @@ class M3U8_Segments:
                     if self.interrupt_flag.is_set():
                         break
 
-                    time.sleep(delay)
+                    time.sleep(TQDM_DELAY_WORKER)
                     futures.append(executor.submit(self.download_segment, segment_url, index, progress_bar))
 
                 # Wait for futures with interrupt handling
@@ -429,8 +410,6 @@ class M3U8_Segments:
             'audio': DEFAULT_AUDIO_WORKERS
         }.get(stream_type.lower(), 1)
 
-        if THERE_IS_PROXY_LIST:
-            return min(len(self.valid_proxy), base_workers * 2)
         return base_workers
     
     def _generate_results(self, stream_type: str) -> Dict:

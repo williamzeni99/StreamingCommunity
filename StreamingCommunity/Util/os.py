@@ -11,7 +11,6 @@ import logging
 import platform
 import subprocess
 import contextlib
-import urllib.request
 import importlib.metadata
 from pathlib import Path
 
@@ -243,7 +242,6 @@ class OsManager:
 
 
 class InternManager():
-
     def format_file_size(self, size_bytes: float) -> str:
         """
         Formats a file size from bytes into a human-readable string representation.
@@ -296,7 +294,6 @@ class InternManager():
 
 
 class OsSummary:
-
     def __init__(self):
         self.ffmpeg_path = None
         self.ffprobe_path = None
