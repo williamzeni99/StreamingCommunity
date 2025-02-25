@@ -47,7 +47,7 @@ def title_search(word_to_search: str) -> int:
         domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
 
     if domain_to_use is None or base_url is None:
-        console.print("[bold red]❌ Error: Unable to determine valid domain or base URL.[/bold red]")
+        console.log("[bold red]Error: Unable to determine valid domain or base URL.[/bold red]")
         console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
         sys.exit(1)
 

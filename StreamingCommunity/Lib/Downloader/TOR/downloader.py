@@ -90,7 +90,7 @@ class TOR_downloader:
             int(torrent_info.num_leechs) == 0 and 
             int(torrent_info.num_seeds) == 0):
             
-            console.print(f"[bold red]⚠️ Torrent not downloadable. Removing...[/bold red]")
+            console.print(f"[bold red]Torrent not downloadable. Removing...[/bold red]")
             try:
                 self.qb.torrents_delete(delete_files=True, torrent_hashes=torrent_info.hash)
             except Exception as delete_error:
@@ -137,7 +137,7 @@ class TOR_downloader:
         
         torrent_info = matching_torrents[0]
         
-        console.print("\n[bold green]🔗 Added Torrent Details:[/bold green]")
+        console.print("\n[bold green]Added Torrent Details:[/bold green]")
         console.print(f"[yellow]Name:[/yellow] {torrent_info.name or torrent_name}")
         console.print(f"[yellow]Hash:[/yellow] {torrent_info.hash}")
         print()

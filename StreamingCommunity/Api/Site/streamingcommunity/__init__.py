@@ -38,7 +38,7 @@ def search(string_to_search: str = None, get_onylDatabase: bool = False):
             # Chiedi la scelta all'utente con il bot Telegram
             string_to_search = bot.ask(
                 "key_search",
-                f"Inserisci la parola da cercare\noppure 🔙 back per tornare alla scelta: ",
+                f"Inserisci la parola da cercare\noppure back per tornare alla scelta: ",
                 None
             )
 

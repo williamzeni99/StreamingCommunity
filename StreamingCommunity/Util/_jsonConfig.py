@@ -39,7 +39,7 @@ class ConfigManager:
         self._validate_and_update_config()
         self._read_initial_config()
         
-        console.print(f"[bold cyan]📂 Configuration file path:[/bold cyan] [green]{self.file_path}[/green]")
+        console.print(f"[bold cyan]Configuration file path:[/bold cyan] [green]{self.file_path}[/green]")
 
     def _validate_and_update_config(self) -> None:
         """Validate local config against reference config and update missing keys."""
@@ -49,10 +49,10 @@ class ConfigManager:
             if os.path.exists(self.file_path):
                 with open(self.file_path, 'r') as f:
                     local_config = json.load(f)
-                console.print("[bold cyan]📖 Local configuration found.[/bold cyan]")
+                console.print("[bold cyan]Local configuration found.[/bold cyan]")
 
             # Download reference config
-            console.print("[bold cyan]🌍 Downloading reference configuration...[/bold cyan]")
+            console.print("[bold cyan]Downloading reference configuration...[/bold cyan]")
             response = requests.get(self.reference_config_url)
             if response.status_code != 200:
                 raise Exception(f"Failed to download reference config. Status code: {response.status_code}")
@@ -65,14 +65,14 @@ class ConfigManager:
                 # Save the merged config
                 with open(self.file_path, 'w') as f:
                     json.dump(merged_config, f, indent=4)
-                console.print("[bold green]✅ Configuration updated with missing keys.[/bold green]")
+                console.print("[bold green]Configuration updated with missing keys.[/bold green]")
             else:
-                console.print("[bold green]✅ Configuration is up to date.[/bold green]")
+                console.print("[bold green]Configuration is up to date.[/bold green]")
 
             self.config = merged_config
 
         except Exception as e:
-            console.print(f"[bold red]❌ Error validating configuration: {e}[/bold red]")
+            console.print(f"[bold red]Error validating configuration: {e}[/bold red]")
             if not self.config:
                 # If validation failed and we have no config, download the reference config
                 self.download_requirements(self.reference_config_url, self.file_path)
@@ -109,38 +109,38 @@ class ConfigManager:
                 self.use_api = self.config.get('DEFAULT', {}).get('use_api', True)
             else:
                 self.use_api = True  # Default to True if config file doesn't exist
-                console.print("[bold yellow]⚠️ Configuration file not found. Using default settings.[/bold yellow]")
+                console.print("[bold yellow]Configuration file not found. Using default settings.[/bold yellow]")
 
         except Exception as e:
             self.use_api = True  # Default to True in case of error
-            logging.error(f"❌ Error reading initial configuration: {e}")
+            logging.error(f"Error reading initial configuration: {e}")
 
     def read_config(self) -> None:
         """Read the configuration file."""
         try:
-            logging.info(f"📖 Reading file: {self.file_path}")
+            logging.info(f"Reading file: {self.file_path}")
 
             # Check if file exists
             if os.path.exists(self.file_path):
                 with open(self.file_path, 'r') as f:
                     self.config = json.load(f)
-                console.print("[bold green]✅ Configuration file loaded successfully.[/bold green]")
+                console.print("[bold green]Configuration file loaded successfully.[/bold green]")
             else:
-                console.print("[bold yellow]⚠️ Configuration file not found. Downloading...[/bold yellow]")
+                console.print("[bold yellow]Configuration file not found. Downloading...[/bold yellow]")
                 self.download_requirements(self.reference_config_url, self.file_path)
 
                 # Load the downloaded config.json into the config attribute
                 with open(self.file_path, 'r') as f:
                     self.config = json.load(f)
-                console.print("[bold green]✅ Configuration file downloaded and saved.[/bold green]")
+                console.print("[bold green]Configuration file downloaded and saved.[/bold green]")
 
             # Update site configuration separately
             self.update_site_config()
 
-            console.print("[bold cyan]🔧 Configuration file processing complete.[/bold cyan]")
+            console.print("[bold cyan]Configuration file processing complete.[/bold cyan]")
 
         except Exception as e:
-            logging.error(f"❌ Error reading configuration file: {e}")
+            logging.error(f"Error reading configuration file: {e}")
 
     def download_requirements(self, url: str, filename: str) -> None:
         """
@@ -151,20 +151,20 @@ class ConfigManager:
             filename (str): The local filename to save the file as.
         """
         try:
-            logging.info(f"🌍 Downloading {filename} from {url}...")
+            logging.info(f"Downloading {filename} from {url}...")
             response = requests.get(url)
 
             if response.status_code == 200:
                 with open(filename, 'wb') as f:
                     f.write(response.content)
-                console.print(f"[bold green]✅ Successfully downloaded {filename}.[/bold green]")
+                console.print(f"[bold green]Successfully downloaded {filename}.[/bold green]")
                 
             else:
-                logging.error(f"❌ Failed to download {filename}. HTTP Status code: {response.status_code}")
+                logging.error(f"Failed to download {filename}. HTTP Status code: {response.status_code}")
                 sys.exit(0)
 
         except Exception as e:
-            logging.error(f"❌ Failed to download {filename}: {e}")
+            logging.error(f"Failed to download {filename}: {e}")
             sys.exit(0)
 
     def update_site_config(self) -> None:
@@ -177,31 +177,31 @@ class ConfigManager:
             }
 
             try:
-                console.print("[bold cyan]🌍 Fetching SITE data from API...[/bold cyan]")
+                console.print("[bold cyan]Fetching SITE data from API...[/bold cyan]")
                 response = requests.get("https://zvfngpoxwrgswnzytadh.supabase.co/rest/v1/public", headers=headers)
 
                 if response.status_code == 200:
                     self.configSite = response.json()[0]['data']
-                    console.print("[bold green]✅ SITE data successfully fetched.[/bold green]")
+                    console.print("[bold green]SITE data successfully fetched.[/bold green]")
                 else:
-                    console.print(f"[bold red]❌ Failed to fetch SITE data. HTTP Status code: {response.status_code}[/bold red]")
+                    console.print(f"[bold red]Failed to fetch SITE data. HTTP Status code: {response.status_code}[/bold red]")
 
             except Exception as e:
-                console.print(f"[bold red]❌ Error fetching SITE data: {e}[/bold red]")
+                console.print(f"[bold red]Error fetching SITE data: {e}[/bold red]")
         else:
             try:
                 if os.path.exists(self.domains_path):
-                    console.print("[bold cyan]📖 Reading domains from local file...[/bold cyan]")
+                    console.print("[bold cyan]Reading domains from local file...[/bold cyan]")
                     with open(self.domains_path, 'r') as f:
                         self.configSite = json.load(f)
-                    console.print("[bold green]✅ Domains loaded successfully from local file.[/bold green]")
+                    console.print("[bold green]Domains loaded successfully from local file.[/bold green]")
                 else:
-                    error_msg = "❌ domains.json not found and API usage is disabled"
+                    error_msg = "domains.json not found and API usage is disabled"
                     console.print(f"[bold red]{error_msg}[/bold red]")
                     raise FileNotFoundError(error_msg)
 
             except Exception as e:
-                console.print(f"[bold red]❌ Error reading domains file: {e}[/bold red]")
+                console.print(f"[bold red]Error reading domains file: {e}[/bold red]")
                 raise
 
     def read_key(self, section: str, key: str, data_type: type = str, from_site: bool = False) -> Any:

@@ -165,7 +165,7 @@ class TVShowManager:
                 else:
                     choices = [str(i) for i in range(max_int_input + 1)] + ["q", "quit", "b", "back"]
                     prompt_msg = "[cyan]Insert media [red]index"
-                    telegram_msg = "Scegli il contenuto da scaricare:\n📺 Serie TV - 🎞️ Film - 🌀 Anime\noppure `back` per tornare indietro"
+                    telegram_msg = "Scegli il contenuto da scaricare:\n Serie TV -  Film -  Anime\noppure `back` per tornare indietro"
                     
                     if is_telegram:
                         key = bot.ask("select_title", telegram_msg, None)
@@ -201,7 +201,7 @@ class TVShowManager:
                 else:
                     choices = [str(i) for i in range(max_int_input + 1)] + ["q", "quit", "b", "back"]
                     prompt_msg = "[cyan]Insert media [red]index"
-                    telegram_msg = "Scegli il contenuto da scaricare:\n📺 Serie TV - 🎞️ Film - 🌀 Anime\noppure `back` per tornare indietro"
+                    telegram_msg = "Scegli il contenuto da scaricare:\n Serie TV -  Film -  Anime\noppure `back` per tornare indietro"
                     
                     if is_telegram:
                         key = bot.ask("select_title", telegram_msg, None)
