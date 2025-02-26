@@ -9,11 +9,14 @@ import psutil
 import logging
 
 
+# External library
+from rich.console import Console
+
+
 # Internal utilities
 from StreamingCommunity.Util.color import Colors
 from StreamingCommunity.Util.os import internet_manager
-from StreamingCommunity.Util.console import console
-from StreamingCommunity.Util._jsonConfig import config_manager
+from StreamingCommunity.Util.config_json import config_manager, get_use_large_bar
 
 
 # External libraries
@@ -28,10 +31,9 @@ USERNAME = config_manager.get_dict('QBIT_CONFIG', 'user')
 PASSWORD = config_manager.get_dict('QBIT_CONFIG', 'pass')
 
 
-# Config
-USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
+# Variable
 REQUEST_TIMEOUT = config_manager.get_float('REQUESTS', 'timeout')
-
+console = Console()
 
 
 class TOR_downloader:
@@ -160,7 +162,7 @@ class TOR_downloader:
             try:
 
                 # Custom progress bar for mobile and PC
-                if USE_LARGE_BAR:
+                if get_use_large_bar():
                     bar_format = (
                         f"{Colors.YELLOW}[TOR] {Colors.WHITE}({Colors.CYAN}video{Colors.WHITE}): "
                         f"{Colors.RED}{{percentage:.2f}}% {Colors.MAGENTA}{{bar}} {Colors.WHITE}[ "
@@ -221,7 +223,7 @@ class TOR_downloader:
                             average_internet = average_internet_str
                             average_internet_unit = ""
 
-                        if USE_LARGE_BAR:
+                        if get_use_large_bar():
                             pbar.set_postfix_str(
                                 f"{Colors.WHITE}[ {Colors.GREEN}{downloaded_size} {Colors.WHITE}< {Colors.GREEN}{total_size} {Colors.RED}{total_size_unit} "
                                 f"{Colors.WHITE}| {Colors.CYAN}{average_internet} {Colors.RED}{average_internet_unit}"

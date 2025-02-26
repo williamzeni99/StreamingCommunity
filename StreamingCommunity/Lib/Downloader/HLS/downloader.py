@@ -10,17 +10,14 @@ from typing import Any, Dict, List, Optional
 
 # External libraries
 import httpx
+from rich.console import Console
+from rich.panel import Panel
 
 
 # Internal utilities
-from StreamingCommunity.Util._jsonConfig import config_manager
+from StreamingCommunity.Util.config_json import config_manager
 from StreamingCommunity.Util.headers import get_userAgent
-from StreamingCommunity.Util.console import console, Panel
-from StreamingCommunity.Util.os import (
-    compute_sha1_hash,
-    os_manager,
-    internet_manager
-)
+from StreamingCommunity.Util.os import compute_sha1_hash, os_manager, internet_manager
 from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
 
 
@@ -49,6 +46,7 @@ RETRY_LIMIT = config_manager.get_int('REQUESTS', 'max_retry')
 MAX_TIMEOUT = config_manager.get_int("REQUESTS", "timeout")
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
+console = Console()
 
 
 class HLSClient:
@@ -192,7 +190,7 @@ class M3U8Manager:
         list_available_resolution = [f"{r[0]}x{r[1]}" for r in tuple_available_resolution]
 
         console.print(
-            f"[cyan bold]Video    →[/cyan bold] [green]Available:[/green] [purple]{', '.join(list_available_resolution)}[/purple] | "
+            f"[cyan bold]Video    [/cyan bold] [green]Available:[/green] [purple]{', '.join(list_available_resolution)}[/purple] | "
             f"[red]Set:[/red] [purple]{FILTER_CUSTOM_REOLUTION}[/purple] | "
             f"[yellow]Downloadable:[/yellow] [purple]{self.video_res[0]}x{self.video_res[1]}[/purple]"
         )
@@ -207,7 +205,7 @@ class M3U8Manager:
             set_codec_info = available_codec_info if config_manager.get_bool("M3U8_CONVERSION", "use_codec") else "[purple]copy[/purple]"
 
             console.print(
-                f"[bold cyan]Codec    →[/bold cyan] [green]Available:[/green] {available_codec_info} | "
+                f"[bold cyan]Codec    [/bold cyan] [green]Available:[/green] {available_codec_info} | "
                 f"[red]Set:[/red] {set_codec_info}"
             )
 
@@ -216,7 +214,7 @@ class M3U8Manager:
         downloadable_sub_languages = list(set(available_sub_languages) & set(DOWNLOAD_SPECIFIC_SUBTITLE))
         if available_sub_languages:
             console.print(
-                f"[cyan bold]Subtitle →[/cyan bold] [green]Available:[/green] [purple]{', '.join(available_sub_languages)}[/purple] | "
+                f"[cyan bold]Subtitle [/cyan bold] [green]Available:[/green] [purple]{', '.join(available_sub_languages)}[/purple] | "
                 f"[red]Set:[/red] [purple]{', '.join(DOWNLOAD_SPECIFIC_SUBTITLE)}[/purple] | "
                 f"[yellow]Downloadable:[/yellow] [purple]{', '.join(downloadable_sub_languages)}[/purple]"
             )
@@ -226,7 +224,7 @@ class M3U8Manager:
         downloadable_audio_languages = list(set(available_audio_languages) & set(DOWNLOAD_SPECIFIC_AUDIO))
         if available_audio_languages:
             console.print(
-                f"[cyan bold]Audio    →[/cyan bold] [green]Available:[/green] [purple]{', '.join(available_audio_languages)}[/purple] | "
+                f"[cyan bold]Audio    [/cyan bold] [green]Available:[/green] [purple]{', '.join(available_audio_languages)}[/purple] | "
                 f"[red]Set:[/red] [purple]{', '.join(DOWNLOAD_SPECIFIC_AUDIO)}[/purple] | "
                 f"[yellow]Downloadable:[/yellow] [purple]{', '.join(downloadable_audio_languages)}[/purple]"
             )

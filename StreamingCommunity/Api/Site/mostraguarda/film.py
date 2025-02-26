@@ -7,14 +7,14 @@ import logging
 # External libraries
 import httpx
 from bs4 import BeautifulSoup
+from rich.console import Console
 
 
 # Internal utilities
-from StreamingCommunity.Util.console import console
-from StreamingCommunity.Util.os import os_manager
+from StreamingCommunity.Util.os import os_manager, get_call_stack
 from StreamingCommunity.Util.message import start_message
 from StreamingCommunity.Util.headers import get_userAgent
-from StreamingCommunity.Util.table import TVShowManager, get_call_stack
+from StreamingCommunity.Util.table import TVShowManager
 from StreamingCommunity.Lib.Downloader import HLS_Downloader
 
 
@@ -25,6 +25,10 @@ from StreamingCommunity.Api.Player.supervideo import VideoSource
 # Logic class
 from StreamingCommunity.Api.Template.config_loader import site_constant
 from StreamingCommunity.Lib.TMBD import Json_film
+
+
+# Variable
+console = Console()
 
 
 def download_film(movie_details: Json_film) -> str:

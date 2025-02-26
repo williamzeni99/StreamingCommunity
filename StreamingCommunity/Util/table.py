@@ -16,13 +16,13 @@ from rich.style import Style
 
 
 # Internal utilities
+from .os import get_call_stack
 from .message import start_message
-from .call_stack import get_call_stack
 
 
 # Telegram bot instance
 from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
-from StreamingCommunity.Util._jsonConfig import config_manager
+from StreamingCommunity.Util.config_json import config_manager
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
 
@@ -32,20 +32,10 @@ class TVShowManager:
         """Initialize TVShowManager with default values."""
         self.console = Console()
         self.tv_shows: List[Dict[str, Any]] = []
-        self.slice_start: int = 0
-        self.slice_end: int = 5
-        self.step: int = self.slice_end
+        self.slice_start = 0
+        self.slice_end = 10
+        self.step = self.slice_end
         self.column_info = []
-
-    def set_slice_end(self, new_slice: int) -> None:
-        """
-        Set the end of the slice for displaying TV shows.
-
-        Parameters:
-            - new_slice (int): The new value for the slice end.
-        """
-        self.slice_end = new_slice
-        self.step = new_slice
 
     def add_column(self, column_info: Dict[str, Dict[str, str]]) -> None:
         """

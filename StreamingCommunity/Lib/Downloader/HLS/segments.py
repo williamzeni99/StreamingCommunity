@@ -17,14 +17,13 @@ from typing import Dict
 # External libraries
 import httpx
 from tqdm import tqdm
+from rich.console import Console
 
 
 # Internal utilities
 from StreamingCommunity.Util.color import Colors
-from StreamingCommunity.Util.console import console
 from StreamingCommunity.Util.headers import get_userAgent
-from StreamingCommunity.Util._jsonConfig import config_manager
-from StreamingCommunity.Util.os import os_manager
+from StreamingCommunity.Util.config_json import config_manager, get_use_large_bar
 
 
 # Logic class
@@ -37,7 +36,6 @@ from ...M3U8 import (
 
 # Config
 TQDM_DELAY_WORKER = config_manager.get_float('M3U8_DOWNLOAD', 'tqdm_delay')
-USE_LARGE_BAR = not ("android" in sys.platform or "ios" in sys.platform)
 REQUEST_MAX_RETRY = config_manager.get_int('REQUESTS', 'max_retry')
 REQUEST_VERIFY = config_manager.get_int('REQUESTS', 'verify')
 DEFAULT_VIDEO_WORKERS = config_manager.get_int('M3U8_DOWNLOAD', 'default_video_workser')
@@ -47,6 +45,9 @@ MAX_INTERRUPT_COUNT = 3
 SEGMENT_MAX_TIMEOUT = config_manager.get_int("M3U8_DOWNLOAD", "segment_timeout")
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
+
+# Variable
+console = Console()
 
 
 class M3U8_Segments:
@@ -386,7 +387,7 @@ class M3U8_Segments:
         """
         Generate platform-appropriate progress bar format.
         """
-        if not USE_LARGE_BAR:
+        if not get_use_large_bar():
             return (
                 f"{Colors.YELLOW}Proc{Colors.WHITE}: "
                 f"{Colors.RED}{{percentage:.2f}}% "
