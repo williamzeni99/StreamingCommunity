@@ -17,7 +17,7 @@ on:
 
 jobs:
   publish:
-    if: startsWith(github.ref_name, 'v') && github.event.inputs.publish_pypi == 'true'
+    if: (startsWith(github.ref_name, 'v') || github.event_name == 'workflow_dispatch') && github.event.inputs.publish_pypi == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +39,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install setuptools wheel twine
-
       - name: Build package
         run: python setup.py sdist bdist_wheel
 
@@ -50,7 +49,7 @@ jobs:
         run: twine upload dist/*
 
   build:
-    if: startsWith(github.ref_name, 'v') && github.event.inputs.publish_pypi == 'false'
+    if: (startsWith(github.ref_name, 'v') || github.event_name == 'workflow_dispatch') && github.event.inputs.publish_pypi == 'false'
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
@@ -68,7 +67,6 @@ jobs:
         run: |
           $latestTag = git describe --tags --abbrev=0
           echo "latest_tag=$latestTag" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -79,7 +77,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install pyinstaller
-
       - name: Build executable with PyInstaller (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
@@ -95,7 +92,6 @@ jobs:
             --hidden-import=pyTelegramBotAPI --additional-hooks-dir=pyinstaller/hooks `
             --add-data "StreamingCommunity;StreamingCommunity" `
             --name=StreamingCommunity_win --icon=".github/media/logo.ico" test_run.py
-
       - name: Build executable with PyInstaller (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -110,7 +106,6 @@ jobs:
             --hidden-import=pyTelegramBotAPI --additional-hooks-dir=pyinstaller/hooks \
             --add-data "StreamingCommunity:StreamingCommunity" \
             --name=StreamingCommunity_linux test_run.py
-
       - name: Build executable with PyInstaller (macOS)
         if: matrix.os == 'macos-latest'
         run: |
