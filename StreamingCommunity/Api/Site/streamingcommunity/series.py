@@ -6,7 +6,7 @@ from typing import Tuple
 
 # External library
 from rich.console import Console
-from rich.prompt import Prompt, Confirm
+from rich.prompt import Prompt
 
 
 # Internal utilities
@@ -15,7 +15,7 @@ from StreamingCommunity.Lib.Downloader import HLS_Downloader
 from StreamingCommunity.TelegramHelp.telegram_bot import TelegramSession, get_bot_instance
 
 # Logic class
-from .util.ScrapeSerie import ScrapeSerie
+from .util.ScrapeSerie import GetSerieInfo
 from StreamingCommunity.Api.Template.Util import (
     manage_selection, 
     map_episode_title, 
@@ -37,7 +37,7 @@ msg = Prompt()
 console = Console()
 
 
-def download_video(index_season_selected: int, index_episode_selected: int, scrape_serie: ScrapeSerie, video_source: VideoSource) -> Tuple[str,bool]:
+def download_video(index_season_selected: int, index_episode_selected: int, scrape_serie: GetSerieInfo, video_source: VideoSource) -> Tuple[str,bool]:
     """
     Download a single episode video.
 
@@ -94,7 +94,7 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
 
     return r_proc['path'], r_proc['stopped']
 
-def download_episode(index_season_selected: int, scrape_serie: ScrapeSerie, video_source: VideoSource, download_all: bool = False) -> None:
+def download_episode(index_season_selected: int, scrape_serie: GetSerieInfo, video_source: VideoSource, download_all: bool = False) -> None:
     """
     Download episodes of a selected season.
 
@@ -156,7 +156,7 @@ def download_series(select_season: MediaItem) -> None:
     start_message()
 
     # Init class
-    scrape_serie = ScrapeSerie(site_constant.FULL_URL)
+    scrape_serie = GetSerieInfo(site_constant.FULL_URL)
     video_source = VideoSource(site_constant.FULL_URL, True)
 
     # Setup video source

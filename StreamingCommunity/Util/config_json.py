@@ -14,6 +14,8 @@ from rich.console import Console
 
 # Variable
 console = Console()
+download_site_data = True
+validate_github_config = True
 
 
 class ConfigManager:
@@ -35,16 +37,40 @@ class ConfigManager:
         self.cache = {}
         self.reference_config_url = 'https://raw.githubusercontent.com/Arrowar/StreamingCommunity/refs/heads/main/config.json'
         
-        # Validate and update config before proceeding
-        self._validate_and_update_config()
+        # Read initial config to get use_api setting
         self._read_initial_config()
         
+        # Validate and update config before proceeding (if enabled)
+        if validate_github_config:
+            self._validate_and_update_config()
+        
         console.print(f"[bold cyan]ConfigManager initialized:[/bold cyan] [green]{self.file_path}[/green]")
+
+    def _read_initial_config(self) -> None:
+        """Read initial configuration to get use_api setting."""
+        try:
+            if os.path.exists(self.file_path):
+                with open(self.file_path, 'r') as f:
+                    self.config = json.load(f)
+
+                self.use_api = self.config.get('DEFAULT', {}).get('use_api', True)
+                console.print(f"[bold cyan]API usage setting:[/bold cyan] [{'green' if self.use_api else 'yellow'}]{self.use_api}[/{'green' if self.use_api else 'yellow'}]")
+                console.print(f"[bold cyan]Download site data:[/bold cyan] [{'green' if download_site_data else 'yellow'}]{download_site_data}[/{'green' if download_site_data else 'yellow'}]")
+                console.print(f"[bold cyan]Validate GitHub config:[/bold cyan] [{'green' if validate_github_config else 'yellow'}]{validate_github_config}[/{'green' if validate_github_config else 'yellow'}]")
+
+            else:
+                self.use_api = True
+                console.print("[bold yellow]Configuration file not found. Using default API setting: True[/bold yellow]")
+                console.print(f"[bold yellow]Download site data: {download_site_data}[/bold yellow]")
+                console.print(f"[bold yellow]Validate GitHub config: {validate_github_config}[/bold yellow]")
+
+        except Exception as e:
+            self.use_api = True
+            console.print("[bold red]Error reading API setting. Using default: True[/bold red]")
 
     def _validate_and_update_config(self) -> None:
         """Validate local config against reference config and update missing keys."""
         try:
-
             # Load local config if exists
             local_config = {}
             if os.path.exists(self.file_path):
@@ -56,7 +82,7 @@ class ConfigManager:
             console.print(f"[bold cyan]Downloading reference config from:[/bold cyan] [green]{self.reference_config_url}[/green]")
             response = requests.get(self.reference_config_url, timeout=10)
 
-            if response.ok:
+            if not response.ok:
                 raise Exception(f"Failed to download reference config. Status code: {response.status_code}")
             
             reference_config = response.json()
@@ -135,24 +161,6 @@ class ConfigManager:
                 
         return merged
 
-    def _read_initial_config(self) -> None:
-        """Read initial configuration to get use_api setting."""
-        try:
-            if os.path.exists(self.file_path):
-                with open(self.file_path, 'r') as f:
-                    self.config = json.load(f)
-
-                self.use_api = self.config.get('DEFAULT', {}).get('use_api', True)
-                console.print(f"[bold cyan]API usage setting:[/bold cyan] [{'green' if self.use_api else 'yellow'}]{self.use_api}[/{'green' if self.use_api else 'yellow'}]")
-
-            else:
-                self.use_api = True
-                console.print("[bold yellow]Configuration file not found. Using default API setting: True[/bold yellow]")
-
-        except Exception as e:
-            self.use_api = True
-            console.print("[bold red]Error reading API setting. Using default: True[/bold red]")
-
     def read_config(self) -> None:
         """Read the configuration file."""
         try:
@@ -174,8 +182,14 @@ class ConfigManager:
                     self.config = json.load(f)
                 console.print(f"[bold green]Configuration downloaded and saved:[/bold green] {len(self.config)} keys")
 
-            # Update site configuration separately
-            self.update_site_config()
+            # Read API setting again in case it was updated in the downloaded config
+            self.use_api = self.config.get('DEFAULT', {}).get('use_api', self.use_api)
+
+            # Update site configuration separately if enabled
+            if download_site_data:
+                self.update_site_config()
+            else:
+                console.print("[bold yellow]Site data download is disabled[/bold yellow]")
 
             console.print("[bold cyan]Configuration processing complete[/bold cyan]")
 

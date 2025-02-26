@@ -19,7 +19,7 @@ from StreamingCommunity.Api.Player.Helper.Vixcloud.util import Season, EpisodeMa
 max_timeout = config_manager.get_int("REQUESTS", "timeout")
 
 
-class ScrapeSerie:
+class GetSerieInfo:
     def __init__(self, url):
         """
         Initialize the ScrapeSerie class for scraping TV series information.

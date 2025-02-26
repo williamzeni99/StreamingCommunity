@@ -287,17 +287,6 @@ class InternManager():
         else:
             return f"{bytes / (1024 * 1024):.2f} MB/s"
 
-    @staticmethod
-    def check_internet():
-        while True:
-            try:
-                httpx.get("https://www.google.com", timeout=5)
-                break
-
-            except Exception as e:
-                console.log("[bold red]Internet is not available. Waiting...[/bold red]")
-                time.sleep(2)
-
 
 class OsSummary:
     def __init__(self):
@@ -346,32 +335,6 @@ class OsSummary:
         except importlib.metadata.PackageNotFoundError:
             return f"{lib_name}-not installed"
 
-    def download_requirements(self, url: str, filename: str):
-        """
-        Download the requirements.txt file from the specified URL if not found locally using requests.
-
-        Args:
-            url (str): The URL to download the requirements file from.
-            filename (str): The local filename to save the requirements file as.
-        """
-        try:
-            import requests
-
-            logging.info(f"{filename} not found locally. Downloading from {url}...")
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                with open(filename, 'wb') as f:
-                    f.write(response.content)
-
-            else:
-                logging.error(f"Failed to download {filename}. HTTP Status code: {response.status_code}")
-                sys.exit(0)
-
-        except Exception as e:
-            logging.error(f"Failed to download {filename}: {e}")
-            sys.exit(0)
-
     def install_library(self, lib_name: str):
         """
         Install a Python library using pip.
@@ -402,16 +365,6 @@ class OsSummary:
 
     def get_system_summary(self):
         self.check_python_version()
-        InternManager().check_internet()
-
-        # Python info
-        python_version = sys.version.split()[0]
-        python_implementation = platform.python_implementation()
-        arch = platform.machine()
-        os_info = platform.platform()
-        glibc_version = 'glibc ' + '.'.join(map(str, platform.libc_ver()[1]))
-
-        console.print(f"[cyan]Python: [bold red]{python_version} ({python_implementation} {arch}) - {os_info} ({glibc_version})[/bold red]")
 
         # FFmpeg detection
         binary_dir = self.get_binary_directory()
@@ -456,31 +409,6 @@ class OsSummary:
             sys.exit(0)
 
         console.print(f"[cyan]Path: [red]ffmpeg [bold yellow]'{self.ffmpeg_path}'[/bold yellow][white], [red]ffprobe '[bold yellow]{self.ffprobe_path}'[/bold yellow]")
-
-        # Handle requirements.txt
-        if not getattr(sys, 'frozen', False):
-            requirements_file = 'requirements.txt'
-
-            requirements_file = Path(__file__).parent.parent.parent / requirements_file
-
-            if not os.path.exists(requirements_file):
-                self.download_requirements(
-                    'https://raw.githubusercontent.com/Arrowar/StreamingCommunity/refs/heads/main/requirements.txt',
-                    requirements_file
-                )
-
-            optional_libraries = [line.strip().split("=")[0] for line in open(requirements_file, 'r', encoding='utf-8-sig')]
-
-            for lib in optional_libraries:
-                installed_version = self.get_library_version(lib.split("<")[0])
-                if 'not installed' in installed_version:
-                    user_response = msg.ask(f"{lib} is not installed. Do you want to install it? (yes/no)", default="y")
-                    if user_response.lower().strip() in ["yes", "y"]:
-                        self.install_library(lib)
-                else:
-                    logging.info(f"Library: {installed_version}")
-
-            logging.info(f"Libraries: {', '.join([self.get_library_version(lib) for lib in optional_libraries])}")
 
 
 os_manager = OsManager()
