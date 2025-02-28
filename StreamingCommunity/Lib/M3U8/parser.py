@@ -503,25 +503,35 @@ class M3U8_Parser:
         except Exception as e:
             logging.error(f"Error parsing video info: {e}")
 
-    def __parse_encryption_keys__(self, m3u8_obj) -> None:
+    def __parse_encryption_keys__(self, obj) -> None:
         """
-        Extracts encryption keys from the M3U8 object.
+        Extracts encryption keys either from the M3U8 object or from individual segments.
 
         Parameters:
-            - m3u8_obj: The M3U8 object containing encryption keys.
+            - obj: Either the main M3U8 object or an individual segment.
         """
         try:
-            if m3u8_obj.key is not None:
+            if hasattr(obj, 'key') and obj.key is not None:
+                key_info = {
+                    'method': obj.key.method,
+                    'iv': obj.key.iv,
+                    'uri': obj.key.uri
+                }
+                
                 if self.keys is None:
-                    self.keys = {
-                        'method': m3u8_obj.key.method,
-                        'iv': m3u8_obj.key.iv,
-                        'uri': m3u8_obj.key.uri
-                    }
+                    self.keys = key_info
+
+                """
+                elif obj.key.uri not in self.keys:
+                    if isinstance(self.keys, dict):
+                        self.keys[obj.key.uri] = key_info
+                    else:
+                        old_key = self.keys
+                        self.keys = {'default': old_key, obj.key.uri: key_info}
+                """
 
         except Exception as e:
             logging.error(f"Error parsing encryption keys: {e}")
-            sys.exit(0)
             pass
 
     def __parse_subtitles_and_audio__(self, m3u8_obj) -> None:
@@ -574,6 +584,10 @@ class M3U8_Parser:
                     self.segments.append(segment.uri)
                 else:
                     self.subtitle.append(segment.uri)
+            
+            # Second check if there is key in main m3u8 obj
+            if self.keys is None:
+                self.__parse_encryption_keys__(m3u8_obj)
 
         except Exception as e:
             logging.error(f"Error parsing segments: {e}")

@@ -429,7 +429,8 @@ class HLS_Downloader:
                     'path': self.path_manager.output_path,
                     'url': self.m3u8_url,
                     'is_master': False,
-                    'error': 'File already exists',
+                    'msg': 'File already exists',
+                    'error': None,
                     'stopped': False
                 }
                 if TELEGRAM_BOT:
@@ -473,6 +474,8 @@ class HLS_Downloader:
                 'path': self.path_manager.output_path,
                 'url': self.m3u8_url,
                 'is_master': self.m3u8_manager.is_master,
+                'msg': None,
+                'error': None,
                 'stopped': download_stopped
             }
 
@@ -485,6 +488,7 @@ class HLS_Downloader:
                 'path': None,
                 'url': self.m3u8_url,
                 'is_master': getattr(self.m3u8_manager, 'is_master', None),
+                'msg': None,
                 'error': error_msg,
                 'stopped': False
             }

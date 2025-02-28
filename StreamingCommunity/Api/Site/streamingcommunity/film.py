@@ -80,10 +80,8 @@ def download_film(select_title: MediaItem) -> str:
         if script_id != "unknown":
             TelegramSession.deleteScriptId(script_id)
 
-    if "error" in r_proc.keys():
-        try:
-            os.remove(r_proc['path'])
-        except:
-            pass
+    if r_proc['error'] is not None:
+        try: os.remove(r_proc['path'])
+        except: pass
 
     return r_proc['path']

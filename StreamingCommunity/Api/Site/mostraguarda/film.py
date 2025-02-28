@@ -86,10 +86,8 @@ def download_film(movie_details: Json_film) -> str:
         output_path=os.path.join(mp4_path, title_name)
     ).start()
 
-    if "error" in r_proc.keys():
-        try:
-            os.remove(r_proc['path'])
-        except:
-            pass
+    if r_proc['error'] is not None:
+        try: os.remove(r_proc['path'])
+        except: pass
 
     return r_proc['path']

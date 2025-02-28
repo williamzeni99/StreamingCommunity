@@ -86,11 +86,9 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
         output_path=os.path.join(mp4_path, mp4_name)
     ).start()
 
-    if "error" in r_proc.keys():
-        try:
-            os.remove(r_proc['path'])
-        except:
-            pass
+    if r_proc['error'] is not None:
+        try: os.remove(r_proc['path'])
+        except: pass
 
     return r_proc['path'], r_proc['stopped']
 
