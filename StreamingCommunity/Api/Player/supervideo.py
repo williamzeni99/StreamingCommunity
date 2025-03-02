@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 
 # Internal utilities
 from StreamingCommunity.Util.config_json import config_manager
-from StreamingCommunity.Util.headers import get_userAgent
+from StreamingCommunity.Util.headers import get_headers
 
 
 # Variable
@@ -27,11 +27,7 @@ class VideoSource:
         Attributes:
             - url (str): The URL of the video source.
         """
-        self.headers = {
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7',
-            'User-Agent': get_userAgent()
-        }
+        self.headers = get_headers()
         self.client = httpx.Client()
         self.url = url
 
@@ -66,7 +62,7 @@ class VideoSource:
         """
         iframes = soup.find_all("iframe")
         if iframes and len(iframes) > 1:
-            return iframes[1].get("src")
+            return iframes[0].get("src") or iframes[0].get("data-src")
         
         return None
 
@@ -115,13 +111,8 @@ class VideoSource:
                 logging.error("Failed to fetch HTML content.")
                 return None
 
-            soup = BeautifulSoup(html_content, "html.parser")
-            if not soup:
-                logging.error("Failed to parse HTML content.")
-                return None
-
             # Find master playlist
-            data_js = self.get_result_node_js(soup)
+            data_js = self.get_result_node_js(BeautifulSoup(html_content, "html.parser"))
 
             if data_js is not None:
                 match = re.search(r'sources:\s*\[\{\s*file:\s*"([^"]+)"', data_js)
@@ -131,7 +122,7 @@ class VideoSource:
                     
             else:
 
-                iframe_src = self.get_iframe(soup)
+                iframe_src = self.get_iframe(BeautifulSoup(html_content, "html.parser"))
                 if not iframe_src:
                     logging.error("No iframe found.")
                     return None

@@ -67,7 +67,8 @@ def validate_url(url, base_url):
         return False, None
     
     client = httpx.Client(
-        verify=VERIFY,
+        http1=True,
+        verify=certifi.where(),
         headers=get_headers(),
         timeout=MAX_TIMEOUT
     )
@@ -82,7 +83,7 @@ def validate_url(url, base_url):
         
     return True, base_domain
 
-def search_domain(site_name: str, base_url: str, get_first: bool = False):
+def search_domain(base_url: str):
     """Search for valid domain matching site name and base URL."""    
     try:
         is_correct, redirect_tld = validate_url(base_url, base_url)

@@ -38,7 +38,7 @@ def title_search(title_search: str) -> int:
     Returns:
         int: The number of titles found.
     """
-    domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
+    domain_to_use, base_url = search_domain(site_constant.FULL_URL)
 
     if domain_to_use is None or base_url is None:
         console.print("[bold red]Error: Unable to determine valid domain or base URL.[/bold red]")

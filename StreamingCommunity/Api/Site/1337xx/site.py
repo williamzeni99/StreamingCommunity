@@ -41,7 +41,7 @@ def title_search(word_to_search: str) -> int:
     table_show_manager.clear()
 
     # Check if domain is working
-    domain_to_use, base_url = search_domain(site_constant.SITE_NAME, site_constant.FULL_URL)
+    domain_to_use, base_url = search_domain(site_constant.FULL_URL)
 
     if domain_to_use is None or base_url is None:
         console.log("[bold red]Error: Unable to determine valid domain or base URL.[/bold red]")
