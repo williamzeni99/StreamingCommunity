@@ -242,7 +242,7 @@ def join_audios(video_path: str, audio_tracks: List[Dict[str, str]], out_path: s
 
     # Use shortest input path for video and audios
     if not video_audio_same_duration:
-        logging.info("[red]Use shortest input.")
+        console.log("[red]Use shortest input ...")
         ffmpeg_cmd.extend(['-shortest', '-strict', 'experimental'])
 
     # Overwrite

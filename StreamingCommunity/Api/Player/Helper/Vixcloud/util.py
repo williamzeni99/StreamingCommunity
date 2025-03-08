@@ -8,14 +8,12 @@ class Episode:
         self.data = data
 
         self.id: int = data.get('id', 0)
-        self.scws_id: int = data.get('scws_id', 0)
         self.number: int = data.get('number', 1)
         self.name: str = data.get('name', '')
-        self.plot: str = data.get('plot', '')
         self.duration: int = data.get('duration', 0)
 
     def __str__(self):
-        return f"Episode(id={self.id}, number={self.number}, name='{self.name}', plot='{self.plot}', duration={self.duration} sec)"
+        return f"Episode(id={self.id}, number={self.number}, name='{self.name}', duration={self.duration} sec)"
 
 class EpisodeManager:
     def __init__(self):
@@ -89,12 +87,9 @@ class Season:
         self.season_data = season_data
 
         self.id: int = season_data.get('id', 0)
-        self.scws_id: int = season_data.get('scws_id', 0)
-        self.imdb_id: int = season_data.get('imdb_id', 0)
         self.number: int = season_data.get('number', 0)
         self.name: str = season_data.get('name', '')
         self.slug: str = season_data.get('slug', '')
-        self.plot: str = season_data.get('plot', '')
         self.type: str = season_data.get('type', '')
         self.seasons_count: int = season_data.get('seasons_count', 0)
         
