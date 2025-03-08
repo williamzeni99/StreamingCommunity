@@ -57,7 +57,6 @@ def get_video_duration(file_path: str) -> float:
     Returns:
         (float): The duration of the video in seconds if successful, None if there's an error.
     """
-
     try:
         ffprobe_cmd = [get_ffprobe_path(), '-v', 'error', '-show_format', '-print_format', 'json', file_path]
         logging.info(f"FFmpeg command: {ffprobe_cmd}")
@@ -95,7 +94,6 @@ def format_duration(seconds: float) -> Tuple[int, int, int]:
     Returns:
         list[int, int, int]: List containing hours, minutes, and seconds.
     """
-
     hours, remainder = divmod(seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
 
@@ -157,11 +155,7 @@ def get_ffprobe_info(file_path):
             'codec_names': codec_names
         }
     
-    except subprocess.CalledProcessError as e:
-        logging.error(f"ffprobe failed for file {file_path}: {e}")
-        return None
-    
-    except json.JSONDecodeError as e:
+    except Exception as e:
         logging.error(f"Failed to parse JSON output from ffprobe for file {file_path}: {e}")
         return None
 
@@ -198,23 +192,25 @@ def need_to_force_to_ts(file_path):
     return False
 
 
-def check_duration_v_a(video_path, audio_path):
+def check_duration_v_a(video_path, audio_path, tolerance=1.0):
     """
     Check if the duration of the video and audio matches.
 
     Parameters:
         - video_path (str): Path to the video file.
         - audio_path (str): Path to the audio file.
+        - tolerance (float): Allowed tolerance for the duration difference (in seconds).
 
     Returns:
-        - bool: True if the duration of the video and audio matches, False otherwise.
+        - tuple: (bool, float) -> True if the duration of the video and audio matches, False otherwise, along with the difference in duration.
     """
-    
-    # Ottieni la durata del video
     video_duration = get_video_duration(video_path)
-    
-    # Ottieni la durata dell'audio
     audio_duration = get_video_duration(audio_path)
 
-    # Verifica se le durate corrispondono
-    return video_duration == audio_duration
+    duration_difference = abs(video_duration - audio_duration)
+
+    # Check if the duration difference is within the tolerance
+    if duration_difference <= tolerance:
+        return True, duration_difference
+    else:
+        return False, duration_difference

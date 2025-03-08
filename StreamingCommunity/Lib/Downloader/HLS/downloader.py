@@ -436,6 +436,18 @@ class HLS_Downloader:
                 if TELEGRAM_BOT:
                     bot.send_message(f"Contenuto già scaricato!", None)
                 return response
+            
+            if GET_ONLY_LINK:
+                console.print(f"URL: {self.m3u8_url}[/bold red]")
+                return {
+                    'path': None,
+                    'url': self.m3u8_url,
+                    'is_master': getattr(self.m3u8_manager, 'is_master', None),
+                    'msg': None,
+                    'error': error_msg,
+                    'stopped': True
+                }
+
 
             self.path_manager.setup_directories()
 
@@ -466,9 +478,8 @@ class HLS_Downloader:
 
             final_file = self.merge_manager.merge()
             self.path_manager.move_final_file(final_file)
-            self.path_manager.cleanup()
-
             self._print_summary()
+            self.path_manager.cleanup()
 
             return {
                 'path': self.path_manager.output_path,

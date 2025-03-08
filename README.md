@@ -46,6 +46,7 @@
     - 🔍 [Parser](#m3u8_parser-settings)
 - 📝 [Command](#command)
 - 💻 [Examples of terminal](#examples-of-terminal-usage)
+- 🔧 [Manual domain configuration](#update-domains)
 - 🐳 [Docker](#docker)
 - 📝 [Telegram Usage](#telegram-usage)
 - 🎓 [Tutorial](#tutorials)

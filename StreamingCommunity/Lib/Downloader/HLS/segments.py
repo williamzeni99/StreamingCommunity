@@ -74,6 +74,9 @@ class M3U8_Segments:
 
         # Sync
         self.queue = PriorityQueue()
+        self.buffer = {}
+        self.expected_index = 0 
+
         self.stop_event = threading.Event()
         self.downloaded_segments = set()
         self.base_timeout = 0.5
@@ -94,6 +97,15 @@ class M3U8_Segments:
         self.active_retries_lock = threading.Lock()
 
     def __get_key__(self, m3u8_parser: M3U8_Parser) -> bytes:
+        """
+        Fetches the encryption key from the M3U8 playlist.
+
+        Args:
+            m3u8_parser (M3U8_Parser): An instance of M3U8_Parser containing parsed M3U8 data.
+
+        Returns:
+            bytes: The decryption key in byte format.
+        """
         key_uri = urljoin(self.url, m3u8_parser.keys.get('uri'))
         parsed_url = urlparse(key_uri)
         self.key_base_url = f"{parsed_url.scheme}://{parsed_url.netloc}/"
@@ -110,6 +122,12 @@ class M3U8_Segments:
             raise Exception(f"Failed to fetch key: {e}")
     
     def parse_data(self, m3u8_content: str) -> None:
+        """
+        Parses the M3U8 content and extracts necessary data.
+
+        Args:
+            m3u8_content (str): The raw M3U8 playlist content.
+        """
         m3u8_parser = M3U8_Parser()
         m3u8_parser.parse_data(uri=self.url, raw_content=m3u8_content)
 
@@ -131,6 +149,14 @@ class M3U8_Segments:
         self.class_ts_estimator.total_segments = len(self.segments)
 
     def get_info(self) -> None:
+        """
+        Retrieves M3U8 playlist information from the given URL.
+
+        If the URL is an index URL, this method:
+            - Sends an HTTP GET request to fetch the M3U8 playlist.
+            - Parses the M3U8 content using `parse_data`.
+            - Saves the playlist to a temporary folder.
+        """
         if self.is_index_url:
             try:
                 client_params = {'headers': {'User-Agent': get_userAgent()}, 'timeout': MAX_TIMEOOUT}
@@ -251,9 +277,6 @@ class M3U8_Segments:
         """
         Writes segments to file with additional verification.
         """
-        buffer = {}
-        expected_index = 0
-        
         with open(self.tmp_file_path, 'wb') as f:
             while not self.stop_event.is_set() or not self.queue.empty():
                 if self.interrupt_flag.is_set():
@@ -267,28 +290,28 @@ class M3U8_Segments:
 
                     # Handle failed segments
                     if segment_content is None:
-                        if index == expected_index:
-                            expected_index += 1
+                        if index == self.expected_index:
+                            self.expected_index += 1
                         continue
 
                     # Write segment if it's the next expected one
-                    if index == expected_index:
+                    if index == self.expected_index:
                         f.write(segment_content)
                         f.flush()
-                        expected_index += 1
+                        self.expected_index += 1
 
                         # Write any buffered segments that are now in order
-                        while expected_index in buffer:
-                            next_segment = buffer.pop(expected_index)
+                        while self.expected_index in self.buffer:
+                            next_segment = self.buffer.pop(self.expected_index)
 
                             if next_segment is not None:
                                 f.write(next_segment)
                                 f.flush()
 
-                            expected_index += 1
+                            self.expected_index += 1
                     
                     else:
-                        buffer[index] = segment_content
+                        self.buffer[index] = segment_content
 
                 except queue.Empty:
                     self.current_timeout = min(MAX_TIMEOOUT, self.current_timeout * 1.1)
@@ -439,6 +462,9 @@ class M3U8_Segments:
             
         if self.info_nFailed > 0:
             self._display_error_summary()
+
+        self.buffer = {}
+        self.expected_index = 0
 
     def _display_error_summary(self) -> None:
         """Generate final error report."""

@@ -52,7 +52,7 @@ class M3U8_Ts_Estimator:
         self.now_downloaded_size += size_download
         logging.debug(f"Current total downloaded size: {self.now_downloaded_size}")
 
-    def capture_speed(self, interval: float = 1):
+    def capture_speed(self, interval: float = 1.5):
         """Capture the internet speed periodically."""
         last_upload, last_download = 0, 0
         speed_buffer = deque(maxlen=3)

@@ -130,6 +130,9 @@ class VideoSource:
                         logging.info(f"M3U8 URL: {self.m3u8_url}")
                         break
 
+                    else:
+                        logging.error("Failed to find M3U8 URL: No match found")
+
             return self.m3u8_url
 
         except Exception as e:

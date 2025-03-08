@@ -119,6 +119,8 @@ class VideoSource:
 
                 if match:
                     return match.group(1)
+                else:
+                    logging.error("Failed to find M3U8 URL: No match found")
                     
             else:
 
@@ -151,6 +153,8 @@ class VideoSource:
 
                 if match:
                     return match.group(1)
+                else:
+                    logging.error("Failed to find M3U8 URL: No match found")
             
             return None
 
