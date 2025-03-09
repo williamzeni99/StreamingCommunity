@@ -70,7 +70,7 @@ def download_episode(index_select: int, scrape_serie: ScrapeSerieAnime, video_so
         video_source.get_embed(obj_episode.id)
 
         # Create output path
-        title_name = f"{scrape_serie.series_name}_EP_{dynamic_format_number(int(obj_episode.number))}.mp4"
+        title_name = f"{scrape_serie.series_name}_EP_{dynamic_format_number(str(obj_episode.number))}.mp4"
 
         if scrape_serie.is_series:
             mp4_path = os_manager.get_sanitize_path(os.path.join(site_constant.ANIME_FOLDER, scrape_serie.series_name))

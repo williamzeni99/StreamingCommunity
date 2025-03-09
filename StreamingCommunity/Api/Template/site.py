@@ -72,7 +72,7 @@ def get_select_title(table_show_manager, media_search_manager):
 
     # Handle user's quit command
     if last_command == "q" or last_command == "quit":
-        console.print("\n[red]Quit [white]...")
+        console.print("\n[red]Quit ...")
         sys.exit(0)
 
     # Check if the selected index is within range

@@ -50,7 +50,7 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
         - bool: kill handler status
     """
     start_message()
-    index_season_selected = dynamic_format_number(index_season_selected)
+    index_season_selected = dynamic_format_number(str(index_season_selected))
 
     # Get info about episode
     obj_episode = scrape_serie.episode_manager.get(index_episode_selected - 1)
