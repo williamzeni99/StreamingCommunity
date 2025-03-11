@@ -64,8 +64,15 @@ def title_search(title_search: str) -> int:
     # Prepara le scelte per l'utente
     if site_constant.TELEGRAM_BOT:
         choices = []
-          
-    for i, dict_title in enumerate(response.json()['data']):
+
+    # Collect json data
+    try:
+        data = response.json().get('data', [])
+    except Exception as e:
+        console.log(f"Error parsing JSON response: {e}")
+        return 0
+
+    for i, dict_title in enumerate(data):
         try:
             media_search_manager.add_media({
                 'id': dict_title.get('id'),
