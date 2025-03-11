@@ -137,7 +137,7 @@ def download_series(select_title: MediaItem):
 
     # Download selected episodes
     if len(list_episode_select) == 1 and last_command != "*":
-        path, _ = download_episode(list_episode_select[0]-1, scrape_serie, video_source)[0]
+        path, _ = download_episode(list_episode_select[0]-1, scrape_serie, video_source)
         return path
 
     # Download all other episodes selecter
