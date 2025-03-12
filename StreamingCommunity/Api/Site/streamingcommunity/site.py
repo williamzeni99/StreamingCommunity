@@ -17,7 +17,6 @@ from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
 
 # Logic class
 from StreamingCommunity.Api.Template.config_loader import site_constant
-from StreamingCommunity.Api.Template.Util import search_domain
 from StreamingCommunity.Api.Template.Class.SearchType import MediaManager
 
 
@@ -38,13 +37,6 @@ def title_search(title_search: str) -> int:
     Returns:
         int: The number of titles found.
     """
-    domain_to_use, base_url = search_domain(site_constant.FULL_URL)
-
-    if domain_to_use is None or base_url is None:
-        console.print("[bold red]Error: Unable to determine valid domain or base URL.[/bold red]")
-        console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
-        sys.exit(1)
-
     if site_constant.TELEGRAM_BOT:
         bot = get_bot_instance()
 
@@ -60,6 +52,7 @@ def title_search(title_search: str) -> int:
 
     except Exception as e:
         console.print(f"Site: {site_constant.SITE_NAME}, request search error: {e}")
+        return 0
 
     # Prepara le scelte per l'utente
     if site_constant.TELEGRAM_BOT:

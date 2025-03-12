@@ -48,11 +48,7 @@ class VideoSource:
 
             return self.redirect_url
         
-        except httpx.RequestError as e:
-            logging.error(f"Error during the initial request: {e}")
-            raise
-
-        except AttributeError as e:
+        except Exception as e:
             logging.error(f"Error parsing HTML: {e}")
             raise
 
@@ -98,12 +94,8 @@ class VideoSource:
 
             return self.maxstream_url
         
-        except httpx.RequestError as e:
-            logging.error(f"Error during the request to the redirect URL: {e}")
-            raise
-
-        except AttributeError as e:
-            logging.error(f"Error parsing HTML: {e}")
+        except Exception as e:
+            logging.error(f"Error during the request: {e}")
             raise
 
     def get_m3u8_url(self):

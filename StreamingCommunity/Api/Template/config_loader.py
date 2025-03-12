@@ -32,10 +32,6 @@ class SiteConstant:
         return config_manager.get('OUT_FOLDER', 'root_path')
     
     @property
-    def DOMAIN_NOW(self):
-        return config_manager.get_site(self.SITE_NAME, 'domain')
-    
-    @property
     def FULL_URL(self):
         return config_manager.get_site(self.SITE_NAME, 'full_url').rstrip('/')
     

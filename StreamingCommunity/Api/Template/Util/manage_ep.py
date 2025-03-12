@@ -218,6 +218,7 @@ def validate_episode_selection(list_episode_select: List[int], episodes_count: i
             input_episodes = input(f"Enter valid episode numbers (1-{episodes_count}): ")
             list_episode_select = list(map(int, input_episodes.split(',')))
 
+
 def display_episodes_list(episodes_manager) -> str:
     """
     Display episodes list and handle user input.

@@ -17,7 +17,6 @@ from StreamingCommunity.Util.table import TVShowManager
 
 # Logic class
 from StreamingCommunity.Api.Template.config_loader import site_constant
-from StreamingCommunity.Api.Template.Util import search_domain
 from StreamingCommunity.Api.Template.Class.SearchType import MediaManager
 
 
@@ -41,15 +40,7 @@ def title_search(word_to_search: str) -> int:
     media_search_manager.clear()
     table_show_manager.clear()
 
-    # Check if domain is working
-    domain_to_use, base_url = search_domain(site_constant.FULL_URL)
-
-    if domain_to_use is None or base_url is None:
-        console.print("[bold red]Error: Unable to determine valid domain or base URL.[/bold red]")
-        console.print("[yellow]The service might be temporarily unavailable or the domain may have changed.[/yellow]")
-        sys.exit(1)
-
-    search_url = f"{site_constant.FULL_URL}/?s={word_to_search}"
+    search_url = f"{site_constant.FULL_URL}/?story={word_to_search}&do=search&subaction=search"
     console.print(f"[cyan]Search url: [yellow]{search_url}")
 
     try:
@@ -58,20 +49,18 @@ def title_search(word_to_search: str) -> int:
 
     except Exception as e:
         console.print(f"Site: {site_constant.SITE_NAME}, request search error: {e}")
+        return 0
 
     # Create soup and find table
     soup = BeautifulSoup(response.text, "html.parser")
 
-    for div in soup.find_all("div", class_ = "card-content"):
+    for div in soup.find_all("div", class_ = "short-main"):
         try:
-
-            url = div.find("h3").find("a").get("href")
-            title = div.find("h3").find("a").get_text(strip=True)
-            desc = div.find("p").find("strong").text
+            url = div.find("a").get("href")
+            title = div.find("a").get_text(strip=True)
 
             title_info = {
                 'name': title,
-                'desc': desc,
                 'url': url
             }
 
