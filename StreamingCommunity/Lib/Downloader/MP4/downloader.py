@@ -30,7 +30,8 @@ from ...FFmpeg import print_duration_table
 
 
 # Config
-REQUEST_VERIFY = config_manager.get_int('REQUESTS', 'verify')
+REQUEST_VERIFY = config_manager.get_bool('REQUESTS', 'verify')
+REQUEST_HTTP2 = config_manager.get_bool('REQUEST', 'http2')
 GET_ONLY_LINK = config_manager.get_bool('M3U8_PARSER', 'get_only_link')
 REQUEST_TIMEOUT = config_manager.get_float('REQUESTS', 'timeout')
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
@@ -111,7 +112,7 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
     original_handler = signal.signal(signal.SIGINT, partial(signal_handler, interrupt_handler=interrupt_handler, original_handler=signal.getsignal(signal.SIGINT)))
 
     try:
-        transport = httpx.HTTPTransport(verify=REQUEST_VERIFY, http2=True)
+        transport = httpx.HTTPTransport(verify=REQUEST_VERIFY, http2=REQUEST_HTTP2)
         
         with httpx.Client(transport=transport, timeout=httpx.Timeout(60)) as client:
             with client.stream("GET", url, headers=headers, timeout=REQUEST_TIMEOUT) as response:
