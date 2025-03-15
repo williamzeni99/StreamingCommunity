@@ -119,15 +119,15 @@ class M3U8_Ts_Estimator:
                 
                 retry_count = self.segments_instance.active_retries if self.segments_instance else 0
                 progress_str = (
-                    f"{Colors.GREEN}{number_file_total_size} {Colors.WHITE}< {Colors.RED}{units_file_total_size}"
-                    f"{Colors.WHITE} {Colors.CYAN}{average_internet_speed} {Colors.RED}{average_internet_unit}"
+                    f"{Colors.GREEN}{number_file_total_size} {Colors.RED}{units_file_total_size}"
+                    f"{Colors.WHITE}, {Colors.CYAN}{average_internet_speed} {Colors.RED}{average_internet_unit}"
                     f"{Colors.WHITE}, {Colors.GREEN}CRR {Colors.RED}{retry_count} "
                 )
                 
             else:
                 retry_count = self.segments_instance.active_retries if self.segments_instance else 0
                 progress_str = (
-                    f"{Colors.GREEN}{number_file_total_size} {Colors.WHITE}< {Colors.RED}{units_file_total_size}"
+                    f"{Colors.GREEN}{number_file_total_size} {Colors.RED}{units_file_total_size}"
                     f"{Colors.WHITE}, {Colors.GREEN}CRR {Colors.RED}{retry_count} "
                 )
             

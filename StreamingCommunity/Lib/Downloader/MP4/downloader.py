@@ -31,7 +31,7 @@ from ...FFmpeg import print_duration_table
 
 # Config
 REQUEST_VERIFY = config_manager.get_bool('REQUESTS', 'verify')
-REQUEST_HTTP2 = config_manager.get_bool('REQUEST', 'http2')
+REQUEST_HTTP2 = config_manager.get_bool('REQUESTS', 'http2')
 GET_ONLY_LINK = config_manager.get_bool('M3U8_PARSER', 'get_only_link')
 REQUEST_TIMEOUT = config_manager.get_float('REQUESTS', 'timeout')
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')

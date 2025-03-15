@@ -79,9 +79,15 @@ Install directly from PyPI:
 pip install StreamingCommunity
 ```
 
-### Creating a Run Script
+Update to the latest version:
 
-Create `run_streaming.py`:
+```bash
+pip install --upgrade StreamingCommunity
+```
+
+## Quick Start
+
+Create a simple script (`run_streaming.py`) to launch the main application:
 
 ```python
 from StreamingCommunity.run import main
@@ -91,15 +97,84 @@ if __name__ == "__main__":
 ```
 
 Run the script:
+
 ```bash
 python run_streaming.py
 ```
 
-### Updating via PyPI
+## Modules
 
-```bash
-pip install --upgrade StreamingCommunity
+### HLS Downloader
+
+Download HTTP Live Streaming (HLS) content from m3u8 URLs.
+
+```python
+from StreamingCommunity.Download import HLS_Downloader
+
+# Initialize with m3u8 URL and optional output path
+downloader = HLS_Downloader(
+    m3u8_url="https://example.com/stream.m3u8",
+    output_path="/downloads/video.mp4"  # Optional
+)
+
+# Start the download
+downloader.download()
 ```
+
+See [HLS example](./Test/Download/HLS.py) for complete usage.
+
+### MP4 Downloader
+
+Direct MP4 file downloader with support for custom headers and referrer.
+
+```python
+from StreamingCommunity.Download import MP4_downloader
+
+# Basic usage
+downloader = MP4_downloader(
+    url="https://example.com/video.mp4",
+    path="/downloads/saved_video.mp4"
+)
+
+# Advanced usage with custom headers and referrer
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+}
+downloader = MP4_downloader(
+    url="https://example.com/video.mp4",
+    path="/downloads/saved_video.mp4",
+    referer="https://example.com",
+    headers_=headers
+)
+
+# Start download
+downloader.download()
+```
+
+See [MP4 example](./Test/Download/MP4.py) for complete usage.
+
+### Torrent Client
+
+Download content via torrent magnet links.
+
+```python
+from StreamingCommunity.Download import TOR_downloader
+
+# Initialize torrent client
+client = TOR_downloader()
+
+# Add magnet link
+client.add_magnet_link("magnet:?xt=urn:btih:example_hash&dn=example_name")
+
+# Start download
+client.start_download()
+
+# Move downloaded files to specific location
+client.move_downloaded_files("/downloads/torrents/")
+```
+
+See [Torrent example](./Test/Download/TOR.py) for complete usage.
+
 
 ## 2. Automatic Installation
 

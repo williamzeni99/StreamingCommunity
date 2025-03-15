@@ -14,15 +14,15 @@ from StreamingCommunity.Api.Template import get_select_title
 
 # Logic class
 from StreamingCommunity.Api.Template.config_loader import site_constant
-#from .site import title_search, table_show_manager, media_search_manager
-#from .film import download_film
-#from .series import download_series
+from .site import title_search, table_show_manager, media_search_manager
+from .film import download_film
+from .series import download_series
 
 
 # Variable
-indice = 4
+indice = 2
 _useFor = "film_serie"
-_deprecate = True
+_deprecate = False
 _priority = 1
 _engineDownload = "hls"
 
