@@ -147,9 +147,14 @@ class TVShowManager:
                 if not force_int_input:
                     prompt_msg = ("\n[cyan]Insert media index [yellow](e.g., 1), [red]* [cyan]to download all media, "
                                 "[yellow](e.g., 1-2) [cyan]for a range of media, or [yellow](e.g., 3-*) [cyan]to download from a specific index to the end")
+                    telegram_msg = "Menu di selezione degli episodi: \n\n" \
+                                   "- Inserisci il numero dell'episodio (ad esempio, 1)\n" \
+                                   "- Inserisci * per scaricare tutti gli episodi\n" \
+                                   "- Inserisci un intervallo di episodi (ad esempio, 1-2) per scaricare da un episodio all'altro\n" \
+                                   "- Inserisci (ad esempio, 3-*) per scaricare dall'episodio specificato fino alla fine della serie"
                     
                     if is_telegram:
-                        key = bot.ask("select_title_episode", prompt_msg, None)
+                        key = bot.ask("select_title_episode", telegram_msg, None)
                     else:
                         key = Prompt.ask(prompt_msg)
                 else:
@@ -183,9 +188,14 @@ class TVShowManager:
                 if not force_int_input:
                     prompt_msg = ("\n[cyan]Insert media index [yellow](e.g., 1), [red]* [cyan]to download all media, "
                                 "[yellow](e.g., 1-2) [cyan]for a range of media, or [yellow](e.g., 3-*) [cyan]to download from a specific index to the end")
+                    telegram_msg = "Menu di selezione degli episodi: \n\n" \
+                                   "- Inserisci il numero dell'episodio (ad esempio, 1)\n" \
+                                   "- Inserisci * per scaricare tutti gli episodi\n" \
+                                   "- Inserisci un intervallo di episodi (ad esempio, 1-2) per scaricare da un episodio all'altro\n" \
+                                   "- Inserisci (ad esempio, 3-*) per scaricare dall'episodio specificato fino alla fine della serie"
                     
                     if is_telegram:
-                        key = bot.ask("select_title_episode", prompt_msg, None)
+                        key = bot.ask("select_title_episode", telegram_msg, None)
                     else:
                         key = Prompt.ask(prompt_msg)
                 else:

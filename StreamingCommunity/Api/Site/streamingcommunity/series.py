@@ -185,7 +185,11 @@ def download_series(select_season: MediaItem) -> None:
 
         index_season_selected = bot.ask(
             "select_title_episode",
-            "Inserisci il numero della stagione (es. 1), * per scaricare tutte le stagioni, (es. 1-2) per un intervallo di stagioni, o (es. 3-*) per scaricare dalla stagione specificata fino alla fine",
+            "Menu di selezione delle stagioni\n\n"
+            "- Inserisci il numero della stagione (ad esempio, 1)\n"
+            "- Inserisci * per scaricare tutte le stagioni\n"
+            "- Inserisci un intervallo di stagioni (ad esempio, 1-2) per scaricare da una stagione all'altra\n"
+            "- Inserisci (ad esempio, 3-*) per scaricare dalla stagione specificata fino alla fine della serie",
             None
         )
 
