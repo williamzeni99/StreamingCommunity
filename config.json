@@ -25,8 +25,7 @@
     "REQUESTS": {
         "verify": false,
         "timeout": 20,
-        "max_retry": 8,
-        "http2": true
+        "max_retry": 8
     },
     "M3U8_DOWNLOAD": {
         "tqdm_delay": 0.01,

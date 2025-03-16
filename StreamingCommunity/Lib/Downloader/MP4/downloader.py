@@ -31,7 +31,6 @@ from ...FFmpeg import print_duration_table
 
 # Config
 REQUEST_VERIFY = config_manager.get_bool('REQUESTS', 'verify')
-REQUEST_HTTP2 = config_manager.get_bool('REQUESTS', 'http2')
 GET_ONLY_LINK = config_manager.get_bool('M3U8_PARSER', 'get_only_link')
 REQUEST_TIMEOUT = config_manager.get_float('REQUESTS', 'timeout')
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
@@ -111,11 +110,12 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
     interrupt_handler = InterruptHandler()
     original_handler = signal.signal(signal.SIGINT, partial(signal_handler, interrupt_handler=interrupt_handler, original_handler=signal.getsignal(signal.SIGINT)))
 
+    # Ensure the output directory exists
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
     try:
-        transport = httpx.HTTPTransport(verify=REQUEST_VERIFY, http2=REQUEST_HTTP2)
-        
-        with httpx.Client(transport=transport, timeout=httpx.Timeout(60)) as client:
-            with client.stream("GET", url, headers=headers, timeout=REQUEST_TIMEOUT) as response:
+        with httpx.Client() as client:
+            with client.stream("GET", url, headers=headers) as response:
                 response.raise_for_status()
                 total = int(response.headers.get('content-length', 0))
                 
@@ -123,6 +123,7 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
                     console.print("[bold red]No video stream found.[/bold red]")
                     return None, False
 
+                # Create a fancy progress bar
                 progress_bar = tqdm(
                     total=total,
                     ascii='░▒█',
@@ -135,7 +136,7 @@ def MP4_downloader(url: str, path: str, referer: str = None, headers_: dict = No
                     unit_scale=True,
                     desc='Downloading',
                     mininterval=0.05,
-                    file=sys.stdout                         # Using file=sys.stdout to force in-place updates because sys.stderr may not support carriage returns in this environment.
+                    file=sys.stdout                         # Using file=sys.stdout to force in-place updates because sys.stderr may not support carriage returns in this environment.  
                 )
 
                 downloaded = 0

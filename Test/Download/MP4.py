@@ -10,6 +10,8 @@ sys.path.append(src_path)
 
 # Import
 from StreamingCommunity.Util.message import start_message
+from StreamingCommunity.Util.os import os_summary
+os_summary.get_system_summary()
 from StreamingCommunity.Util.logger import Logger
 from StreamingCommunity.Lib.Downloader import MP4_downloader
 

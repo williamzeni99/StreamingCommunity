@@ -256,14 +256,7 @@ class ConfigManager:
                             sites_info = []
                             for site, info in examples:
                                 sites_info.append(f"[cyan]{site}[/cyan]: {info.get('full_url', 'N/A')}")
-                            
-                            console.print("[bold cyan]Sample sites:[/bold cyan]")
-                            for info in sites_info:
-                                console.print(f"  {info}")
-                            
-                            if site_count > 3:
-                                console.print(f"  ... and {site_count - 3} more")
-                                
+
                     else:
                         console.print("[bold yellow]API returned empty data set[/bold yellow]")
                 else:
