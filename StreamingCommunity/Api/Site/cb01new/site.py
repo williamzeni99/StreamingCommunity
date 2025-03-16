@@ -40,7 +40,7 @@ def title_search(word_to_search: str) -> int:
     media_search_manager.clear()
     table_show_manager.clear()
 
-    search_url = f"{site_constant.FULL_URL}/?story={word_to_search}&do=search&subaction=search"
+    search_url = f"{site_constant.FULL_URL}/?s={word_to_search}"
     console.print(f"[cyan]Search url: [yellow]{search_url}")
 
     try:
@@ -54,10 +54,11 @@ def title_search(word_to_search: str) -> int:
     # Create soup and find table
     soup = BeautifulSoup(response.text, "html.parser")
 
-    for div in soup.find_all("div", class_ = "short-main"):
+    for card in soup.find_all("div", class_=["card", "mp-post", "horizontal"]):
         try:
-            url = div.find("a").get("href")
-            title = div.find("a").get_text(strip=True)
+            title_tag = card.find("h3", class_="card-title").find("a")
+            url = title_tag.get("href")
+            title = title_tag.get_text(strip=True)
 
             title_info = {
                 'name': title,

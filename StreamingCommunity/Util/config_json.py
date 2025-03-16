@@ -196,6 +196,7 @@ class ConfigManager:
         except Exception as e:
             logging.error(f"Error reading configuration file: {e}")
             console.print(f"[bold red]Failed to read configuration:[/bold red] {str(e)}")
+            sys.exit(0)
 
     def download_requirements(self, url: str, filename: str) -> None:
         """

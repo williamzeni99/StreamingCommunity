@@ -634,6 +634,9 @@ The API-based domain updates are currently deprecated. To use it anyway, set `us
 
 Note: If `use_api` is set to `false` and no `domains.json` file is found, the script will raise an error.
 
+#### 💡 Adding a New Site to the Legacy API
+If you want to add a new site to the legacy API, just message me on the Discord server, and I'll add it!
+
 # COMMAND
 
 - Download a specific season by entering its number.
