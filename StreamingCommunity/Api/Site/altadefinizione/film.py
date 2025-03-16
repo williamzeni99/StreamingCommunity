@@ -67,6 +67,7 @@ def download_film(select_title: MediaItem) -> str:
 
     except Exception as e:
         console.print(f"[red]Error fetching mostraguarda link: {e}")
+        console.print("[yellow]Missing access credentials. This part of the code is still under development.")
         return None
 
     # Create supervio URL
