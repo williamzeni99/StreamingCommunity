@@ -52,6 +52,8 @@ def title_search(title_search: str) -> int:
 
     except Exception as e:
         console.print(f"Site: {site_constant.SITE_NAME}, request search error: {e}")
+        if site_constant.TELEGRAM_BOT:
+            bot.send_message(f"ERRORE\n\nErrore nella richiesta di ricerca:\n\n{e}", None)
         return 0
 
     # Prepara le scelte per l'utente
@@ -82,6 +84,8 @@ def title_search(title_search: str) -> int:
             
         except Exception as e:
             print(f"Error parsing a film entry: {e}")
+            if site_constant.TELEGRAM_BOT:
+                bot.send_message(f"ERRORE\n\nErrore nell'analisi del film:\n\n{e}", None)
 	
     if site_constant.TELEGRAM_BOT:
         if choices:

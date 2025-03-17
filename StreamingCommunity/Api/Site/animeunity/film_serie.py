@@ -123,7 +123,11 @@ def download_series(select_title: MediaItem):
 
         last_command = bot.ask(
             "select_title",
-            f"Inserisci l'indice del media o * per scaricare tutti i media, oppure 1-2 o 3-* per un intervallo di media.",
+            "Menu di selezione degli episodi: \n\n" 
+            "- Inserisci il numero dell'episodio (ad esempio, 1)\n" 
+            "- Inserisci * per scaricare tutti gli episodi\n" 
+            "- Inserisci un intervallo di episodi (ad esempio, 1-2) per scaricare da un episodio all'altro\n" 
+            "- Inserisci (ad esempio, 3-*) per scaricare dall'episodio specificato fino alla fine della serie",
             None
         )
 

@@ -37,7 +37,7 @@ from ...M3U8 import (
 # Config
 TQDM_DELAY_WORKER = config_manager.get_float('M3U8_DOWNLOAD', 'tqdm_delay')
 REQUEST_MAX_RETRY = config_manager.get_int('REQUESTS', 'max_retry')
-REQUEST_VERIFY = config_manager.get_int('REQUESTS', 'verify')
+REQUEST_VERIFY = config_manager.get_bool('REQUESTS', 'verify')
 DEFAULT_VIDEO_WORKERS = config_manager.get_int('M3U8_DOWNLOAD', 'default_video_workser')
 DEFAULT_AUDIO_WORKERS = config_manager.get_int('M3U8_DOWNLOAD', 'default_audio_workser')
 MAX_TIMEOOUT = config_manager.get_int("REQUESTS", "timeout")

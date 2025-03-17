@@ -34,7 +34,7 @@ class GetSerieInfo:
         """
         response = httpx.get(self.url, headers=self.headers)
         soup = BeautifulSoup(response.text, "html.parser")
-        self.serie_name = soup.find("title").get_text(strip=True).split(" - ")[0]
+        self.series_name = soup.find("title").get_text(strip=True).split(" - ")[0]
 
         # Process all seasons
         season_items = soup.find_all('div', class_='accordion-item')
