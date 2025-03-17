@@ -62,7 +62,8 @@ def title_search(word_to_search: str) -> int:
 
             title_info = {
                 'name': title,
-                'url': url
+                'url': url,
+                'type': 'film'
             }
 
             media_search_manager.add_media(title_info)

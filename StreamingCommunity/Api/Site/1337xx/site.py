@@ -62,7 +62,8 @@ def title_search(word_to_search: str) -> int:
                 'seader': tr.find_all("td")[-5].get_text(strip=True),
                 'leacher': tr.find_all("td")[-4].get_text(strip=True),
                 'date': tr.find_all("td")[-3].get_text(strip=True).replace("'", ""),
-                'size': tr.find_all("td")[-2].get_text(strip=True)
+                'size': tr.find_all("td")[-2].get_text(strip=True),
+                'type': 'torrent'
             }
             media_search_manager.add_media(title_info)
 

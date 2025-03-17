@@ -18,6 +18,7 @@ from rich.prompt import Prompt
 
 
 # Internal utilities
+from .global_search import global_search
 from StreamingCommunity.Util.message import start_message
 from StreamingCommunity.Util.config_json import config_manager
 from StreamingCommunity.Util.os import os_summary
@@ -54,6 +55,7 @@ def run_function(func: Callable[..., None], close_console: bool = False, search_
         func(search_terms)
 
 
+# !!! DA METTERE IN COMUNE CON QUELLA DI GLOBAL
 def load_search_functions():
     modules = []
     loaded_functions = {}
@@ -237,6 +239,11 @@ def main(script_id = 0):
         '--specific_list_subtitles', type=str, help='Comma-separated list of specific subtitle languages to download (e.g., eng,spa).'
     )
 
+    # Add global search option
+    parser.add_argument(
+        '--global', action='store_true', help='Perform a global search across multiple sites.'
+    )
+
     # Add arguments for search functions
     color_map = {
         "anime": "red",
@@ -253,6 +260,7 @@ def main(script_id = 0):
         parser.add_argument(f'-{short_option}', f'--{long_option}', action='store_true', help=f'Search for {alias.split("_")[0]} on streaming platforms.')
 
     parser.add_argument('-s', '--search', default=None, help='Search terms')
+    
     # Parse command-line arguments
     args = parser.parse_args()
 
@@ -280,6 +288,11 @@ def main(script_id = 0):
 
     config_manager.write_config()
 
+    # Check if global search is requested
+    if getattr(args, 'global'):
+        global_search(search_terms)
+        return
+
     # Map command-line arguments to functions
     arg_to_function = {alias: func for alias, (func, _) in search_functions.items()}
 
@@ -295,13 +308,18 @@ def main(script_id = 0):
     # Create dynamic prompt message and choices
     choice_labels = {str(i): (alias.split("_")[0].capitalize(), use_for) for i, (alias, (_, use_for)) in enumerate(search_functions.items())}
 
+    # Add global search option to the menu
+    #global_search_key = str(len(choice_labels))
+    #choice_labels[global_search_key] = ("Global Search", "all")
+    #input_to_function[global_search_key] = global_search
+
     # Display the category legend in a single line
     legend_text = " | ".join([f"[{color}]{category.capitalize()}[/{color}]" for category, color in color_map.items()])
     console.print(f"\n[bold green]Category Legend:[/bold green] {legend_text}")
 
     # Construct the prompt message with color-coded site names
     prompt_message = "[green]Insert category [white](" + ", ".join(
-        [f"{key}: [{color_map[label[1]]}]{label[0]}[/{color_map[label[1]]}]" for key, label in choice_labels.items()]
+        [f"{key}: [{color_map.get(label[1], 'white')}]{label[0]}[/{color_map.get(label[1], 'white')}]" for key, label in choice_labels.items()]
     ) + "[white])"
 
     if TELEGRAM_BOT:
@@ -330,10 +348,16 @@ def main(script_id = 0):
 
     # Run the corresponding function based on user input
     if category in input_to_function:
-        run_function(input_to_function[category], search_terms = args.search)
+        """if category == global_search_key:
+            # Run global search
+            run_function(input_to_function[category], search_terms=search_terms)
+        
+        else:"""
+        
+        # Run normal site-specific search
+        run_function(input_to_function[category], search_terms=search_terms)
         
     else:
-
         if TELEGRAM_BOT:
             bot.send_message(f"Categoria non valida", None)
 

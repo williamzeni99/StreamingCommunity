@@ -45,6 +45,7 @@
     - 📥 [Download](#m3u8_download-settings)
     - 🔍 [Parser](#m3u8_parser-settings)
 - 📝 [Command](#command)
+- 🔍 [Global search](#global-search)
 - 💻 [Examples of terminal](#examples-of-terminal-usage)
 - 🔧 [Manual domain configuration](#update-domains)
 - 🐳 [Docker](#docker)
@@ -637,19 +638,41 @@ Note: If `use_api` is set to `false` and no `domains.json` file is found, the sc
 #### 💡 Adding a New Site to the Legacy API
 If you want to add a new site to the legacy API, just message me on the Discord server, and I'll add it!
 
-# COMMAND
+# Global Search
 
-- Download a specific season by entering its number.
-  *  **Example:** `1` will download *Season 1* only.
+You can now search across multiple streaming sites at once using the Global Search feature. This allows you to find content more efficiently without having to search each site individually.
 
--  Use the wildcard `*` to download every available season.
-   * **Example:** `*` will download all seasons in the series.
+## Using Global Search
 
-- Specify a range of seasons using a hyphen `-`.
-   * **Example:** `1-2` will download *Seasons 1 and 2*.
+The Global Search feature provides a unified interface to search across all supported sites:
 
-- Enter a season number followed by `-*` to download from that season to the end.
-  * **Example:** `3-*` will download from *Season 3* to the final season.
+## Search Options
+
+When using Global Search, you have three ways to select which sites to search:
+
+1. **Search all sites** - Searches across all available streaming sites
+2. **Search by category** - Group sites by their categories (movies, series, anime, etc.)
+3. **Select specific sites** - Choose individual sites to include in your search
+
+## Navigation and Selection
+
+After performing a search:
+
+1. Results are displayed in a consolidated table showing:
+   - Title
+   - Media type (movie, TV series, etc.)
+   - Source site
+
+2. Select an item by number to view details or download
+
+3. The system will automatically use the appropriate site's API to handle the download
+
+## Command Line Arguments
+
+The Global Search can be configured from the command line:
+
+- `--global` - Perform a global search across multiple sites.
+- `-s`, `--search` - Specify the search terms.
 
 # Examples of terminal usage
 
@@ -662,6 +685,9 @@ python test_run.py --specific_list_audio ita,eng --specific_list_subtitles eng,s
 
 # Keep console open after download
 python test_run.py --not_close true
+
+# Use global search
+python test_run.py --global -s "cars"
 ```
 
 # Docker

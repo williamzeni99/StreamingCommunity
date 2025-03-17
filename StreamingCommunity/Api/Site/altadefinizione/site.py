@@ -1,4 +1,4 @@
-# 10.12.23
+# 16.03.25
 
 
 # External libraries
@@ -6,11 +6,12 @@ import httpx
 from bs4 import BeautifulSoup
 from rich.console import Console
 
-from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
+
 # Internal utilities
 from StreamingCommunity.Util.config_json import config_manager
 from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.table import TVShowManager
+from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
 
 
 # Logic class
@@ -61,10 +62,8 @@ def title_search(title_search: str) -> int:
     # Create soup istance
     soup = BeautifulSoup(response.text, "html.parser")
 
-    i = 0
-
     # Collect data from soup
-    for movie_div in soup.find_all("div", class_="movie"):
+    for i, movie_div in enumerate(soup.find_all("div", class_="movie")):
 
         title_tag = movie_div.find("h2", class_="movie-title")
         title = title_tag.find("a").get_text(strip=True)
@@ -85,8 +84,6 @@ def title_search(title_search: str) -> int:
         if site_constant.TELEGRAM_BOT:
             choice_text = f"{i} - {title} ({tipo})"
             choices.append(choice_text)
-
-        i += 1
 
     if site_constant.TELEGRAM_BOT:
         if choices:

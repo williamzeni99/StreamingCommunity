@@ -77,10 +77,8 @@ def get_real_title(record):
     """
     if record['title_eng'] is not None:
         return record['title_eng']
-    
     elif record['title'] is not None:
         return record['title']
-    
     else:
         return record['title_it']
 
