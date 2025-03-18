@@ -165,13 +165,10 @@ from StreamingCommunity.Download import TOR_downloader
 client = TOR_downloader()
 
 # Add magnet link
-client.add_magnet_link("magnet:?xt=urn:btih:example_hash&dn=example_name")
+client.add_magnet_link("magnet:?xt=urn:btih:example_hash&dn=example_name", save_path=".")
 
 # Start download
 client.start_download()
-
-# Move downloaded files to specific location
-client.move_downloaded_files("/downloads/torrents/")
 ```
 
 See [Torrent example](./Test/Download/TOR.py) for complete usage.

@@ -58,6 +58,5 @@ def download_title(select_title: MediaItem):
 
     # Tor manager
     manager = TOR_downloader()
-    manager.add_magnet_link(final_url)
+    manager.add_magnet_link(final_url, save_path=mp4_path)
     manager.start_download()
-    manager.move_downloaded_files(mp4_path)
