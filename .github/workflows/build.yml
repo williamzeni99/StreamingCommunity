@@ -102,6 +102,7 @@ jobs:
           python -m pip install pyinstaller
 
       - name: Build executable with PyInstaller
+        shell: bash
         run: |
           pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=ua_generator \
             --hidden-import=qbittorrentapi --hidden-import=qbittorrent \
@@ -122,7 +123,7 @@ jobs:
             --hidden-import=telebot \
             --additional-hooks-dir=pyinstaller/hooks \
             --add-data "StreamingCommunity${{ matrix.separator }}StreamingCommunity" \
-            --name=${{ matrix.artifact_name }} --icon=".github/media/logo.ico" test_run.py
+            --name=${{ matrix.artifact_name }} test_run.py
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
