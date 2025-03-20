@@ -27,7 +27,6 @@ class M3U8_Ts_Estimator:
             - total_segments (int): Length of total segments to download.
         """
         self.ts_file_sizes = []
-        self.now_downloaded_size = 0
         self.total_segments = total_segments
         self.segments_instance = segments_instance
         self.lock = threading.Lock()
@@ -42,15 +41,13 @@ class M3U8_Ts_Estimator:
         else:
             logging.debug("USE_LARGE_BAR is False, speed capture thread not started")
 
-    def add_ts_file(self, size: int, size_download: int, duration: float):
+    def add_ts_file(self, size: int):
         """Add a file size to the list of file sizes."""
-        if size <= 0 or size_download <= 0 or duration <= 0:
-            logging.error(f"Invalid input values: size={size}, size_download={size_download}, duration={duration}")
+        if size <= 0:
+            logging.error(f"Invalid input values: size={size}")
             return
 
         self.ts_file_sizes.append(size)
-        self.now_downloaded_size += size_download
-        logging.debug(f"Current total downloaded size: {self.now_downloaded_size}")
 
     def capture_speed(self, interval: float = 1.5):
         """Capture the internet speed periodically."""
@@ -99,9 +96,9 @@ class M3U8_Ts_Estimator:
             logging.error("An unexpected error occurred: %s", e)
             return "Error"
     
-    def update_progress_bar(self, total_downloaded: int, duration: float, progress_counter: tqdm) -> None:
+    def update_progress_bar(self, total_downloaded: int, progress_counter: tqdm) -> None:
         try:
-            self.add_ts_file(total_downloaded * self.total_segments, total_downloaded, duration)
+            self.add_ts_file(total_downloaded * self.total_segments)
             
             file_total_size = self.calculate_total_size()
             number_file_total_size = file_total_size.split(' ')[0]
