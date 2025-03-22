@@ -60,17 +60,19 @@
 # Installation
 
 <p align="center">
-  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_win.exe" style="margin: 0 20px;">
+  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_win.exe">
     <img src="https://img.shields.io/badge/-Windows-blue.svg?style=for-the-badge&logo=windows" alt="Windows">
   </a>
-  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_mac" style="margin: 0 20px;">
+  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_mac">
     <img src="https://img.shields.io/badge/-macOS-black.svg?style=for-the-badge&logo=apple" alt="macOS">
   </a>
-  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_linux" style="margin: 0 20px;">
+  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_linux">
     <img src="https://img.shields.io/badge/-Linux-orange.svg?style=for-the-badge&logo=linux" alt="Linux">
   </a>
+  <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_linux_previous">
+    <img src="https://img.shields.io/badge/-Linux Previous-gray.svg?style=for-the-badge&logo=linux" alt="Linux Previous">
+  </a>
 </p>
-
 
 ## 1. PyPI Installation
 
@@ -349,7 +351,9 @@ The configuration file is divided into several main sections:
         "show_trending": true,
         "use_api": true,
         "not_close": false,
-        "telegram_bot": false
+        "telegram_bot": false,
+        "download_site_data": false,
+        "validate_github_config": false
     }
 }
 ```
@@ -362,6 +366,8 @@ The configuration file is divided into several main sections:
 - `not_close`: If set to true, keeps the program running after download is complete
   * Can be changed from terminal with `--not_close true/false`
 - `telegram_bot`: Enables Telegram bot integration
+- `download_site_data`: If set to false, disables automatic site data download
+- `validate_github_config`: If set to false, disables validation and updating of configuration from GitHub
 
 ## OUT_FOLDER Settings
 
