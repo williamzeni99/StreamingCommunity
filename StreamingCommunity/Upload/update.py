@@ -68,7 +68,7 @@ def update():
 
     # Check installed version
     if str(__version__).replace('v', '') != str(last_version).replace('v', '') :
-        console.print(f"\n[red]New version available: [yellow]{last_version}")
+        console.print(f"\n[cyan]New version available: [yellow]{last_version}")
 
     console.print(f"\n[red]{__title__} has been downloaded [yellow]{total_download_count} [red]times, but only [yellow]{percentual_stars}% [red]of users have starred it.\n\
         [cyan]Help the repository grow today by leaving a [yellow]star [cyan]and [yellow]sharing [cyan]it with others online!")
