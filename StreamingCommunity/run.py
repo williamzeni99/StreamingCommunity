@@ -143,7 +143,7 @@ def initialize():
         sys.exit(0)
 
     # Trending tmbd
-    """if SHOW_TRENDING:
+    if SHOW_TRENDING:
         print()
         tmdb.display_trending_films()
         tmdb.display_trending_tv_shows()
@@ -152,7 +152,7 @@ def initialize():
     try:
         git_update()
     except:
-        console.log("[red]Error with loading github.")"""
+        console.log("[red]Error with loading github.")
 
 def restart_script():
     """Riavvia lo script con gli stessi argomenti della riga di comando."""

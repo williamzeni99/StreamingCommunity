@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.ibb.co/v6RnT0wY/s2.jpg" alt="Project Logo" width="700"/>
+  <img src="https://i.ibb.co/v6RnT0wY/s2.jpg" alt="Project Logo" width="600"/>
 </p>
 
 <p align="center">
@@ -32,6 +32,7 @@
 # 📋 Table of Contents
 
 - 🔄 [Update Domains](#update-domains)
+- 🌐 [Available Sites](https://arrowar.github.io/StreamingDirectory/)
 - 🛠️ [Installation](#installation)
     - 📦 [PyPI Installation](#1-pypi-installation)
     - 🔄 [Automatic Installation](#2-automatic-installation)
@@ -71,6 +72,9 @@
   </a>
   <a href="https://github.com/Arrowar/StreamingCommunity/releases/latest/download/StreamingCommunity_linux_previous">
     <img src="https://img.shields.io/badge/-Linux Previous-gray.svg?style=for-the-badge&logo=linux" alt="Linux Previous">
+  </a>
+  <a href="https://github.com/Arrowar/StreamingCommunity/releases">
+    <img src="https://img.shields.io/badge/-All Versions-lightgrey.svg?style=for-the-badge&logo=github" alt="All Versions">
   </a>
 </p>
 
