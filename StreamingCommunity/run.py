@@ -296,7 +296,7 @@ def main(script_id = 0):
         section, option = key.split('.')
         config_manager.set_key(section, option, value)
 
-    config_manager.write_config()
+    config_manager.save_config()
 
     # Check if global search is requested
     if getattr(args, 'global'):
