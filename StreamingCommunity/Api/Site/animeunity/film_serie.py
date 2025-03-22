@@ -55,8 +55,7 @@ def download_episode(index_select: int, scrape_serie: ScrapeSerieAnime, video_so
     if obj_episode is not None:
 
         start_message()
-        console.print(f"[yellow]Download:  [red]EP_{obj_episode.number} \n")
-        console.print("[cyan]You can safely stop the download with [bold]Ctrl+c[bold] [cyan] \n")
+        console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] ([cyan]E{obj_episode.number}[/cyan]) \n")
 
         if site_constant.TELEGRAM_BOT:
             bot.send_message(f"Download in corso:\nTitolo:{scrape_serie.series_name}\nEpisodio: {obj_episode.number}", None)
@@ -70,7 +69,7 @@ def download_episode(index_select: int, scrape_serie: ScrapeSerieAnime, video_so
         video_source.get_embed(obj_episode.id)
 
         # Create output path
-        title_name = f"{scrape_serie.series_name}_EP_{dynamic_format_number(str(obj_episode.number))}.mp4"
+        mp4_name = f"{scrape_serie.series_name}_EP_{dynamic_format_number(str(obj_episode.number))}.mp4"
 
         if scrape_serie.is_series:
             mp4_path = os_manager.get_sanitize_path(os.path.join(site_constant.ANIME_FOLDER, scrape_serie.series_name))
@@ -84,7 +83,7 @@ def download_episode(index_select: int, scrape_serie: ScrapeSerieAnime, video_so
         # Start downloading
         path, kill_handler = MP4_downloader(
             url=str(video_source.src_mp4).strip(),
-            path=os.path.join(mp4_path, title_name)
+            path=os.path.join(mp4_path, mp4_name)
         )
 
         return path, kill_handler

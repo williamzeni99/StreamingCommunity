@@ -19,7 +19,7 @@ from .serie import download_series
 # Variable
 indice = 8
 _useFor = "anime"
-_deprecate = True
+_deprecate = False
 _priority = 2
 _engineDownload = "mp4"
 

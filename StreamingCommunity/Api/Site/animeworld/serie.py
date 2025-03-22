@@ -19,7 +19,7 @@ from StreamingCommunity.Lib.Downloader import MP4_downloader
 # Logic class
 from .util.ScrapeSerie import ScrapSerie
 from StreamingCommunity.Api.Template.config_loader import site_constant
-from StreamingCommunity.Api.Template.Util import manage_selection, dynamic_format_number
+from StreamingCommunity.Api.Template.Util import manage_selection, dynamic_format_number, map_episode_title
 from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
@@ -48,12 +48,11 @@ def download_episode(index_select: int, scrape_serie: ScrapSerie, episodes) -> T
     start_message()
 
     # Get information about the selected episode
-    console.print(f"[yellow]Download:  [red]EP_{index_select} \n")
-    console.print("[cyan]You can safely stop the download with [bold]Ctrl+c[bold] [cyan] \n")
+    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] ([cyan]E{index_select+1}[/cyan]) \n")
 
-    # Create output path
-    title_name = f"{scrape_serie.get_name()}_EP_{dynamic_format_number(str(index_select))}.mp4"
-    mp4_path = os_manager.get_sanitize_path(os.path.join(site_constant.ANIME_FOLDER, scrape_serie.get_name()))
+    # Define filename and path for the downloaded video
+    mp4_name = f"{scrape_serie.get_name()}_EP_{dynamic_format_number(str(index_select+1))}.mp4"
+    mp4_path = os.path.join(site_constant.ANIME_FOLDER, scrape_serie.get_name())
 
     # Create output folder
     os_manager.create_path(mp4_path)
@@ -65,7 +64,7 @@ def download_episode(index_select: int, scrape_serie: ScrapSerie, episodes) -> T
     # Start downloading
     path, kill_handler = MP4_downloader(
         url=str(mp4_link).strip(),
-        path=os.path.join(mp4_path, title_name)
+        path=os.path.join(mp4_path, mp4_name)
     )
 
     return path, kill_handler

@@ -37,7 +37,7 @@ def download_film(select_title: MediaItem) -> str:
         - str: output path
     """
     start_message()
-    console.print(f"[yellow]Download:  [red]{select_title.name} \n")
+    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [cyan]{select_title.name}[/cyan] \n")
 
     # Setup api manger
     video_source = VideoSource(select_title.url)

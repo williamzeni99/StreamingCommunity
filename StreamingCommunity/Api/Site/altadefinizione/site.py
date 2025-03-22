@@ -26,12 +26,12 @@ table_show_manager = TVShowManager()
 max_timeout = config_manager.get_int("REQUESTS", "timeout")
 
 
-def title_search(title_search: str) -> int:
+def title_search(query: str) -> int:
     """
     Search for titles based on a search query.
       
     Parameters:
-        - title_search (str): The title to search for.
+        - query (str): The query to search for.
 
     Returns:
         int: The number of titles found.
@@ -42,7 +42,7 @@ def title_search(title_search: str) -> int:
     media_search_manager.clear()
     table_show_manager.clear()
 
-    search_url = f"{site_constant.FULL_URL}/?story={title_search}&do=search&subaction=search"
+    search_url = f"{site_constant.FULL_URL}/?story={query}&do=search&subaction=search"
     console.print(f"[cyan]Search url: [yellow]{search_url}")
 
     try:

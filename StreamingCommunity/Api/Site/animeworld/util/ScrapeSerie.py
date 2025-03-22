@@ -5,9 +5,11 @@
 import httpx
 from bs4 import BeautifulSoup
 
+
 # Internal utilities
 from StreamingCommunity.Util.headers import get_userAgent
 from StreamingCommunity.Util.config_json import config_manager
+from StreamingCommunity.Util.os import os_manager
 
 
 # Player
@@ -17,7 +19,6 @@ from StreamingCommunity.Api.Player.sweetpixel import AnimeWorldPlayer
 
 # Variable
 max_timeout = config_manager.get_int("REQUESTS", "timeout")
-
 
 
 class ScrapSerie:
@@ -32,22 +33,22 @@ class ScrapSerie:
             base_url=full_url
         )
 
+        try:
+            self.response = self.client.get(self.link, timeout=max_timeout, follow_redirects=True)
+            self.response.raise_for_status()
+
+        except:
+            raise Exception(f"Failed to retrieve anime page.")
+
+
     def get_name(self):
         """Extract and return the name of the anime series."""
-        response = self.client.get(self.link, follow_redirects=True)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, "html.parser")
-            return soup.find("h1", {"id": "anime-title"}).get_text()
-        else:
-            raise Exception(f"Failed to retrieve anime name. Status code: {response.status_code}")
-
+        soup = BeautifulSoup(self.response.content, "html.parser")
+        return os_manager.get_sanitize_file(soup.find("h1", {"id": "anime-title"}).get_text(strip=True))
+    
     def get_episodes(self, nums=None):
         """Fetch and return the list of episodes, optionally filtering by specific episode numbers."""
-        response = self.client.get(self.link, follow_redirects=True)
-        if response.status_code != 200:
-            raise Exception(f"Failed to retrieve episodes. Status code: {response.status_code}")
-
-        soup = BeautifulSoup(response.content.decode('utf-8', 'ignore'), "html.parser")
+        soup = BeautifulSoup(self.response.content, "html.parser")
 
         raw_eps = {}
         for data in soup.select('li.episode > a'):

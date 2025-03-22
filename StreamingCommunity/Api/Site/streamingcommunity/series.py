@@ -61,8 +61,7 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
 
     # Get info about episode
     obj_episode = season.episodes.get(index_episode_selected - 1)
-    console.print(f"[yellow]Download: [red]{index_season_selected}:{index_episode_selected} {obj_episode.name}")
-    print()
+    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [bold magenta]{obj_episode.name}[/bold magenta] ([cyan]S{index_season_selected}E{index_episode_selected}[/cyan]) \n")
 
     if site_constant.TELEGRAM_BOT:
         bot = get_bot_instance()

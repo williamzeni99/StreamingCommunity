@@ -55,45 +55,54 @@ def get_session_and_csrf() -> dict:
     logging.info(f"CSRF Token: {csrf_token}")
     return session_id, csrf_token
 
-def title_search(title: str) -> int:
+def title_search(query: str) -> int:
     """
     Function to perform an anime search using a provided title.
 
     Parameters:
-        - title_search (str): The title to search for.
+        - query (str): The query to search for.
 
     Returns:
         - int: A number containing the length of media search manager.
     """
-    session_id, csrf_token = get_session_and_csrf()
-    url = f"{site_constant.FULL_URL}/api/search/v2"
+    search_url = f"{site_constant.FULL_URL}/search?keyword={query}"
+    console.print(f"[cyan]Search url: [yellow]{search_url}")
 
-    # Set up the headers, params for the request
-    headers = {
-        'User-Agent': get_userAgent(),
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'CSRF-Token': csrf_token,
-        'X-Requested-With': 'XMLHttpRequest'
-    }
-    params = {
-        'keyword': title,
-    }
+    # Make the GET request
+    try:
+        response = httpx.get(search_url, headers={'User-Agent': get_userAgent()})
 
-    # Make the POST request
-    response = httpx.post(url, params=params, cookies={'sessionId': session_id}, headers=headers)
-    
-    for dict_title in response.json()['animes']:
+    except Exception as e:
+        console.print(f"Site: {site_constant.SITE_NAME}, request search error: {e}")
+        return 0
+
+    # Create soup istance
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Collect data from soup
+    for element in soup.find_all('a', class_='poster'):
         try:
+            title = element.find('img').get('alt')
+            url = f"{site_constant.FULL_URL}{element.get('href')}"
+            status_div = element.find('div', class_='status')
+            is_dubbed = False
+            anime_type = 'TV'
 
-            media_search_manager.add_media({
-                'id': dict_title.get('id'),
-                'name': dict_title.get('name'),
-                'type': 'TV',
-                'status': dict_title.get('stateName'),
-                'episodes_count': dict_title.get('episodes'),
-                'plot': ' '.join((words := str(dict_title.get('story', '')).split())[:10]) + ('...' if len(words) > 10 else ''),
-                'url': f"{site_constant.FULL_URL}/play/{dict_title.get('link')}.{dict_title.get('identifier')}"
-            })
+            if status_div:
+                if status_div.find('div', class_='dub'):
+                    is_dubbed = True
+                
+                if status_div.find('div', class_='movie'):
+                    anime_type = 'Movie'
+                elif status_div.find('div', class_='ona'):
+                    anime_type = 'ONA'
+
+                media_search_manager.add_media({
+                    'name': title,
+                    'type': anime_type,
+                    'DUB': is_dubbed,
+                    'url': url
+                })
 
         except Exception as e:
             print(f"Error parsing a film entry: {e}")

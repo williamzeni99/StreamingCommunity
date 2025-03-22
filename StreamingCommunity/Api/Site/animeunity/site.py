@@ -83,12 +83,12 @@ def get_real_title(record):
         return record['title_it']
 
 
-def title_search(title: str) -> int:
+def title_search(query: str) -> int:
     """
-    Function to perform an anime search using a provided title.
+    Function to perform an anime search using a provided query.
 
     Parameters:
-        - title_search (str): The title to search for.
+        - query (str): The query to search for.
 
     Returns:
         - int: A number containing the length of media search manager.
@@ -106,7 +106,7 @@ def title_search(title: str) -> int:
         'user-agent': get_userAgent(),
         'x-csrf-token': data.get('csrf_token')
     }
-    json_data =  {'title': title}
+    json_data =  {'title': query}
 
     # Send a POST request to the API endpoint for live search
     try:

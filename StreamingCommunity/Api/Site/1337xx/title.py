@@ -33,9 +33,8 @@ def download_title(select_title: MediaItem):
         - select_title (MediaItem): The media item to be downloaded. This should be an instance of the MediaItem class, containing attributes like `name` and `url`.
     """
     start_message()
-    console.print(f"[yellow]Download:  [red]{select_title.name} \n")
-    print() 
-
+    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [cyan]{select_title.name}[/cyan] \n")
+    
     # Define output path
     title_name = os_manager.get_sanitize_file(select_title.name)
     mp4_path = os.path.join(site_constant.MOVIE_FOLDER, title_name.replace(".mp4", ""))

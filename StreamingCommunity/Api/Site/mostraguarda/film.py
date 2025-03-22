@@ -44,7 +44,7 @@ def download_film(movie_details: Json_film) -> str:
 
     # Start message and display film information
     start_message()
-    console.print(f"[yellow]Download:  [red]{movie_details.title} \n")
+    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [cyan]{movie_details.title}[/cyan] \n")
     
     # Make request to main site
     try:
