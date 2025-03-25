@@ -43,6 +43,13 @@ def update():
             timeout=config_manager.get_int("REQUESTS", "timeout"), 
             follow_redirects=True
         ).json()
+
+        response_commits = httpx.get(
+            url=f"https://api.github.com/repos/{__author__}/{__title__}/commits",
+            headers={'user-agent': get_userAgent()}, 
+            timeout=config_manager.get_int("REQUESTS", "timeout"), 
+            follow_redirects=True
+        ).json()
         
     except Exception as e:
         console.print(f"[red]Error accessing GitHub API: {e}")
@@ -66,8 +73,20 @@ def update():
     else:
         percentual_stars = 0
 
-    # Check installed version
-    if str(__version__).replace('v', '') != str(last_version).replace('v', '') :
+    # Get the current version (installed version)
+    current_version = __version__
+
+    # Get commit details
+    latest_commit = response_commits[0] if response_commits else None
+    if latest_commit:
+        latest_commit_message = latest_commit.get('commit', {}).get('message', 'No commit message')
+    else:
+        latest_commit_message = 'No commit history available'
+
+    console.print(f"\n[cyan]Current installed version: [yellow]{current_version}")
+    console.print(f"[cyan]Last commit: [yellow]{latest_commit_message}")
+    
+    if str(current_version).replace('v', '') != str(last_version).replace('v', ''):
         console.print(f"\n[cyan]New version available: [yellow]{last_version}")
 
     console.print(f"\n[red]{__title__} has been downloaded [yellow]{total_download_count} [red]times, but only [yellow]{percentual_stars}% [red]of users have starred it.\n\

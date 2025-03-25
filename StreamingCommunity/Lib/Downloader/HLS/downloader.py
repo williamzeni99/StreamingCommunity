@@ -189,10 +189,16 @@ class M3U8Manager:
         tuple_available_resolution = self.parser._video.get_list_resolution()
         list_available_resolution = [f"{r[0]}x{r[1]}" for r in tuple_available_resolution]
 
+        # Check if self.video_res is not None
+        if self.video_res is not None:
+            video_resolution = f"{self.video_res[0]}x{self.video_res[1]}"
+        else:
+            video_resolution = "Not set"
+
         console.print(
             f"[cyan bold]Video    [/cyan bold] [green]Available:[/green] [purple]{', '.join(list_available_resolution)}[/purple] | "
             f"[red]Set:[/red] [purple]{FILTER_CUSTOM_REOLUTION}[/purple] | "
-            f"[yellow]Downloadable:[/yellow] [purple]{self.video_res[0]}x{self.video_res[1]}[/purple]"
+            f"[yellow]Downloadable:[/yellow] [purple]{video_resolution}[/purple]"
         )
 
         if self.parser.codec is not None:
