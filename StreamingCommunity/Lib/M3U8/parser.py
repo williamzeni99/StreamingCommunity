@@ -1,6 +1,6 @@
 # 20.04.25
 
-import sys
+import re
 import logging
 
 
@@ -418,18 +418,38 @@ class M3U8_Parser:
             - uri (str): The URI containing video information.
 
         Returns:
-            int: The video resolution if found, otherwise 0.
+            tuple: The video resolution (width, height) if found, otherwise (0, 0).
         """
-
         # Log
         logging.info(f"Try extract resolution from: {uri}")
-
+        
+        # First try: Check for known resolutions
         for resolution in RESOLUTIONS:
             if "http" in str(uri):
                 if str(resolution[1]) in uri:
                     return resolution
-            
-        # Default resolution return (not best)
+        
+        # Pattern to match common resolution formats like 854x480, 1280x720, etc.
+        resolution_patterns = [
+            r'(\d+)x(\d+)',  # Match format: 854x480
+            r'(\d+)p',       # Match format: 480p, 720p, etc.
+            r'_(\d+)x(\d+)'  # Match format: _854x480
+        ]
+        
+        for pattern in resolution_patterns:
+            matches = re.findall(pattern, uri)
+            if matches:
+                if len(matches[0]) == 2:  # Format like 854x480
+                    width, height = int(matches[0][0]), int(matches[0][1])
+                    return (width, height)
+                
+                elif len(matches[0]) == 1:  # Format like 480p
+                    height = int(matches[0])
+
+                    # Estimate width based on common aspect ratios (16:9)
+                    width = int(height * 16 / 9)
+                    return (width, height)
+        
         logging.warning("No resolution found with custom parsing.")
         return (0, 0)
 

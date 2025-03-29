@@ -21,7 +21,7 @@ from .film import download_film
 # Variable
 indice = 7
 _useFor = "film"
-_deprecate = False
+_deprecate = True
 _priority = 2
 _engineDownload = "hls"
 
