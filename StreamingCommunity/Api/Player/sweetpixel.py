@@ -16,9 +16,9 @@ from StreamingCommunity.Util.headers import get_userAgent
 MAX_TIMEOUT = config_manager.get_int("REQUESTS", "timeout")
 
 
-class AnimeWorldPlayer:
+class VideoSource:
     def __init__(self, full_url, episode_data, session_id, csrf_token):
-        """Initialize the AnimeWorldPlayer with session details, episode data, and URL."""
+        """Initialize the VideoSource with session details, episode data, and URL."""
         self.session_id = session_id
         self.csrf_token = csrf_token
         self.episode_data = episode_data
@@ -33,7 +33,7 @@ class AnimeWorldPlayer:
             timeout=MAX_TIMEOUT
         )
 
-    def get_download_link(self):
+    def get_playlist(self):
         """Fetch the download link from AnimeWorld using the episode link."""
         try:
             # Make a POST request to the episode link and follow any redirects

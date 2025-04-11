@@ -47,7 +47,6 @@ class GetSerieInfo:
         Returns:
             List[Dict[str, str]]: List of dictionaries containing episode information.
         """
-
         try:
             response = httpx.get(f"{self.url}?area=online", cookies=self.cookies, headers=self.headers, timeout=max_timeout)
             response.raise_for_status()
@@ -81,4 +80,33 @@ class GetSerieInfo:
      
         self.list_episodes = list_dict_episode
         return list_dict_episode
+    
+    
+    # ------------- FOR GUI -------------
+    def getNumberSeason(self) -> int:
+        """
+        Get the total number of seasons available for the series.
+        Note: DDLStreamItaly typically provides content organized as threads, not seasons.
+        """
+        return 1
+    
+    def getEpisodeSeasons(self, season_number: int = 1) -> list:
+        """
+        Get all episodes for a specific season.
+        Note: For DDLStreamItaly, this returns all episodes as they're typically in one list.
+        """     
+        if not self.list_episodes:
+            self.list_episodes = self.get_episode_number()
+            
+        return self.list_episodes
         
+    def selectEpisode(self, season_number: int = 1, episode_index: int = 0) -> dict:
+        """
+        Get information for a specific episode.
+        """
+        episodes = self.getEpisodeSeasons()
+        if not episodes or episode_index < 0 or episode_index >= len(episodes):
+            logging.error(f"Episode index {episode_index} is out of range")
+            return None
+            
+        return episodes[episode_index]

@@ -19,12 +19,12 @@ from StreamingCommunity.Lib.Downloader import MP4_downloader
 # Logic class
 from .util.ScrapeSerie import ScrapSerie
 from StreamingCommunity.Api.Template.config_loader import site_constant
-from StreamingCommunity.Api.Template.Util import manage_selection, dynamic_format_number, map_episode_title
+from StreamingCommunity.Api.Template.Util import manage_selection, dynamic_format_number
 from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
-from StreamingCommunity.Api.Player.sweetpixel import AnimeWorldPlayer
+from StreamingCommunity.Api.Player.sweetpixel import VideoSource
 
 
 # Variable
@@ -33,8 +33,7 @@ msg = Prompt()
 KILL_HANDLER = bool(False)
 
 
-
-def download_episode(index_select: int, scrape_serie: ScrapSerie, episodes) -> Tuple[str,bool]:
+def download_episode(index_select: int, scrape_serie: ScrapSerie) -> Tuple[str,bool]:
     """
     Downloads the selected episode.
 
@@ -47,7 +46,8 @@ def download_episode(index_select: int, scrape_serie: ScrapSerie, episodes) -> T
     """
     start_message()
 
-    # Get information about the selected episode
+    # Get episode information
+    episode_data = scrape_serie.selectEpisode(1, index_select)
     console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] ([cyan]E{index_select+1}[/cyan]) \n")
 
     # Define filename and path for the downloaded video
@@ -57,9 +57,9 @@ def download_episode(index_select: int, scrape_serie: ScrapSerie, episodes) -> T
     # Create output folder
     os_manager.create_path(mp4_path)
 
-    # Collect mp4 link
-    video_source = AnimeWorldPlayer(site_constant.FULL_URL, episodes[index_select], scrape_serie.session_id, scrape_serie.csrf_token)
-    mp4_link = video_source.get_download_link()
+    # Get video source for the episode
+    video_source = VideoSource(site_constant.FULL_URL, episode_data, scrape_serie.session_id, scrape_serie.csrf_token)
+    mp4_link = video_source.get_playlist()
 
     # Start downloading
     path, kill_handler = MP4_downloader(
@@ -70,38 +70,41 @@ def download_episode(index_select: int, scrape_serie: ScrapSerie, episodes) -> T
     return path, kill_handler
 
 
-def download_series(select_title: MediaItem):
+def download_series(select_title: MediaItem, episode_selection: str = None):
     """
     Function to download episodes of a TV series.
 
     Parameters:
-        - tv_id (int): The ID of the TV series.
-        - tv_name (str): The name of the TV series.
+        - select_title (MediaItem): The selected media item
+        - episode_selection (str, optional): Episode selection input that bypasses manual input
     """
     start_message()
 
+    # Create scrap instance
     scrape_serie = ScrapSerie(select_title.url, site_constant.FULL_URL)
+    episodes = scrape_serie.get_episodes() 
 
-    # Get the count of episodes for the TV series
-    episodes = scrape_serie.get_episodes()
-    episoded_count = len(episodes)
-    console.print(f"[cyan]Episodes find: [red]{episoded_count}")
+    # Get episode count
+    console.print(f"[green]Episodes found:[/green] [red]{len(episodes)}[/red]")
 
-    # Prompt user to select an episode index
-    last_command = msg.ask("\n[cyan]Insert media [red]index [yellow]or [red]* [cyan]to download all media [yellow]or [red]1-2 [cyan]or [red]3-* [cyan]for a range of media")
+    # Display episodes list and get user selection
+    if episode_selection is None:
+        last_command = msg.ask("\n[cyan]Insert media [red]index [yellow]or [red]* [cyan]to download all media [yellow]or [red]1-2 [cyan]or [red]3-* [cyan]for a range of media")
+    else:
+        last_command = episode_selection
+        console.print(f"\n[cyan]Using provided episode selection: [yellow]{episode_selection}")
 
-    # Manage user selection
-    list_episode_select = manage_selection(last_command, episoded_count)
+    list_episode_select = manage_selection(last_command, len(episodes))
 
     # Download selected episodes
     if len(list_episode_select) == 1 and last_command != "*":
-        path, _ = download_episode(list_episode_select[0]-1, scrape_serie, episodes)
+        path, _ = download_episode(list_episode_select[0]-1, scrape_serie)
         return path
 
-    # Download all other episodes selecter
+    # Download all selected episodes
     else:
         kill_handler = False
         for i_episode in list_episode_select:
             if kill_handler:
                 break
-            _, kill_handler = download_episode(i_episode-1, scrape_serie, episodes)
+            _, kill_handler = download_episode(i_episode-1, scrape_serie)

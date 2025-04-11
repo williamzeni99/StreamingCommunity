@@ -35,22 +35,22 @@ from StreamingCommunity.Api.Player.ddl import VideoSource
 console = Console()
 
 
-def download_video(index_episode_selected: int, scape_info_serie: GetSerieInfo, video_source: VideoSource) -> Tuple[str,bool]:
+def download_video(index_episode_selected: int, scape_info_serie: GetSerieInfo) -> Tuple[str,bool]:
     """
-    Download a single episode video.
+    Downloads a specific episode.
 
     Parameters:
-        - tv_name (str): Name of the TV series.
-        - index_episode_selected (int): Index of the selected episode.
+        - index_episode_selected (int): Episode index
+        - scape_info_serie (GetSerieInfo): Scraper object with series information
 
-    Return:
-        - str: output path
-        - bool: kill handler status
+    Returns:
+        - str: Path to downloaded file
+        - bool: Whether download was stopped
     """
     start_message()
 
-    # Get info about episode
-    obj_episode = scape_info_serie.list_episodes[index_episode_selected - 1]
+    # Get episode information
+    obj_episode = scape_info_serie.selectEpisode(1, index_episode_selected-1)
     console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [bold magenta]{obj_episode.get('name')}[/bold magenta] ([cyan]E{index_episode_selected}[/cyan]) \n")
     
     # Define filename and path for the downloaded video
@@ -63,7 +63,7 @@ def download_video(index_episode_selected: int, scape_info_serie: GetSerieInfo, 
     os_manager.create_path(mp4_path)
 
     # Setup video source
-    video_source.setup(obj_episode.get('url'))
+    video_source = VideoSource(site_constant.COOKIE, obj_episode.get('url'))
 
     # Get m3u8 master playlist
     master_playlist = video_source.get_playlist()
@@ -82,38 +82,37 @@ def download_video(index_episode_selected: int, scape_info_serie: GetSerieInfo, 
         console.print("[green]Result: ")
         console.print(r_proc)
 
-    return os.path.join(mp4_path, title_name)
+    return os.path.join(mp4_path, title_name), False
 
 
-def download_thread(dict_serie: MediaItem):
+def download_thread(dict_serie: MediaItem, episode_selection: str = None):
     """
     Download all episode of a thread
+    
+    Parameters:
+        dict_serie (MediaItem): The selected media item
+        episode_selection (str, optional): Episode selection input that bypasses manual input
     """
-    start_message()
-
-    # Init class
-    scape_info_serie = GetSerieInfo(dict_serie, site_constant.COOKIE)
-    video_source = VideoSource(site_constant.COOKIE)
-
-    # Collect information about thread
-    list_dict_episode = scape_info_serie.get_episode_number()
-    episodes_count = len(list_dict_episode)
-
+    scrape_serie = GetSerieInfo(dict_serie, site_constant.COOKIE)
+    
+    # Get episode list 
+    episodes = scrape_serie.getEpisodeSeasons()
+    episodes_count = len(episodes)
+    
     # Display episodes list and manage user selection
-    last_command = display_episodes_list(scape_info_serie.list_episodes)
+    if episode_selection is None:
+        last_command = display_episodes_list(scrape_serie.list_episodes)
+    else:
+        last_command = episode_selection
+        console.print(f"\n[cyan]Using provided episode selection: [yellow]{episode_selection}")
+    
+    # Validate episode selection
     list_episode_select = manage_selection(last_command, episodes_count)
-
-    try:
-        list_episode_select = validate_episode_selection(list_episode_select, episodes_count)
-
-    except ValueError as e:
-        console.print(f"[red]{str(e)}")
-        return
+    list_episode_select = validate_episode_selection(list_episode_select, episodes_count)
 
     # Download selected episodes
     kill_handler = bool(False)
     for i_episode in list_episode_select:
         if kill_handler:
             break
-
-        kill_handler = download_video(i_episode, scape_info_serie, video_source)[1]
+        kill_handler = download_video(i_episode, scrape_serie)[1]

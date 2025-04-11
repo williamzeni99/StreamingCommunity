@@ -62,9 +62,10 @@ def title_search(query: str) -> int:
             link = serie_div.find('a').get("href")
 
             serie_info = {
-                'name': title,
+                'name': title.replace("streaming guardaserie", ""),
                 'url': link,
-                'type': 'tv'
+                'type': 'tv',
+                'image': f"{site_constant.FULL_URL}/{serie_div.find('img').get("src")}",
             }
 
             media_search_manager.add_media(serie_info)

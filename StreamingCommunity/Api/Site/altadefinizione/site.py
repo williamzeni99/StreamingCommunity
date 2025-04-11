@@ -78,7 +78,8 @@ def title_search(query: str) -> int:
         media_search_manager.add_media({
             'url': url,
             'name': title,
-            'type': tipo
+            'type': tipo,
+            'image': f"{site_constant.FULL_URL}{movie_div.find("img", class_="layer-image").get("data-src")}"
         })
 
         if site_constant.TELEGRAM_BOT:

@@ -1,6 +1,5 @@
 # 10.12.23
 
-import sys
 import logging
 
 
@@ -140,7 +139,7 @@ def title_search(query: str) -> int:
                 'type': dict_title.get('type'),
                 'status': dict_title.get('status'),
                 'episodes_count': dict_title.get('episodes_count'),
-                'plot': ' '.join((words := str(dict_title.get('plot', '')).split())[:10]) + ('...' if len(words) > 10 else '')
+                'image': dict_title.get('imageurl')
             })
 
             if site_constant.TELEGRAM_BOT:

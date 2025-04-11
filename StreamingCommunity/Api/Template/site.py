@@ -10,7 +10,7 @@ from rich.console import Console
 # Variable
 console = Console()
 available_colors = ['red', 'magenta', 'yellow', 'cyan', 'green', 'blue', 'white']
-column_to_hide = ['Slug', 'Sub_ita', 'Last_air_date', 'Seasons_count', 'Url']
+column_to_hide = ['Slug', 'Sub_ita', 'Last_air_date', 'Seasons_count', 'Url', 'Image', 'Path_id']
 
 
 def get_select_title(table_show_manager, media_search_manager):

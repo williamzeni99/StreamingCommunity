@@ -20,31 +20,21 @@ max_timeout = config_manager.get_int("REQUESTS", "timeout")
 
 
 class GetSerieInfo:
-    def __init__(self, url):
+    def __init__(self, url, media_id: int = None, series_name: str = None):
         """
         Initialize the GetSerieInfo class for scraping TV series information.
         
         Args:
             - url (str): The URL of the streaming site.
+            - media_id (int, optional): Unique identifier for the media
+            - series_name (str, optional): Name of the TV series
         """
         self.is_series = False
         self.headers = {'user-agent': get_userAgent()}
         self.url = url
-
-        # Initialize the SeasonManager
+        self.media_id = media_id
         self.seasons_manager = SeasonManager()
 
-    def setup(self, media_id: int = None, series_name: str = None):
-        """
-        Set up the scraper with specific media details.
-        
-        Args:
-            media_id (int, optional): Unique identifier for the media
-            series_name (str, optional): Name of the TV series
-        """
-        self.media_id = media_id
-
-        # If series name is provided, initialize series-specific properties
         if series_name is not None:
             self.is_series = True
             self.series_name = series_name
@@ -128,3 +118,39 @@ class GetSerieInfo:
         except Exception as e:
             logging.error(f"Error collecting episodes for season {number_season}: {e}")
             raise
+
+    # ------------- FOR GUI -------------
+    def getNumberSeason(self) -> int:
+        """
+        Get the total number of seasons available for the series.
+        """
+        if not self.seasons_manager.seasons:
+            self.collect_info_title()
+            
+        return len(self.seasons_manager.seasons)
+    
+    def getEpisodeSeasons(self, season_number: int) -> list:
+        """
+        Get all episodes for a specific season.
+        """
+        season = self.seasons_manager.get_season_by_number(season_number)
+
+        if not season:
+            logging.error(f"Season {season_number} not found")
+            return []
+            
+        if not season.episodes.episodes:
+            self.collect_info_season(season_number)
+            
+        return season.episodes.episodes
+        
+    def selectEpisode(self, season_number: int, episode_index: int) -> dict:
+        """
+        Get information for a specific episode in a specific season.
+        """
+        episodes = self.getEpisodeSeasons(season_number)
+        if not episodes or episode_index < 0 or episode_index >= len(episodes):
+            logging.error(f"Episode index {episode_index} is out of range for season {season_number}")
+            return None
+            
+        return episodes[episode_index]

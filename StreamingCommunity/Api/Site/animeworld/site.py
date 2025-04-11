@@ -101,7 +101,8 @@ def title_search(query: str) -> int:
                     'name': title,
                     'type': anime_type,
                     'DUB': is_dubbed,
-                    'url': url
+                    'url': url,
+                    'image': element.find('img').get('src')
                 })
 
         except Exception as e:

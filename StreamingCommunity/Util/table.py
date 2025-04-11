@@ -158,7 +158,8 @@ class TVShowManager:
                     else:
                         key = Prompt.ask(prompt_msg)
                 else:
-                    choices = [str(i) for i in range(max_int_input + 1)] + ["q", "quit", "b", "back"]
+                    # Include empty string in choices to allow pagination with Enter key
+                    choices = [""] + [str(i) for i in range(max_int_input + 1)] + ["q", "quit", "b", "back"]
                     prompt_msg = "[cyan]Insert media [red]index"
                     telegram_msg = "Scegli il contenuto da scaricare:\n Serie TV -  Film -  Anime\noppure `back` per tornare indietro"
                     
@@ -199,7 +200,8 @@ class TVShowManager:
                     else:
                         key = Prompt.ask(prompt_msg)
                 else:
-                    choices = [str(i) for i in range(max_int_input + 1)] + ["q", "quit", "b", "back"]
+                    # Include empty string in choices to allow pagination with Enter key
+                    choices = [""] + [str(i) for i in range(max_int_input + 1)] + ["q", "quit", "b", "back"]
                     prompt_msg = "[cyan]Insert media [red]index"
                     telegram_msg = "Scegli il contenuto da scaricare:\n Serie TV -  Film -  Anime\noppure `back` per tornare indietro"
                     

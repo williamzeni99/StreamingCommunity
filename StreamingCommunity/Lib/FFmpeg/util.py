@@ -138,26 +138,53 @@ def get_ffprobe_info(file_path):
 
     Returns:
         dict: A dictionary containing the format name and a list of codec names.
+              Returns None if file does not exist or ffprobe crashes.
     """
+    if not os.path.exists(file_path):
+        logging.error(f"File not found: {file_path}")
+        return None
+        
     try:
-        result = subprocess.run(
-            [get_ffprobe_path(), '-v', 'error', '-show_format', '-show_streams', '-print_format', 'json', file_path],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True
-        )
-        output = result.stdout
-        info = json.loads(output)
+        # Use subprocess.Popen instead of run to better handle crashes
+        cmd = [get_ffprobe_path(), '-v', 'error', '-show_format', '-show_streams', '-print_format', 'json', file_path]
+        logging.info(f"FFmpeg command: {cmd}")
         
-        format_name = info['format']['format_name'] if 'format' in info else None
-        codec_names = [stream['codec_name'] for stream in info['streams']] if 'streams' in info else []
-        
-        return {
-            'format_name': format_name,
-            'codec_names': codec_names
-        }
+        with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as proc:
+            stdout, stderr = proc.communicate()
+            
+            if proc.returncode != 0:
+                logging.error(f"FFprobe failed with return code {proc.returncode} for file {file_path}")
+                if stderr:
+                    logging.error(f"FFprobe stderr: {stderr}")
+                return {
+                    'format_name': None,
+                    'codec_names': []
+                }
+            
+            # Make sure we have valid JSON before parsing
+            if not stdout or not stdout.strip():
+                logging.warning(f"FFprobe returned empty output for file {file_path}")
+                return {
+                    'format_name': None,
+                    'codec_names': []
+                }
+                
+            info = json.loads(stdout)
+            
+            format_name = info['format']['format_name'] if 'format' in info else None
+            codec_names = [stream['codec_name'] for stream in info['streams']] if 'streams' in info else []
+            
+            return {
+                'format_name': format_name,
+                'codec_names': codec_names
+            }
     
     except Exception as e:
-        logging.error(f"Failed to parse JSON output from ffprobe for file {file_path}: {e}")
-        return None
+        logging.error(f"Failed to get ffprobe info for file {file_path}: {e}")
+        return {
+            'format_name': None,
+            'codec_names': []
+        }
 
 
 def is_png_format_or_codec(file_info):
@@ -173,8 +200,11 @@ def is_png_format_or_codec(file_info):
     if not file_info:
         return False
     
-    #console.print(f"[yellow][FFmpeg] [cyan]Avaiable codec[white]: [red]{file_info['codec_names']}")
-    return file_info['format_name'] == 'png_pipe' or 'png' in file_info['codec_names']
+    # Handle None values in format_name gracefully
+    format_name = file_info.get('format_name')
+    codec_names = file_info.get('codec_names', [])
+    
+    return format_name == 'png_pipe' or 'png' in codec_names
 
 
 def need_to_force_to_ts(file_path):

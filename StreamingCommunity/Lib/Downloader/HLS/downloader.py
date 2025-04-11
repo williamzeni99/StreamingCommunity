@@ -514,7 +514,7 @@ class HLS_Downloader:
         for item in self.download_manager.missing_segments:
             if int(item['nFailed']) >= 1:
                 missing_ts = True
-                missing_info += f"[red]TS Failed: {item['nFailed']} {item['type']} tracks[/red]\n"
+                missing_info += f"[red]TS Failed: {item['nFailed']} {item['type']} tracks[/red]"
 
         file_size = internet_manager.format_file_size(os.path.getsize(self.path_manager.output_path))
         duration = print_duration_table(self.path_manager.output_path, description=False, return_string=True)

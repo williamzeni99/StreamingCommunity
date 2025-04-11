@@ -41,10 +41,9 @@ REQUEST_VERIFY = config_manager.get_bool('REQUESTS', 'verify')
 DEFAULT_VIDEO_WORKERS = config_manager.get_int('M3U8_DOWNLOAD', 'default_video_workser')
 DEFAULT_AUDIO_WORKERS = config_manager.get_int('M3U8_DOWNLOAD', 'default_audio_workser')
 MAX_TIMEOOUT = config_manager.get_int("REQUESTS", "timeout")
-MAX_INTERRUPT_COUNT = 3
 SEGMENT_MAX_TIMEOUT = config_manager.get_int("M3U8_DOWNLOAD", "segment_timeout")
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
-
+MAX_INTERRUPT_COUNT = 3
 
 # Variable
 console = Console()
@@ -160,7 +159,7 @@ class M3U8_Segments:
         if self.is_index_url:
             try:
                 client_params = {'headers': {'User-Agent': get_userAgent()}, 'timeout': MAX_TIMEOOUT}
-                response = httpx.get(self.url, **client_params)
+                response = httpx.get(self.url, **client_params, follow_redirects=True)
                 response.raise_for_status()
                 
                 self.parse_data(response.text)

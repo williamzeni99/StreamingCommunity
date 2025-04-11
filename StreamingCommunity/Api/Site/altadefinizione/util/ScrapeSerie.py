@@ -1,5 +1,8 @@
 # 16.03.25
 
+import logging
+
+
 # External libraries
 import httpx
 from bs4 import BeautifulSoup
@@ -13,7 +16,6 @@ from StreamingCommunity.Api.Player.Helper.Vixcloud.util import SeasonManager
 
 # Variable
 max_timeout = config_manager.get_int("REQUESTS", "timeout")
-
 
 
 class GetSerieInfo:
@@ -70,3 +72,36 @@ class GetSerieInfo:
                         'name': episode_name,
                         'url': episode_url
                     })
+
+
+    # ------------- FOR GUI -------------
+    def getNumberSeason(self) -> int:
+        """
+        Get the total number of seasons available for the series.
+        """
+        if not self.seasons_manager.seasons:
+            self.collect_season()
+            
+        return len(self.seasons_manager.seasons)
+    
+    def getEpisodeSeasons(self, season_number: int) -> list:
+        """
+        Get all episodes for a specific season.
+        """
+        if not self.seasons_manager.seasons:
+            self.collect_season()
+            
+        # Get season directly by its number
+        season = self.seasons_manager.get_season_by_number(season_number)
+        return season.episodes.episodes if season else []
+        
+    def selectEpisode(self, season_number: int, episode_index: int) -> dict:
+        """
+        Get information for a specific episode in a specific season.
+        """
+        episodes = self.getEpisodeSeasons(season_number)
+        if not episodes or episode_index < 0 or episode_index >= len(episodes):
+            logging.error(f"Episode index {episode_index} is out of range for season {season_number}")
+            return None
+            
+        return episodes[episode_index]

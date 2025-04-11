@@ -1,7 +1,5 @@
 # 10.12.23
 
-import sys
-
 
 # External libraries
 import httpx
@@ -75,7 +73,7 @@ def title_search(query: str) -> int:
                 'name': dict_title.get('name'),
                 'type': dict_title.get('type'),
                 'date': dict_title.get('last_air_date'),
-                'score': dict_title.get('score')
+                'image': f"{site_constant.FULL_URL.replace("stream", "cdn.stream")}/images/{dict_title.get('images')[0].get('filename')}"
             })
 
             if site_constant.TELEGRAM_BOT:

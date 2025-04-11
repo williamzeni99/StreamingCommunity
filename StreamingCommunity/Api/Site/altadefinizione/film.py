@@ -42,7 +42,6 @@ def download_film(select_title: MediaItem) -> str:
     Return:
         - str: output path if successful, otherwise None
     """
-
     if site_constant.TELEGRAM_BOT:
         bot = get_bot_instance()
         bot.send_message(f"Download in corso:\n{select_title.name}", None)

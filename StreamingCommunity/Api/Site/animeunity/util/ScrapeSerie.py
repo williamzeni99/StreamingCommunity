@@ -94,3 +94,18 @@ class ScrapeSerieAnime:
         except Exception as e:
             logging.error(f"Error fetching episode information: {e}")
             return None
+
+
+    # ------------- FOR GUI -------------
+    def getNumberSeason(self) -> int:
+        """
+        Get the total number of seasons available for the anime.
+        Note: AnimeUnity typically doesn't have seasons, so returns 1.
+        """
+        return 1
+        
+    def selectEpisode(self, season_number: int = 1, episode_index: int = 0) -> Episode:
+        """
+        Get information for a specific episode.
+        """
+        return self.get_info_episode(episode_index)

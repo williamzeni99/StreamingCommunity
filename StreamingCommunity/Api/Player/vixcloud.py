@@ -24,26 +24,20 @@ console = Console()
 
 
 class VideoSource:
-    def __init__(self, url: str, is_series: bool):
+    def __init__(self, url: str, is_series: bool, media_id: int = None):
         """
         Initialize video source for streaming site.
         
         Args:
             - url (str): The URL of the streaming site.
             - is_series (bool): Flag for series or movie content
+            - media_id (int, optional): Unique identifier for media item
         """
         self.headers = {'user-agent': get_userAgent()}
         self.url = url
         self.is_series = is_series
-
-    def setup(self, media_id: int):
-        """
-        Configure media-specific context.
-        
-        Args:
-            media_id (int): Unique identifier for media item
-        """
         self.media_id = media_id
+        self.iframe_src = None
 
     def get_iframe(self, episode_id: int) -> None:
         """
@@ -164,6 +158,7 @@ class VideoSourceAnime(VideoSource):
         self.headers = {'user-agent': get_userAgent()}
         self.url = url
         self.src_mp4 = None
+        self.iframe_src = None
 
     def get_embed(self, episode_id: int):
         """

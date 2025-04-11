@@ -1,6 +1,5 @@
 # 09.06.24
 
-import sys
 import logging
 
 
@@ -67,7 +66,8 @@ def title_search(query: str) -> int:
                 title_info = {
                     'name': name,
                     'url': link,
-                    'type': title_type
+                    'type': title_type,
+                    'image': title_div.find("div", class_="ipsColumn").find("img").get("src")
                 }
 
                 media_search_manager.add_media(title_info)

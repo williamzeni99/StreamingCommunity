@@ -39,7 +39,7 @@ def process_search_result(select_title):
 
 def search(string_to_search: str = None, get_onlyDatabase: bool = False, direct_item: dict = None):
     """
-    Main function of the application for search film, series and anime.
+    Main function of the application for search.
 
     Parameters:
         string_to_search (str, optional): String to search for

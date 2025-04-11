@@ -1,5 +1,6 @@
 # 21.03.25
 
+import logging
 
 # External libraries
 import httpx
@@ -14,7 +15,7 @@ from StreamingCommunity.Util.os import os_manager
 
 # Player
 from ..site import get_session_and_csrf
-from StreamingCommunity.Api.Player.sweetpixel import AnimeWorldPlayer
+from StreamingCommunity.Api.Player.sweetpixel import VideoSource
 
 
 # Variable
@@ -39,7 +40,6 @@ class ScrapSerie:
 
         except:
             raise Exception(f"Failed to retrieve anime page.")
-
 
     def get_name(self):
         """Extract and return the name of the anime series."""
@@ -68,12 +68,39 @@ class ScrapSerie:
         return episodes
 
     def get_episode(self, index):
-        """Fetch a specific episode based on the index, and return an AnimeWorldPlayer instance."""
+        """Fetch a specific episode based on the index, and return an VideoSource instance."""
         episodes = self.get_episodes()
         
         if 0 <= index < len(episodes):
             episode_data = episodes[index]
-            return AnimeWorldPlayer(episode_data, self.session_id, self.csrf_token)
+            return VideoSource(episode_data, self.session_id, self.csrf_token)
         
         else:
             raise IndexError("Episode index out of range")
+    
+    
+    # ------------- FOR GUI -------------
+    def getNumberSeason(self) -> int:
+        """
+        Get the total number of seasons available for the anime.
+        Note: AnimeWorld typically doesn't have seasons, so returns 1.
+        """
+        return 1
+    
+    def getEpisodeSeasons(self, season_number: int = 1) -> list:
+        """
+        Get all episodes for a specific season.
+        Note: For AnimeWorld, this returns all episodes as they're typically in one season.
+        """
+        return self.get_episodes()
+        
+    def selectEpisode(self, season_number: int = 1, episode_index: int = 0) -> dict:
+        """
+        Get information for a specific episode.
+        """
+        episodes = self.get_episodes()
+        if not episodes or episode_index < 0 or episode_index >= len(episodes):
+            logging.error(f"Episode index {episode_index} is out of range")
+            return None
+            
+        return episodes[episode_index]
