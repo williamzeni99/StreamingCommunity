@@ -22,8 +22,7 @@ from .series import download_series
 # Variable
 indice = 5
 _useFor = "serie"
-_deprecate = False
-_priority = 2
+_priority = 0
 _engineDownload = "hls"
 
 msg = Prompt()

@@ -23,8 +23,7 @@ from .series import download_thread
 # Variable
 indice = 6
 _useFor = "serie"
-_deprecate = False
-_priority = 2
+_priority = 0
 _engineDownload = "mp4"
 
 msg = Prompt()

@@ -23,7 +23,7 @@ from rich.console import Console
 # Internal utilities
 from StreamingCommunity.Util.color import Colors
 from StreamingCommunity.Util.headers import get_userAgent
-from StreamingCommunity.Util.config_json import config_manager, get_use_large_bar
+from StreamingCommunity.Util.config_json import config_manager
 
 
 # Logic class
@@ -407,20 +407,12 @@ class M3U8_Segments:
         """
         Generate platform-appropriate progress bar format.
         """
-        if not get_use_large_bar():
-            return (
-                f"{Colors.YELLOW}Proc{Colors.WHITE}: "
-                f"{Colors.RED}{{percentage:.2f}}% "
-                f"{Colors.CYAN}{{remaining}}{{postfix}} {Colors.WHITE}]"
-            )
-            
-        else:
-            return (
-                f"{Colors.YELLOW}[HLS] {Colors.WHITE}({Colors.CYAN}{description}{Colors.WHITE}): "
-                f"{Colors.RED}{{percentage:.2f}}% "
-                f"{Colors.MAGENTA}{{bar}} "
-                f"{Colors.YELLOW}{{elapsed}}{Colors.WHITE} < {Colors.CYAN}{{remaining}}{Colors.WHITE}{{postfix}}{Colors.WHITE}"
-            )
+        return (
+            f"{Colors.YELLOW}[HLS] {Colors.WHITE}({Colors.CYAN}{description}{Colors.WHITE}): "
+            f"{Colors.RED}{{percentage:.2f}}% "
+            f"{Colors.MAGENTA}{{bar}} "
+            f"{Colors.YELLOW}{{elapsed}}{Colors.WHITE} < {Colors.CYAN}{{remaining}}{Colors.WHITE}{{postfix}}{Colors.WHITE}"
+        )
     
     def _get_worker_count(self, stream_type: str) -> int:
         """

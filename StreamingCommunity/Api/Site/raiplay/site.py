@@ -1,7 +1,8 @@
-# 10.12.23
+# 21.05.24
 
 import threading
 import queue
+
 
 # External libraries
 import httpx
@@ -123,7 +124,13 @@ def title_search(query: str) -> int:
     }
 
     try:
-        response = httpx.post(search_url, headers={'user-agent': get_userAgent()}, json=json_data, timeout=max_timeout, follow_redirects=True)
+        response = httpx.post(
+            search_url, 
+            headers={'user-agent': get_userAgent()}, 
+            json=json_data, 
+            timeout=max_timeout, 
+            follow_redirects=True
+        )
         response.raise_for_status()
 
     except Exception as e:

@@ -25,8 +25,7 @@ from .serie import download_series
 # Variable
 indice = 1
 _useFor = "anime"
-_deprecate = False
-_priority = 2
+_priority = 0
 _engineDownload = "mp4"
 
 msg = Prompt()

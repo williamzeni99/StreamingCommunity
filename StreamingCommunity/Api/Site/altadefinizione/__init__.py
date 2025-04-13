@@ -25,8 +25,7 @@ from .series import download_series
 # Variable
 indice = 2
 _useFor = "film_serie"
-_deprecate = False
-_priority = 1
+_priority = 0
 _engineDownload = "hls"
 
 msg = Prompt()

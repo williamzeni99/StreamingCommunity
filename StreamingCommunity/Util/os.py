@@ -4,7 +4,6 @@ import io
 import os
 import glob
 import sys
-import time
 import shutil
 import hashlib
 import logging
@@ -13,11 +12,9 @@ import inspect
 import subprocess
 import contextlib
 import importlib.metadata
-from pathlib import Path
 
 
 # External library
-import httpx
 from unidecode import unidecode
 from rich.console import Console
 from rich.prompt import Prompt
@@ -357,11 +354,14 @@ class OsSummary:
         Exits with a message if not the official version.
         """
         python_implementation = platform.python_implementation()
+        python_version = platform.python_version()
 
         if python_implementation != "CPython":
             console.print(f"[bold red]Warning: You are using a non-official Python distribution: {python_implementation}.[/bold red]")
             console.print("Please install the official Python from [bold blue]https://www.python.org[/bold blue] and try again.", style="bold yellow")
             sys.exit(0)
+
+        console.print(f"[cyan]Python version: [bold red]{python_version}[/bold red]")
 
     def get_system_summary(self):
         self.check_python_version()

@@ -18,7 +18,7 @@ import qbittorrentapi
 # Internal utilities
 from StreamingCommunity.Util.color import Colors
 from StreamingCommunity.Util.os import internet_manager
-from StreamingCommunity.Util.config_json import config_manager, get_use_large_bar
+from StreamingCommunity.Util.config_json import config_manager
 
 
 # Configuration
@@ -316,19 +316,12 @@ class TOR_downloader:
             # Ensure the torrent is started
             self.qb.torrents_resume(torrent_hashes=self.latest_torrent_hash)
             
-            # Configure progress bar display format based on device
-            if get_use_large_bar():
-                bar_format = (
-                    f"{Colors.YELLOW}[TOR] {Colors.WHITE}({Colors.CYAN}video{Colors.WHITE}): "
-                    f"{Colors.RED}{{percentage:.2f}}% {Colors.MAGENTA}{{bar}} {Colors.WHITE}[ "
-                    f"{Colors.YELLOW}{{elapsed}} {Colors.WHITE}< {Colors.CYAN}{{remaining}}{{postfix}} {Colors.WHITE}]"
-                )
-            else:
-                bar_format = (
-                    f"{Colors.YELLOW}Proc{Colors.WHITE}: "
-                    f"{Colors.RED}{{percentage:.2f}}% {Colors.WHITE}| "
-                    f"{Colors.CYAN}{{remaining}}{{postfix}} {Colors.WHITE}]"
-                )
+            # Configure progress bar display format
+            bar_format = (
+                f"{Colors.YELLOW}[TOR] {Colors.WHITE}({Colors.CYAN}video{Colors.WHITE}): "
+                f"{Colors.RED}{{percentage:.2f}}% {Colors.MAGENTA}{{bar}} {Colors.WHITE}[ "
+                f"{Colors.YELLOW}{{elapsed}} {Colors.WHITE}< {Colors.CYAN}{{remaining}}{{postfix}} {Colors.WHITE}]"
+            )
 
             # Initialize progress bar
             with tqdm(

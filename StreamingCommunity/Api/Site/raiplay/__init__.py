@@ -21,8 +21,7 @@ from .film import download_film
 # Variable
 indice = 8
 _useFor = "film_serie"
-_deprecate = False
-_priority = 3
+_priority = 1                # NOTE: Site search need the use of tmbd obj
 _engineDownload = "hls"
 
 msg = Prompt()

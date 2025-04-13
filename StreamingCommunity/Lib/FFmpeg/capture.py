@@ -36,11 +36,7 @@ def capture_output(process: subprocess.Popen, description: str) -> None:
                 if not line:
                     continue
 
-                logging.info(f"FFMPEG line: {line}")
-
-                # Capture only error
-                if "rror" in str(line):
-                    console.log(f"[red]FFMPEG: {str(line).strip()}")
+                logging.info(f"CAPTURE ffmpeg line: {line}")
 
                 # Check if termination is requested
                 if terminate_flag.is_set():

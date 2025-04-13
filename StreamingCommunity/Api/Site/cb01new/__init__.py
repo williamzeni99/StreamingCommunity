@@ -22,8 +22,7 @@ from .film import download_film
 # Variable
 indice = 4
 _useFor = "film"
-_deprecate = False
-_priority = 2
+_priority = 0
 _engineDownload = "mp4"
 
 msg = Prompt()

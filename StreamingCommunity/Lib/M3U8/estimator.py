@@ -1,6 +1,5 @@
 # 21.04.25
 
-import sys
 import time
 import logging
 import threading
@@ -14,7 +13,6 @@ from tqdm import tqdm
 
 # Internal utilities
 from StreamingCommunity.Util.color import Colors
-from StreamingCommunity.Util.config_json import get_use_large_bar
 from StreamingCommunity.Util.os import internet_manager
 
 
@@ -32,14 +30,10 @@ class M3U8_Ts_Estimator:
         self.lock = threading.Lock()
         self.speed = {"upload": "N/A", "download": "N/A"}
         self._running = True
-
-        if get_use_large_bar():
-            logging.debug("USE_LARGE_BAR is True, starting speed capture thread")
-            self.speed_thread = threading.Thread(target=self.capture_speed)
-            self.speed_thread.daemon = True
-            self.speed_thread.start()
-        else:
-            logging.debug("USE_LARGE_BAR is False, speed capture thread not started")
+        
+        self.speed_thread = threading.Thread(target=self.capture_speed)
+        self.speed_thread.daemon = True
+        self.speed_thread.start()
 
     def __del__(self):
         """Ensure thread is properly stopped when the object is destroyed."""
@@ -133,29 +127,22 @@ class M3U8_Ts_Estimator:
                 with self.segments_instance.active_retries_lock:
                     retry_count = self.segments_instance.active_retries
             
-            if get_use_large_bar():
-                # Get speed data outside of any locks
-                speed_data = ["N/A", ""]
-                with self.lock:
-                    download_speed = self.speed['download']
-                
-                if download_speed != "N/A":
-                    speed_data = download_speed.split(" ")
-                
-                average_internet_speed = speed_data[0] if len(speed_data) >= 1 else "N/A"
-                average_internet_unit = speed_data[1] if len(speed_data) >= 2 else ""
-                
-                progress_str = (
-                    f"{Colors.GREEN}{number_file_total_size} {Colors.RED}{units_file_total_size}"
-                    f"{Colors.WHITE}, {Colors.CYAN}{average_internet_speed} {Colors.RED}{average_internet_unit} "
-                    #f"{Colors.WHITE}, {Colors.GREEN}CRR {Colors.RED}{retry_count} "
-                )
-                
-            else:
-                progress_str = (
-                    f"{Colors.GREEN}{number_file_total_size} {Colors.RED}{units_file_total_size} "
-                    #f"{Colors.WHITE}, {Colors.GREEN}CRR {Colors.RED}{retry_count} "
-                )
+            # Get speed data outside of any locks
+            speed_data = ["N/A", ""]
+            with self.lock:
+                download_speed = self.speed['download']
+            
+            if download_speed != "N/A":
+                speed_data = download_speed.split(" ")
+            
+            average_internet_speed = speed_data[0] if len(speed_data) >= 1 else "N/A"
+            average_internet_unit = speed_data[1] if len(speed_data) >= 2 else ""
+            
+            progress_str = (
+                f"{Colors.GREEN}{number_file_total_size} {Colors.RED}{units_file_total_size}"
+                f"{Colors.WHITE}, {Colors.CYAN}{average_internet_speed} {Colors.RED}{average_internet_unit} "
+                #f"{Colors.WHITE}, {Colors.GREEN}CRR {Colors.RED}{retry_count} "
+            )
             
             progress_counter.set_postfix_str(progress_str)
             

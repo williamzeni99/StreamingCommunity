@@ -70,7 +70,12 @@ def title_search(query: str) -> int:
 
     # Make the GET request
     try:
-        response = httpx.get(search_url, headers={'User-Agent': get_userAgent()})
+        response = httpx.get(
+            search_url, 
+            headers={'User-Agent': get_userAgent()},
+            timeout=max_timeout,
+            verify=False
+        )
 
     except Exception as e:
         console.print(f"Site: {site_constant.SITE_NAME}, request search error: {e}")

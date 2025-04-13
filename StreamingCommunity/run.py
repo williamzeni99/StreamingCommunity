@@ -90,11 +90,8 @@ def load_search_functions():
 
             # Get 'indice' from the module
             indice = getattr(mod, 'indice', 0)
-            is_deprecate = bool(getattr(mod, '_deprecate', True))
             use_for = getattr(mod, '_useFor', 'other')
-
-            if not is_deprecate:
-                modules.append((module_name, indice, use_for))
+            modules.append((module_name, indice, use_for))
 
         except Exception as e:
             console.print(f"[red]Failed to import module {module_name}: {str(e)}")

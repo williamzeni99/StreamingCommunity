@@ -44,7 +44,12 @@ def title_search(query: str) -> int:
     console.print(f"[cyan]Search url: [yellow]{search_url}")
 
     try:
-        response = httpx.get(search_url, headers={'user-agent': get_userAgent()}, timeout=max_timeout, follow_redirects=True)
+        response = httpx.get(
+            search_url, 
+            headers={'user-agent': get_userAgent()}, 
+            timeout=max_timeout, 
+            follow_redirects=True
+        )
         response.raise_for_status()
 
     except Exception as e:
