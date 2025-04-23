@@ -68,22 +68,32 @@ class ScrapeSerieAnime:
         Fetch all episodes data at once and cache it
         """
         try:
+            all_episodes = []
             count = self.get_count_episodes()
             if not count:
                 return
-
-            response = httpx.get(
-                url=f"{self.url}/info_api/{self.media_id}/1",
-                params={
-                    "start_range": 1,
-                    "end_range": count
-                },
-                headers=self.headers,
-                timeout=max_timeout
-            )
-            response.raise_for_status()
             
-            self.episodes_cache = response.json()["episodes"]
+            # Fetch episodes
+            start_range = 1
+            while start_range <= count:
+                end_range = min(start_range + 119, count)
+                
+                response = httpx.get(
+                    url=f"{self.url}/info_api/{self.media_id}/1",
+                    params={
+                        "start_range": start_range,
+                        "end_range": end_range
+                    },
+                    headers=self.headers,
+                    timeout=max_timeout
+                )
+                response.raise_for_status()
+                
+                chunk_episodes = response.json().get("episodes", [])
+                all_episodes.extend(chunk_episodes)
+                start_range = end_range + 1
+            
+            self.episodes_cache = all_episodes
         except Exception as e:
             logging.error(f"Error fetching all episodes: {e}")
             self.episodes_cache = None
