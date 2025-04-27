@@ -58,7 +58,7 @@ def title_search(query: str) -> int:
     # Create soup and find table
     soup = BeautifulSoup(response.text, "html.parser")
 
-    for tr in soup.find_all('tr'):
+    for i, tr in enumerate(soup.find_all('tr')):
         try:
 
             title_info = {
@@ -71,6 +71,9 @@ def title_search(query: str) -> int:
                 'type': 'torrent'
             }
             media_search_manager.add_media(title_info)
+
+            if i == 20:
+                break
 
         except Exception as e:
             print(f"Error parsing a film entry: {e}")

@@ -12,6 +12,10 @@ from typing import Any, List
 from rich.console import Console
 
 
+# Internal utilities
+from StreamingCommunity.Util.headers import get_userAgent
+
+
 # Variable
 console = Console()
 download_site_data = True
@@ -134,7 +138,7 @@ class ConfigManager:
         console.print(f"[bold cyan]Downloading reference configuration:[/bold cyan] [green]{self.reference_config_url}[/green]")
 
         try:
-            response = requests.get(self.reference_config_url, timeout=10)
+            response = requests.get(self.reference_config_url, timeout=8, headers={'User-Agent': get_userAgent()})
             
             if response.status_code == 200:
                 with open(self.file_path, 'wb') as f:
@@ -156,7 +160,7 @@ class ConfigManager:
         try:
             # Download the reference configuration
             console.print(f"[bold cyan]Validating configuration with GitHub...[/bold cyan]")
-            response = requests.get(self.reference_config_url, timeout=10)
+            response = requests.get(self.reference_config_url, timeout=8, headers={'User-Agent': get_userAgent()})
             
             if not response.ok:
                 raise Exception(f"Error downloading reference configuration. Code: {response.status_code}")
@@ -267,13 +271,14 @@ class ConfigManager:
         headers = {
             "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2Zm5ncG94d3Jnc3duenl0YWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNTIxNjMsImV4cCI6MjA1NTcyODE2M30.FNTCCMwi0QaKjOu8gtZsT5yQttUW8QiDDGXmzkn89QE",
             "Authorization": f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2Zm5ncG94d3Jnc3duenl0YWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNTIxNjMsImV4cCI6MjA1NTcyODE2M30.FNTCCMwi0QaKjOu8gtZsT5yQttUW8QiDDGXmzkn89QE",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "User-Agent":  get_userAgent()
         }
         
         try:
             console.print("[bold cyan]Retrieving site data from API...[/bold cyan]")
-            response = requests.get("https://zvfngpoxwrgswnzytadh.supabase.co/rest/v1/public", headers=headers, timeout=10)
-            
+            response = requests.get("https://zvfngpoxwrgswnzytadh.supabase.co/rest/v1/public", timeout=8, headers=headers)
+
             if response.ok:
                 data = response.json()
                 if data and len(data) > 0:
@@ -282,13 +287,6 @@ class ConfigManager:
                     site_count = len(self.configSite) if isinstance(self.configSite, dict) else 0
                     console.print(f"[bold green]Site data retrieved:[/bold green] {site_count} streaming services available")
                     
-                    # Show some sites as examples
-                    if site_count > 0:
-                        examples = list(self.configSite.items())[:3]
-                        sites_info = []
-                        for site, info in examples:
-                            url = info.get('full_url', 'N/A')
-                            console.print(f"  • [cyan]{site}[/cyan]: {url}")
                 else:
                     console.print("[bold yellow]API returned an empty data set[/bold yellow]")
             else:
@@ -347,7 +345,7 @@ class ConfigManager:
         try:
             logging.info(f"Downloading {filename} from {url}...")
             console.print(f"[bold cyan]File download:[/bold cyan] {os.path.basename(filename)}")
-            response = requests.get(url, timeout=10)
+            response = requests.get(url, timeout=8, headers={'User-Agent': get_userAgent()})
             
             if response.status_code == 200:
                 with open(filename, 'wb') as f:
