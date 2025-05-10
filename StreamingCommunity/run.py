@@ -21,7 +21,7 @@ from rich.prompt import Prompt
 from .global_search import global_search
 from StreamingCommunity.Util.message import start_message
 from StreamingCommunity.Util.config_json import config_manager
-from StreamingCommunity.Util.os import os_summary
+from StreamingCommunity.Util.os import os_summary, internet_manager
 from StreamingCommunity.Util.logger import Logger
 from StreamingCommunity.Upload.update import update as git_update
 from StreamingCommunity.Lib.TMBD import tmdb
@@ -200,6 +200,15 @@ def main(script_id = 0):
     # Create logger
     log_not = Logger()
     initialize()
+    
+    if not internet_manager.check_dns_provider():
+        console.print("[red]❌ ERROR: DNS configuration is required!")
+        console.print("[red]The program cannot function correctly without proper DNS settings.")
+        console.print("[yellow]Please configure one of these DNS servers:")
+        console.print("[blue]• Cloudflare (1.1.1.1)")
+        console.print("[blue]• Quad9 (9.9.9.9)")
+        console.print("\n[yellow]⚠️ The program will not work until you configure your DNS settings.")
+        input("[yellow]Press Enter to exit...")
 
     # Load search functions
     search_functions = load_search_functions()
