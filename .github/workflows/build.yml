@@ -105,6 +105,9 @@ jobs:
       - name: Build executable with PyInstaller
         shell: bash
         run: |
+          # Get certifi certificate path
+          CERT_PATH=$(python -c "import certifi; print(certifi.where())")
+          
           pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=ua_generator \
             --hidden-import=qbittorrentapi --hidden-import=qbittorrent \
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm \
@@ -123,6 +126,7 @@ jobs:
             --hidden-import=Cryptodome.Random \
             --hidden-import=telebot \
             --additional-hooks-dir=pyinstaller/hooks \
+            --add-data "${CERT_PATH};certifi" \
             --add-data "StreamingCommunity${{ matrix.separator }}StreamingCommunity" \
             --name=${{ matrix.artifact_name }} test_run.py
 
