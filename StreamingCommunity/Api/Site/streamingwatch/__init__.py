@@ -23,6 +23,7 @@ indice = 8
 _useFor = "film_serie"
 _priority = 10          # !!! MOLTO LENTO
 _engineDownload = "hls"
+_deprecate = False
 
 msg = Prompt()
 console = Console()

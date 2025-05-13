@@ -108,6 +108,14 @@ jobs:
           # Get certifi certificate path
           CERT_PATH=$(python -c "import certifi; print(certifi.where())")
           
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            CERT_DATA="${CERT_PATH};certifi"
+            SC_DATA="StreamingCommunity;StreamingCommunity"
+          else
+            CERT_DATA="${CERT_PATH}:certifi"
+            SC_DATA="StreamingCommunity:StreamingCommunity"
+          fi
+          
           pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=ua_generator \
             --hidden-import=qbittorrentapi --hidden-import=qbittorrent \
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm \
@@ -126,8 +134,8 @@ jobs:
             --hidden-import=Cryptodome.Random \
             --hidden-import=telebot \
             --additional-hooks-dir=pyinstaller/hooks \
-            --add-data "${CERT_PATH};certifi" \
-            --add-data "StreamingCommunity${{ matrix.separator }}StreamingCommunity" \
+            --add-data="$CERT_DATA" \
+            --add-data="$SC_DATA" \
             --name=${{ matrix.artifact_name }} test_run.py
 
       - name: Upload executable

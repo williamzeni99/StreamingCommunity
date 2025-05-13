@@ -30,7 +30,7 @@ from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance, Teleg
 
 # Config
 SHOW_TRENDING = config_manager.get_bool('DEFAULT', 'show_trending')
-CLOSE_CONSOLE = config_manager.get_bool('DEFAULT', 'not_close')
+NOT_CLOSE_CONSOLE = config_manager.get_bool('DEFAULT', 'not_close')
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
 
 
@@ -61,7 +61,7 @@ def load_search_functions():
     loaded_functions = {}
 
     # Lista dei siti da escludere se TELEGRAM_BOT è attivo
-    excluded_sites = {"cb01new", "ddlstreamitaly", "guardaserie", "ilcorsaronero", "mostraguarda"} if TELEGRAM_BOT else set()
+    excluded_sites = {"cb01new", "guardaserie", "ilcorsaronero", "mostraguarda"} if TELEGRAM_BOT else set()
 
     # Find api home directory
     if getattr(sys, 'frozen', False):  # Modalità PyInstaller
@@ -89,9 +89,11 @@ def load_search_functions():
             mod = importlib.import_module(f'StreamingCommunity.Api.Site.{module_name}')
 
             # Get 'indice' from the module
-            indice = getattr(mod, 'indice', 0)
-            use_for = getattr(mod, '_useFor', 'other')
-            modules.append((module_name, indice, use_for))
+            indice = getattr(mod, 'indice')
+            use_for = getattr(mod, '_useFor')
+
+            if not getattr(mod, '_deprecate'):
+                modules.append((module_name, indice, use_for))
 
         except Exception as e:
             console.print(f"[red]Failed to import module {module_name}: {str(e)}")
@@ -202,13 +204,16 @@ def main(script_id = 0):
     initialize()
     
     if not internet_manager.check_dns_provider():
+        print()
         console.print("[red]❌ ERROR: DNS configuration is required!")
         console.print("[red]The program cannot function correctly without proper DNS settings.")
         console.print("[yellow]Please configure one of these DNS servers:")
-        console.print("[blue]• Cloudflare (1.1.1.1)")
-        console.print("[blue]• Quad9 (9.9.9.9)")
+        console.print("[blue]• Cloudflare (1.1.1.1) 'https://developers.cloudflare.com/1.1.1.1/setup/windows/'")
+        console.print("[blue]• Quad9 (9.9.9.9) 'https://docs.quad9.net/Setup_Guides/Windows/Windows_10/'")
         console.print("\n[yellow]⚠️ The program will not work until you configure your DNS settings.")
-        input("[yellow]Press Enter to exit...")
+
+        time.sleep(1)        
+        msg.ask("[yellow]Press Enter to exit...")
 
     # Load search functions
     search_functions = load_search_functions()
@@ -259,21 +264,9 @@ def main(script_id = 0):
         "other": "white"
     }
 
-    # Add dynamic arguments based on loaded search modules
-    used_short_options = set()
-
-    for alias, (_, use_for) in search_functions.items():
-        short_option = alias[:3].upper()
-    
-        original_short_option = short_option
-        count = 1
-        while short_option in used_short_options:
-            short_option = f"{original_short_option}{count}"
-            count += 1
-    
-        used_short_options.add(short_option)
-        long_option = alias
-        parser.add_argument(f'-{short_option}', f'--{long_option}', action='store_true', help=f'Search for {alias.split("_")[0]} on streaming platforms.')
+    # Add numeric arguments for each search module
+    for idx, (alias, (_, use_for)) in enumerate(search_functions.items()):
+        parser.add_argument(f'--{idx}', action='store_true', help=f'Search using {alias.split("_")[0]} ({use_for})')
 
     parser.add_argument('-s', '--search', default=None, help='Search terms')
     
@@ -309,12 +302,11 @@ def main(script_id = 0):
         global_search(search_terms)
         return
 
-    # Map command-line arguments to functions
-    arg_to_function = {alias: func for alias, (func, _) in search_functions.items()}
-
-    # Check which argument is provided and run the corresponding function
-    for arg, func in arg_to_function.items():
-        if getattr(args, arg):
+    # Check for numeric arguments
+    search_functions_list = list(search_functions.items())
+    for i in range(len(search_functions_list)):
+        if getattr(args, str(i)):
+            alias, (func, _) = search_functions_list[i]
             run_function(func, search_terms=search_terms)
             return
 
@@ -324,28 +316,23 @@ def main(script_id = 0):
     # Create dynamic prompt message and choices
     choice_labels = {str(i): (alias.split("_")[0].capitalize(), use_for) for i, (alias, (_, use_for)) in enumerate(search_functions.items())}
 
-    # Add global search option to the menu
-    #global_search_key = str(len(choice_labels))
-    #choice_labels[global_search_key] = ("Global Search", "all")
-    #input_to_function[global_search_key] = global_search
-
     # Display the category legend in a single line
     legend_text = " | ".join([f"[{color}]{category.capitalize()}[/{color}]" for category, color in color_map.items()])
     console.print(f"\n[bold green]Category Legend:[/bold green] {legend_text}")
 
-    # Construct the prompt message with color-coded site names
+    # Construct the prompt message with color-coded site names and aliases
     prompt_message = "[green]Insert category [white](" + ", ".join(
-        [f"{key}: [{color_map.get(label[1], 'white')}]{label[0]}[/{color_map.get(label[1], 'white')}]" for key, label in choice_labels.items()]
+        [f"{key}: [{color_map.get(label[1], 'white')}]{label[0]}" 
+         for key, label in choice_labels.items()]
     ) + "[white])"
 
     if TELEGRAM_BOT:
-        
         # Display the category legend in a single line
         category_legend_str = "Categorie: \n" + " | ".join([
             f"{category.capitalize()}" for category in color_map.keys()
         ])
 
-        # Costruisci il messaggio senza emoji
+        # Build message with aliases
         prompt_message = "Inserisci il sito:\n" + "\n".join(
             [f"{key}: {label[0]}" for key, label in choice_labels.items()]
         )
@@ -356,7 +343,7 @@ def main(script_id = 0):
         category = bot.ask(
             "select_provider",
             f"{category_legend_str}\n\n{prompt_message}",
-            None  # Passiamo la lista delle chiavi come scelte
+            None
         )
 
     else:
@@ -379,10 +366,11 @@ def main(script_id = 0):
 
         console.print("[red]Invalid category.")
 
-        if CLOSE_CONSOLE:
-            restart_script()  # Riavvia lo script invece di uscire
+        if NOT_CLOSE_CONSOLE:
+            restart_script()
+
         else:
-            force_exit()  # Usa la funzione per chiudere sempre
+            force_exit()
 
             if TELEGRAM_BOT:
                 bot.send_message(f"Chiusura in corso", None)

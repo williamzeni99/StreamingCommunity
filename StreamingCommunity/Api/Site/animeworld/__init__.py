@@ -22,6 +22,7 @@ indice = 8
 _useFor = "anime"
 _priority = 0
 _engineDownload = "mp4"
+_deprecate = False
 
 msg = Prompt()
 console = Console()

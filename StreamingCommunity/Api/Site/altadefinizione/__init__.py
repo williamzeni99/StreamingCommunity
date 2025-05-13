@@ -27,6 +27,7 @@ indice = 2
 _useFor = "film_serie"
 _priority = 0
 _engineDownload = "hls"
+_deprecate = True
 
 msg = Prompt()
 console = Console()

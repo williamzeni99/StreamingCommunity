@@ -24,6 +24,7 @@ indice = 3
 _useFor = "film_serie"
 _priority = 0
 _engineDownload = "tor"
+_deprecate = False
 
 console = Console()
 msg = Prompt()

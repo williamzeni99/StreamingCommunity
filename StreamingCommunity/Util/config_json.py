@@ -166,7 +166,6 @@ class ConfigManager:
                 raise Exception(f"Error downloading reference configuration. Code: {response.status_code}")
             
             reference_config = response.json()
-            console.print(f"[bold cyan]Reference configuration downloaded:[/bold cyan] [green]{len(reference_config)} keys available[/green]")
             
             # Compare and update missing keys
             merged_config = self._deep_merge_configs(self.config, reference_config)
@@ -285,7 +284,6 @@ class ConfigManager:
                     self.configSite = data[0]['data']
                     
                     site_count = len(self.configSite) if isinstance(self.configSite, dict) else 0
-                    console.print(f"[bold green]Site data retrieved:[/bold green] {site_count} streaming services available")
                     
                 else:
                     console.print("[bold yellow]API returned an empty data set[/bold yellow]")

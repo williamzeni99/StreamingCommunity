@@ -24,6 +24,7 @@ indice = 5
 _useFor = "serie"
 _priority = 0
 _engineDownload = "hls"
+_deprecate = False
 
 msg = Prompt()
 console = Console()
