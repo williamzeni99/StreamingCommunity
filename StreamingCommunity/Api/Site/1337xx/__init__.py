@@ -21,9 +21,9 @@ from .title import download_title
 
 # Variable
 indice = 3
-_useFor = "film_serie"
+_useFor = "Torrent"
 _priority = 0
-_engineDownload = "tor"
+_engineDownload = "Torrent"
 _deprecate = False
 
 console = Console()

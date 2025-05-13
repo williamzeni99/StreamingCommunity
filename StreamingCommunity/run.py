@@ -193,6 +193,13 @@ def force_exit():
 
 def main(script_id = 0):
 
+    color_map = {
+        "anime": "red",
+        "film_&_serie": "yellow",
+        "serie": "blue",
+        "torrent": "white"
+    }
+
     if TELEGRAM_BOT:
         bot = get_bot_instance()
         bot.send_message(f"Avviato script {script_id}", None)
@@ -256,18 +263,6 @@ def main(script_id = 0):
     )
 
     # Add arguments for search functions
-    color_map = {
-        "anime": "red",
-        "film_serie": "yellow",
-        "film": "blue",
-        "serie": "green",
-        "other": "white"
-    }
-
-    # Add numeric arguments for each search module
-    for idx, (alias, (_, use_for)) in enumerate(search_functions.items()):
-        parser.add_argument(f'--{idx}', action='store_true', help=f'Search using {alias.split("_")[0]} ({use_for})')
-
     parser.add_argument('-s', '--search', default=None, help='Search terms')
     
     # Parse command-line arguments
@@ -302,44 +297,41 @@ def main(script_id = 0):
         global_search(search_terms)
         return
 
-    # Check for numeric arguments
-    search_functions_list = list(search_functions.items())
-    for i in range(len(search_functions_list)):
-        if getattr(args, str(i)):
-            alias, (func, _) = search_functions_list[i]
-            run_function(func, search_terms=search_terms)
-            return
+    # Create mappings using module indice
+    input_to_function = {}
+    choice_labels = {}
+    
+    for alias, (func, use_for) in search_functions.items():
+        module_name = alias.split("_")[0]
+        try:
+            mod = importlib.import_module(f'StreamingCommunity.Api.Site.{module_name}')
+            site_index = str(getattr(mod, 'indice'))
+            input_to_function[site_index] = func
+            choice_labels[site_index] = (module_name.capitalize(), use_for.lower())
+        except Exception as e:
+            console.print(f"[red]Error mapping module {module_name}: {str(e)}")
 
-    # Mapping user input to functions
-    input_to_function = {str(i): func for i, (alias, (func, _)) in enumerate(search_functions.items())}
-
-    # Create dynamic prompt message and choices
-    choice_labels = {str(i): (alias.split("_")[0].capitalize(), use_for) for i, (alias, (_, use_for)) in enumerate(search_functions.items())}
-
-    # Display the category legend in a single line
+    # Display the category legend
     legend_text = " | ".join([f"[{color}]{category.capitalize()}[/{color}]" for category, color in color_map.items()])
     console.print(f"\n[bold green]Category Legend:[/bold green] {legend_text}")
 
-    # Construct the prompt message with color-coded site names and aliases
+    # Construct prompt with proper color mapping
     prompt_message = "[green]Insert category [white](" + ", ".join(
-        [f"{key}: [{color_map.get(label[1], 'white')}]{label[0]}" 
+        [f"[{color_map.get(label[1], 'white')}]{key}: {label[0]}[/{color_map.get(label[1], 'white')}]" 
          for key, label in choice_labels.items()]
     ) + "[white])"
 
     if TELEGRAM_BOT:
-        # Display the category legend in a single line
         category_legend_str = "Categorie: \n" + " | ".join([
             f"{category.capitalize()}" for category in color_map.keys()
         ])
 
-        # Build message with aliases
         prompt_message = "Inserisci il sito:\n" + "\n".join(
             [f"{key}: {label[0]}" for key, label in choice_labels.items()]
         )
 
         console.print(f"\n{prompt_message}")
 
-        # Chiedi la scelta all'utente con il bot Telegram
         category = bot.ask(
             "select_provider",
             f"{category_legend_str}\n\n{prompt_message}",
@@ -351,13 +343,6 @@ def main(script_id = 0):
 
     # Run the corresponding function based on user input
     if category in input_to_function:
-        """if category == global_search_key:
-            # Run global search
-            run_function(input_to_function[category], search_terms=search_terms)
-        
-        else:"""
-        
-        # Run normal site-specific search
         run_function(input_to_function[category], search_terms=search_terms)
         
     else:

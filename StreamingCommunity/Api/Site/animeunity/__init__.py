@@ -24,7 +24,7 @@ from .serie import download_series
 
 # Variable
 indice = 1
-_useFor = "anime"
+_useFor = "Anime"
 _priority = 0
 _engineDownload = "mp4"
 _deprecate = False

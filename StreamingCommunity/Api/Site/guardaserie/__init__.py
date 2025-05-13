@@ -20,8 +20,8 @@ from .series import download_series
 
 
 # Variable
-indice = 5
-_useFor = "serie"
+indice = 4
+_useFor = "Serie"
 _priority = 0
 _engineDownload = "hls"
 _deprecate = False
