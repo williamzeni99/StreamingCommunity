@@ -51,7 +51,7 @@ jobs:
 
   build:
     if: startsWith(github.ref_name, 'v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_pypi == 'false')
-    
+
     strategy:
       matrix:
         include:
@@ -59,17 +59,17 @@ jobs:
             artifact_name: StreamingCommunity_win
             executable: StreamingCommunity_win.exe
             separator: ';'
-          
+
           - os: macos-latest
             artifact_name: StreamingCommunity_mac
             executable: StreamingCommunity_mac
             separator: ':'
-          
+
           - os: ubuntu-latest
             artifact_name: StreamingCommunity_linux_latest
             executable: StreamingCommunity_linux_latest
             separator: ':'
-          
+
           - os: ubuntu-22.04
             artifact_name: StreamingCommunity_linux_previous
             executable: StreamingCommunity_linux_previous
@@ -105,17 +105,6 @@ jobs:
       - name: Build executable with PyInstaller
         shell: bash
         run: |
-          # Get certifi certificate path
-          CERT_PATH=$(python -c "import certifi; print(certifi.where())")
-          
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            CERT_DATA="${CERT_PATH};certifi"
-            SC_DATA="StreamingCommunity;StreamingCommunity"
-          else
-            CERT_DATA="${CERT_PATH}:certifi"
-            SC_DATA="StreamingCommunity:StreamingCommunity"
-          fi
-          
           pyinstaller --onefile --hidden-import=pycryptodomex --hidden-import=ua_generator \
             --hidden-import=qbittorrentapi --hidden-import=qbittorrent \
             --hidden-import=bs4 --hidden-import=httpx --hidden-import=rich --hidden-import=tqdm \
@@ -134,8 +123,7 @@ jobs:
             --hidden-import=Cryptodome.Random \
             --hidden-import=telebot \
             --additional-hooks-dir=pyinstaller/hooks \
-            --add-data="$CERT_DATA" \
-            --add-data="$SC_DATA" \
+            --add-data "StreamingCommunity${{ matrix.separator }}StreamingCommunity" \
             --name=${{ matrix.artifact_name }} test_run.py
 
       - name: Upload executable
