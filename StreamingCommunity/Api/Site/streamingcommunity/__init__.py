@@ -142,7 +142,7 @@ def search(string_to_search: str = None, get_onlyDatabase: bool = False, direct_
     # Perform search on the database using the obtained query
     finder = ProxyFinder(site_constant.FULL_URL)
     proxy = finder.find_fast_proxy()
-    len_database = title_search(string_to_search, proxy)
+    len_database = title_search(actual_search_query, proxy)
 
     # If only the database object (media_search_manager populated by title_search) is needed
     if get_onlyDatabase:
