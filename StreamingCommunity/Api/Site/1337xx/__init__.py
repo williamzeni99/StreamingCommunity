@@ -24,7 +24,7 @@ indice = 3
 _useFor = "Torrent"
 _priority = 0
 _engineDownload = "Torrent"
-_deprecate = False
+_deprecate = True
 
 console = Console()
 msg = Prompt()
@@ -62,7 +62,7 @@ def search(string_to_search: str = None, get_onlyDatabase: bool = False, direct_
         return media_search_manager
 
     if len_database > 0:
-        select_title = get_select_title(table_show_manager, media_search_manager)
+        select_title = get_select_title(table_show_manager, media_search_manager, len_database)
         download_title(select_title)
 
     else:
