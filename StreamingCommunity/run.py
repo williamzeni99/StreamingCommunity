@@ -219,8 +219,8 @@ def main(script_id = 0):
         console.print("[blue]• Quad9 (9.9.9.9) 'https://docs.quad9.net/Setup_Guides/Windows/Windows_10/'")
         console.print("\n[yellow]⚠️ The program will not work until you configure your DNS settings.")
 
-        time.sleep(1)        
-        msg.ask("[yellow]Press Enter to exit...")
+        time.sleep(2)        
+        msg.ask("[yellow]Press Enter to continue ...")
 
     # Load search functions
     search_functions = load_search_functions()
