@@ -39,9 +39,6 @@ class ConfigManager:
           
             # Get the actual path of the module file
             current_file_path = os.path.abspath(__file__)
-            # Navigate upwards to find the project root
-            # Assuming this file is in a package structure like StreamingCommunity/Util/config_json.py
-            # We need to go up 2 levels to reach the project root
             base_path = os.path.dirname(os.path.dirname(os.path.dirname(current_file_path)))
             
         # Initialize file paths
@@ -562,7 +559,6 @@ class ConfigManager:
         return section in config_source
 
 
-# Helper function to check the platform
 def get_use_large_bar():
     """
     Determine if the large bar feature should be enabled.
