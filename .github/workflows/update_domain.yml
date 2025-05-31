@@ -1,0 +1,48 @@
+name: Aggiorna Domini Periodicamente
+
+on:
+  schedule:
+    - cron: "*/45 * * * *"
+  workflow_dispatch:
+
+jobs:
+  update-domains:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout del codice
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Installa dipendenze
+        run: pip install httpx ua-generator
+
+      - name: Configura DNS
+        run: |
+          sudo sh -c 'echo "nameserver 9.9.9.9" > /etc/resolv.conf'
+          sudo sh -c 'echo "nameserver 149.112.112.122" >> /etc/resolv.conf'
+          cat /etc/resolv.conf
+
+      - name: Esegui lo script di aggiornamento domini
+        run: python domain_updater.py
+
+      - name: Commit e Push delle modifiche (se presenti)
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # Controlla se domain.json è stato modificato
+          if ! git diff --quiet domain.json; then
+            git add domain.json
+            git commit -m "Aggiornamento automatico domini [skip ci]"
+            echo "Modifiche committate. Tentativo di push..."
+            git push
+          else
+            echo "Nessuna modifica a domain.json da committare."
+          fi
