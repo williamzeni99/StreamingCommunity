@@ -79,7 +79,7 @@ def update():
     try:
         current_version = importlib.metadata.version(__title__)
     except importlib.metadata.PackageNotFoundError:
-        console.print(f"[yellow]Warning: Could not determine installed version for '{__title__}' via importlib.metadata. Falling back to source version.[/yellow]")
+        #console.print(f"[yellow]Warning: Could not determine installed version for '{__title__}' via importlib.metadata. Falling back to source version.[/yellow]")
         current_version = source_code_version
 
     # Get commit details
