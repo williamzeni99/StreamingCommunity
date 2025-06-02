@@ -22,7 +22,8 @@ jobs:
           
       - name: Install dependencies
         run: |
-          pip install httpx ua-generator requests
+          pip install httpx tldextract ua-generator dnspython
+
           pip install --upgrade pip setuptools wheel
 
       - name: Configure DNS
