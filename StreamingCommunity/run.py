@@ -207,6 +207,13 @@ def main(script_id = 0):
         "torrent": "white"
     }
 
+    category_map = {
+        1: "anime",
+        2: "film_&_serie",
+        3: "serie",
+        4: "torrent"
+    }
+
     if TELEGRAM_BOT:
         bot = get_bot_instance()
         bot.send_message(f"Avviato script {script_id}", None)
@@ -271,6 +278,11 @@ def main(script_id = 0):
         '--global', action='store_true', help='Perform a global search across multiple sites.'
     )
 
+    # Add category selection argument
+    parser.add_argument(
+        '--category', type=int, help='Select category directly (1: anime, 2: film_&_serie, 3: serie, 4: torrent).'
+    )
+
     # Add arguments for search functions
     parser.add_argument('-s', '--search', default=None, help='Search terms')
     
@@ -320,35 +332,60 @@ def main(script_id = 0):
         except Exception as e:
             console.print(f"[red]Error mapping module {module_name}: {str(e)}")
 
-    # Display the category legend
-    legend_text = " | ".join([f"[{color}]{category.capitalize()}[/{color}]" for category, color in color_map.items()])
-    console.print(f"\n[bold green]Category Legend:[/bold green] {legend_text}")
+    if args.category:
+        selected_category = category_map.get(args.category)
+        category_sites = []
+        for key, label in choice_labels.items():
+            if label[1] == selected_category:
+                category_sites.append((key, label[0]))
 
-    # Construct prompt with proper color mapping
-    prompt_message = "[green]Insert category [white](" + ", ".join(
-        [f"[{color_map.get(label[1], 'white')}]{key}: {label[0]}[/{color_map.get(label[1], 'white')}]" 
-         for key, label in choice_labels.items()]
-    ) + "[white])"
+        if len(category_sites) == 1:
+            category = category_sites[0][0]
+            console.print(f"[green]Selezionato automaticamente: {category_sites[0][1]}[/green]")
 
-    if TELEGRAM_BOT:
-        category_legend_str = "Categorie: \n" + " | ".join([
-            f"{category.capitalize()}" for category in color_map.keys()
-        ])
-
-        prompt_message = "Inserisci il sito:\n" + "\n".join(
-            [f"{key}: {label[0]}" for key, label in choice_labels.items()]
-        )
-
-        console.print(f"\n{prompt_message}")
-
-        category = bot.ask(
-            "select_provider",
-            f"{category_legend_str}\n\n{prompt_message}",
-            None
-        )
+        else:
+            sito_prompt_items = [f"[{color_map.get(selected_category, 'white')}]({k}) {v}[/{color_map.get(selected_category, 'white')}]" 
+                               for k, v in category_sites]
+            sito_prompt_line = ", ".join(sito_prompt_items)
+            
+            if TELEGRAM_BOT:
+                console.print(f"\nInsert site: {sito_prompt_line}")
+                category = bot.ask(
+                    "select_site",
+                    f"Insert site: {sito_prompt_line}",
+                    None
+                )
+            else:
+                category = msg.ask(f"\n[cyan]Insert site: {sito_prompt_line}", choices=[k for k, _ in category_sites], show_choices=False)
 
     else:
-        category = msg.ask(prompt_message, choices=list(choice_labels.keys()), default="0", show_choices=False, show_default=False)
+        legend_text = " | ".join([f"[{color}]{category.capitalize()}[/{color}]" for category, color in color_map.items()])
+        console.print(f"\n[bold cyan]Category Legend:[/bold cyan] {legend_text}")
+
+        prompt_message = "[cyan]Insert site: " + ", ".join(
+            [f"[{color_map.get(label[1], 'white')}]({key}) {label[0]}[/{color_map.get(label[1], 'white')}]" 
+             for key, label in choice_labels.items()]
+        )
+
+        if TELEGRAM_BOT:
+            category_legend_str = "Categorie: \n" + " | ".join([
+                f"{category.capitalize()}" for category in color_map.keys()
+            ])
+
+            prompt_message_telegram = "Inserisci il sito:\n" + "\n".join(
+                [f"{key}: {label[0]}" for key, label in choice_labels.items()]
+            )
+
+            console.print(f"\n{prompt_message_telegram}")
+
+            category = bot.ask(
+                "select_provider",
+                f"{category_legend_str}\n\n{prompt_message_telegram}",
+                None
+            )
+
+        else:
+            category = msg.ask(prompt_message, choices=list(choice_labels.keys()), default="0", show_choices=False, show_default=False)
 
     # Run the corresponding function based on user input
     if category in input_to_function:

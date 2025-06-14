@@ -156,7 +156,7 @@ class M3U8Manager:
         If it's a master playlist, only selects video stream.
         """
         if not self.is_master:
-            self.video_url, self.video_res = self.m3u8_url, "0p"
+            self.video_url, self.video_res = self.m3u8_url, "0px"
             self.audio_streams = []
             self.sub_streams = []
 
@@ -165,7 +165,7 @@ class M3U8Manager:
                 self.video_url, self.video_res = self.parser._video.get_best_uri()
             elif str(FILTER_CUSTOM_REOLUTION) == "worst":
                 self.video_url, self.video_res = self.parser._video.get_worst_uri()
-            elif "p" in str(FILTER_CUSTOM_REOLUTION):
+            elif "px" in str(FILTER_CUSTOM_REOLUTION):
                 self.video_url, self.video_res = self.parser._video.get_custom_uri(int(FILTER_CUSTOM_REOLUTION.replace("p", "")))
             else:
                 logging.error("Resolution not recognized.")

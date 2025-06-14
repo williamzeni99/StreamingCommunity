@@ -697,8 +697,14 @@ python test_run.py --specific_list_audio ita,eng --specific_list_subtitles eng,s
 # Keep console open after download
 python test_run.py --not_close true
 
-# Use global search
+# Use global searchAdd commentMore actions
 python test_run.py --global -s "cars"
+
+# Select specific category
+python test_run.py --category 1       # Search in anime category
+python test_run.py --category 2       # Search in movies & series
+python test_run.py --category 3       # Search in series
+python test_run.py --category 4       # Search in torrent category
 ```
 
 # Docker

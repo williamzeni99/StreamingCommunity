@@ -35,7 +35,5 @@ def start_message():
     
     if SHOW:
         console.print(f"[purple]{msg}")
-
-        # Print a decorative separator line using asterisks
-        separator = "_" * (console.width - 2)  # Ridotto di 2 per il padding
+        separator = "_" * (console.width - 2)
         console.print(f"[cyan]{separator}[/cyan]\n")
