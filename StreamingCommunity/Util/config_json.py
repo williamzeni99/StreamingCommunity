@@ -275,7 +275,7 @@ class ConfigManager:
         }
         
         try:
-            console.print(f"[bold cyan]Retrieving site data from GitHub:[/bold cyan] [green]{domains_github_url}[/green]")
+            console.print(f"[bold cyan]Retrieving site data from GitHub:[/bold cyan]")
             response = requests.get(domains_github_url, timeout=8, headers=headers)
 
             if response.ok:
