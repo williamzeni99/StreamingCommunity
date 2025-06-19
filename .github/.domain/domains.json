@@ -6,14 +6,14 @@
     "time_change": "2025-03-19 12:20:19"
   },
   "cb01new": {
-    "domain": "live",
-    "full_url": "https://cb01net.live/",
-    "old_domain": "digital",
-    "time_change": "2025-06-11 07:20:30"
+    "domain": "rest",
+    "full_url": "https://cb01net.rest/",
+    "old_domain": "live",
+    "time_change": "2025-06-20 09:22:25"
   },
   "animeunity": {
     "domain": "so",
-    "full_url": "https://animeunity.so/",
+    "full_url": "https://www.animeunity.so/",
     "old_domain": "so",
     "time_change": "2025-06-18 14:21:22"
   },
@@ -48,10 +48,10 @@
     "time_change": "2025-05-26 23:22:45"
   },
   "streamingcommunity": {
-    "domain": "cam",
-    "full_url": "https://streamingunity.cam/",
-    "old_domain": "agency",
-    "time_change": "2025-06-14 09:20:54"
+    "domain": "shop",
+    "full_url": "https://streamingunity.shop/",
+    "old_domain": "cam",
+    "time_change": "2025-06-19 19:15:09"
   },
   "altadefinizionegratis": {
     "domain": "club",
