@@ -25,7 +25,7 @@ def get_headers():
 def get_tld(url_str):
     try:
         parsed = urlparse(unquote(url_str))
-        domain = parsed.netloc.lower().lstrip('www.')
+        domain = parsed.netloc.lower()
         parts = domain.split('.')
         return parts[-1] if len(parts) >= 2 else None
     
@@ -35,7 +35,7 @@ def get_tld(url_str):
 def get_base_domain(url_str):
     try:
         parsed = urlparse(url_str)
-        domain = parsed.netloc.lower().lstrip('www.')
+        domain = parsed.netloc.lower()
         parts = domain.split('.')
         return '.'.join(parts[:-1]) if len(parts) > 2 else parts[0]
     
@@ -89,8 +89,10 @@ def parse_url(url):
     try:
         extracted = tldextract.extract(url)
         parsed = urlparse(url)
+
+        # Mantieni il netloc originale (con www se presente)
         clean_url = f"{parsed.scheme}://{parsed.netloc}/"
-        full_domain = f"{extracted.domain}.{extracted.suffix}" if extracted.domain else extracted.suffix
+        full_domain = parsed.netloc
         domain_tld = extracted.suffix
         result = {
             'url': clean_url,
