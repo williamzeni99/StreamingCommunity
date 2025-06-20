@@ -25,9 +25,9 @@
   },
   "guardaserie": {
     "domain": "meme",
-    "full_url": "https://guardaserie.meme/",
+    "full_url": "http://guardaserie.meme/",
     "old_domain": "meme",
-    "time_change": "2025-06-18 15:23:54"
+    "time_change": "2025-06-21 11:18:08"
   },
   "ddlstreamitaly": {
     "domain": "co",
@@ -54,9 +54,9 @@
     "time_change": "2025-06-19 19:15:09"
   },
   "altadefinizionegratis": {
-    "domain": "club",
-    "full_url": "https://altadefinizionegratis.club/",
-    "old_domain": "cc",
-    "time_change": "2025-06-11 07:20:42"
+    "domain": "vip",
+    "full_url": "https://altadefinizionegratis.vip/",
+    "old_domain": "club",
+    "time_change": "2025-06-20 20:23:22"
   }
 }

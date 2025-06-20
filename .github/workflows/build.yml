@@ -75,24 +75,12 @@ jobs:
             executable: StreamingCommunity_linux_previous
             separator: ':'
 
-          - os: ubuntu-latest
-            artifact_name: StreamingCommunity_linux_arm64
-            executable: StreamingCommunity_linux_arm64
-            separator: ':'
-            architecture: arm64
-            container: 'arm64v8/python:3.12-slim'
-
     runs-on: ${{ matrix.os }}
-    container: ${{ matrix.container }}
     defaults:
       run:
         shell: bash
 
     steps:
-      - name: Set up QEMU (for ARM64)
-        if: ${{ matrix.architecture == 'arm64' }}
-        uses: docker/setup-qemu-action@v3
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -101,27 +89,14 @@ jobs:
       - name: Get the latest tag
         id: get_latest_tag
         shell: pwsh
-        if: ${{ !matrix.container }}
         run: |
           $latestTag = git describe --tags --abbrev=0
           echo "latest_tag=$latestTag" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Get the latest tag (container)
-        if: ${{ matrix.container }}
-        run: echo "latest_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-
       - name: Set up Python
-        if: ${{ !matrix.container }}
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-          architecture: ${{ matrix.architecture || 'x64' }}
-
-      - name: Install system dependencies (ARM64)
-        if: ${{ matrix.architecture == 'arm64' }}
-        run: |
-          apt-get update
-          apt-get install -y build-essential zlib1g-dev libffi-dev
 
       - name: Install dependencies
         run: |
