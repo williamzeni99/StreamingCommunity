@@ -6,10 +6,10 @@
     "time_change": "2025-03-19 12:20:19"
   },
   "cb01new": {
-    "domain": "today",
-    "full_url": "https://cb01net.today/",
-    "old_domain": "world",
-    "time_change": "2025-07-01 07:22:25"
+    "domain": "click",
+    "full_url": "https://cb01net.click/",
+    "old_domain": "today",
+    "time_change": "2025-07-07 20:23:56"
   },
   "animeunity": {
     "domain": "so",
@@ -42,21 +42,21 @@
     "time_change": "2025-04-29 12:30:30"
   },
   "altadefinizione": {
-    "domain": "qpon",
-    "full_url": "https://altadefinizione.qpon/",
-    "old_domain": "blog",
-    "time_change": "2025-06-30 21:19:33"
+    "domain": "free",
+    "full_url": "http://altadefinizione.free/",
+    "old_domain": "qpon",
+    "time_change": "2025-07-07 11:18:33"
   },
   "streamingcommunity": {
-    "domain": "cloud",
-    "full_url": "https://streamingunity.cloud/",
-    "old_domain": "life",
-    "time_change": "2025-07-02 11:18:46"
+    "domain": "co",
+    "full_url": "https://streamingcommunityz.co/",
+    "old_domain": "cloud",
+    "time_change": "2025-07-07 14:22:00"
   },
   "altadefinizionegratis": {
-    "domain": "life",
-    "full_url": "https://altadefinizionegratis.life/",
-    "old_domain": "blog",
-    "time_change": "2025-06-30 21:19:36"
+    "domain": "city",
+    "full_url": "https://altadefinizionegratis.city/",
+    "old_domain": "life",
+    "time_change": "2025-07-07 17:19:15"
   }
 }
