@@ -276,7 +276,7 @@ class ConfigManager:
         
         try:
             console.print("[bold cyan]Retrieving site data from GitHub:[/bold cyan]")
-            response = requests.get(domains_github_url, timeout=8, headers=headers, verify=self.get_bool('REQUESTS', 'verify'))
+            response = requests.get(domains_github_url, timeout=8, headers=headers)
 
             if response.ok:
                 self.configSite = response.json()
