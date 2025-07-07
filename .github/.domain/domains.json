@@ -1,21 +1,21 @@
 {
   "1337xx": {
     "domain": "to",
-    "full_url": "https://www.1337xx.to/",
+    "full_url": "http://www.1337xx.to/",
     "old_domain": "to",
-    "time_change": "2025-03-19 12:20:19"
+    "time_change": "2025-07-11 20:19:48"
   },
   "cb01new": {
-    "domain": "today",
-    "full_url": "https://cb01net.today/",
-    "old_domain": "world",
-    "time_change": "2025-07-01 07:22:25"
+    "domain": "click",
+    "full_url": "https://cb01net.click/",
+    "old_domain": "today",
+    "time_change": "2025-07-07 20:19:52"
   },
   "animeunity": {
     "domain": "so",
     "full_url": "http://www.animeunity.so/",
     "old_domain": "so",
-    "time_change": "2025-07-04 14:19:55"
+    "time_change": "2025-07-12 07:16:53"
   },
   "animeworld": {
     "domain": "ac",
@@ -24,10 +24,10 @@
     "time_change": "2025-03-21 12:20:27"
   },
   "guardaserie": {
-    "domain": "kaufen",
-    "full_url": "https://guardaserie.kaufen/",
-    "old_domain": "meme",
-    "time_change": "2025-07-02 12:42:58"
+    "domain": "qpon",
+    "full_url": "https://guardaserietv.qpon/",
+    "old_domain": "kaufen",
+    "time_change": "2025-07-11 18:25:25"
   },
   "ddlstreamitaly": {
     "domain": "co",
@@ -45,18 +45,18 @@
     "domain": "free",
     "full_url": "http://altadefinizione.free/",
     "old_domain": "qpon",
-    "time_change": "2025-07-06 14:15:01"
+    "time_change": "2025-07-10 07:18:40"
   },
   "streamingcommunity": {
-    "domain": "cloud",
-    "full_url": "https://streamingunity.cloud/",
-    "old_domain": "life",
-    "time_change": "2025-07-02 11:18:46"
+    "domain": "city",
+    "full_url": "https://streamingcommunityz.city/",
+    "old_domain": "co",
+    "time_change": "2025-07-08 16:23:07"
   },
   "altadefinizionegratis": {
-    "domain": "life",
-    "full_url": "https://altadefinizionegratis.life/",
-    "old_domain": "blog",
-    "time_change": "2025-06-30 21:19:36"
+    "domain": "city",
+    "full_url": "http://altadefinizionegratis.city/",
+    "old_domain": "life",
+    "time_change": "2025-07-11 19:14:39"
   }
 }
