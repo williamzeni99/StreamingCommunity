@@ -273,6 +273,10 @@ def find_new_domain(input_url, output_file=None, verbose=True, json_output=False
         final_domain_info = original_info
         final_url = original_info['url'] if original_info else input_url
 
+    # Force HTTPS if final URL is HTTP
+    if final_url and final_url.startswith('http://'):
+        final_url = final_url.replace('http://', 'https://', 1)
+
     results_original_domain = original_info['full_domain'] if original_info else None
     results_final_domain_tld = final_domain_info['domain'] if final_domain_info and 'domain' in final_domain_info else None
 
