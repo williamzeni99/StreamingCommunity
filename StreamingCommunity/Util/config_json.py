@@ -36,10 +36,8 @@ class ConfigManager:
             base_path = os.path.dirname(sys.executable)
 
         else:
-          
-            # Get the actual path of the module file
-            current_file_path = os.path.abspath(__file__)
-            base_path = os.path.dirname(os.path.dirname(os.path.dirname(current_file_path)))
+            # Use the current working directory where the script is executed
+            base_path = os.getcwd()
             
         # Initialize file paths
         self.file_path = os.path.join(base_path, file_name)
@@ -140,7 +138,7 @@ class ConfigManager:
         console.print(f"[bold cyan]Downloading reference configuration:[/bold cyan] [green]{self.reference_config_url}[/green]")
 
         try:
-            response = requests.get(self.reference_config_url, timeout=8, headers={'User-Agent': get_userAgent()}, verify=self.get_bool('REQUESTS', 'verify'))
+            response = requests.get(self.reference_config_url, timeout=8, headers={'User-Agent': get_userAgent()})
             
             if response.status_code == 200:
                 with open(self.file_path, 'wb') as f:
