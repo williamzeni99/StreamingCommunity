@@ -66,7 +66,7 @@ def process_search_result(select_title, selections=None):
         selections (dict, optional): Dictionary containing selection inputs that bypass manual input
                                     {'season': season_selection, 'episode': episode_selection}
     """
-    if select_title.type == 'Movie' or select_title.type == 'OVA':
+    if select_title.type == 'Movie':
         download_film(select_title)
 
     else:

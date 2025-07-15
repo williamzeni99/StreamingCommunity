@@ -49,7 +49,8 @@ def title_search(query: str, proxy: str) -> int:
             f"{site_constant.FULL_URL}/it", 
             headers={'user-agent': get_userAgent()}, 
             timeout=max_timeout,
-            proxy=proxy
+            proxy=proxy,
+	    follow_redirects=True
         )
         response.raise_for_status()
 
