@@ -7,7 +7,6 @@ certifi
 psutil
 unidecode
 curl_cffi
-dnspython
 jsbeautifier
 pathvalidate
 pycryptodomex

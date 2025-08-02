@@ -121,6 +121,8 @@ jobs:
             --hidden-import=jsbeautifier.unpackers.meshim \
             --hidden-import=editorconfig --hidden-import=editorconfig.handlers \
             --hidden-import=six --hidden-import=pathvalidate \
+            --hidden-import=xml.etree.ElementTree \
+            --hidden-import=pywidevine \
             --hidden-import=Cryptodome.Cipher --hidden-import=Cryptodome.Cipher.AES \
             --hidden-import=Cryptodome.Util --hidden-import=Cryptodome.Util.Padding \
             --hidden-import=Cryptodome.Random \

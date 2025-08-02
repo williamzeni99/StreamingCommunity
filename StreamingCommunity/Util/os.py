@@ -20,11 +20,11 @@ from unidecode import unidecode
 from rich.console import Console
 from rich.prompt import Prompt
 from pathvalidate import sanitize_filename, sanitize_filepath
-from dns.resolver import dns
 
 
 # Internal utilities
 from .ffmpeg_installer import check_ffmpeg
+from .bento4_installer import check_mp4decrypt
 
 
 # Variable
@@ -284,43 +284,6 @@ class InternManager():
         else:
             return f"{bytes / (1024 * 1024):.2f} MB/s"
 
-    # def check_dns_provider(self):
-    #     """
-    #     Check if the system's current DNS server matches any known DNS providers.
-        
-    #     Returns:
-    #         bool: True if the current DNS server matches a known provider,
-    #               False if no match is found or in case of errors
-    #     """
-    #     dns_providers = {
-    #         "Cloudflare": ["1.1.1.1", "1.0.0.1"],
-    #         "Google": ["8.8.8.8", "8.8.4.4"],
-    #         "OpenDNS": ["208.67.222.222", "208.67.220.220"],
-    #         "Quad9": ["9.9.9.9", "149.112.112.112"],
-    #         "AdGuard": ["94.140.14.14", "94.140.15.15"],
-    #         "Comodo": ["8.26.56.26", "8.20.247.20"],
-    #         "Level3": ["209.244.0.3", "209.244.0.4"],
-    #         "Norton": ["199.85.126.10", "199.85.127.10"],
-    #         "CleanBrowsing": ["185.228.168.9", "185.228.169.9"],
-    #         "Yandex": ["77.88.8.8", "77.88.8.1"]
-    #     }
-        
-    #     try:
-    #         resolver = dns.resolver.Resolver()
-    #         nameservers = resolver.nameservers
-            
-    #         if not nameservers:
-    #             return False
-                
-    #         for server in nameservers:
-    #             for provider, ips in dns_providers.items():
-    #                 if server in ips:
-    #                     return True
-    #         return False
-            
-    #     except Exception:
-    #         return False
-
     def check_dns_resolve(self, domains_list: list = None):
         """
         Check if the system's current DNS server can resolve a domain name.
@@ -348,6 +311,7 @@ class OsSummary:
         self.ffmpeg_path = None
         self.ffprobe_path = None
         self.ffplay_path = None
+        self.mp4decrypt_path = None
 
     def get_binary_directory(self):
         """Get the binary directory based on OS."""
@@ -442,10 +406,8 @@ class OsSummary:
         }
         arch = arch_map.get(arch, arch)
 
-        # Check binary directory
+        # Check FFmpeg binaries
         if os.path.exists(binary_dir):
-
-            # Search for any file containing 'ffmpeg' and the architecture
             ffmpeg_files = glob.glob(os.path.join(binary_dir, f'*ffmpeg*{arch}*'))
             ffprobe_files = glob.glob(os.path.join(binary_dir, f'*ffprobe*{arch}*'))
 
@@ -453,7 +415,6 @@ class OsSummary:
                 self.ffmpeg_path = ffmpeg_files[0]
                 self.ffprobe_path = ffprobe_files[0]
 
-                # Set executable permissions if needed
                 if system != 'windows':
                     os.chmod(self.ffmpeg_path, 0o755)
                     os.chmod(self.ffprobe_path, 0o755)
@@ -462,11 +423,19 @@ class OsSummary:
         else:
             self.ffmpeg_path, self.ffprobe_path, self.ffplay_path = check_ffmpeg()
 
+        # Check mp4decrypt
+        self.mp4decrypt_path = check_mp4decrypt()
+
         if not self.ffmpeg_path or not self.ffprobe_path:
             console.log("[red]Can't locate ffmpeg or ffprobe")
             sys.exit(0)
 
+        if not self.mp4decrypt_path:
+            console.log("[yellow]Warning: mp4decrypt not found")
+
         console.print(f"[cyan]Path: [red]ffmpeg [bold yellow]'{self.ffmpeg_path}'[/bold yellow][white], [red]ffprobe '[bold yellow]{self.ffprobe_path}'[/bold yellow]")
+        if self.mp4decrypt_path:
+            console.print(f"[cyan]Path: [red]mp4decrypt [bold yellow]'{self.mp4decrypt_path}'[/bold yellow]")
 
 
 os_manager = OsManager()
@@ -513,6 +482,10 @@ def get_ffmpeg_path():
 def get_ffprobe_path():
     """Returns the path of FFprobe."""
     return os_summary.ffprobe_path
+
+def get_mp4decrypt_path():
+    """Returns the path of mp4decrypt."""
+    return os_summary.mp4decrypt_path
 
 def get_wvd_path():
     """
