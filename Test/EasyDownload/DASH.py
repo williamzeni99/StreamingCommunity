@@ -13,7 +13,7 @@ from StreamingCommunity.Util.message import start_message
 from StreamingCommunity.Util.os import os_summary, get_wvd_path
 os_summary.get_system_summary()
 from StreamingCommunity.Util.logger import Logger
-from StreamingCommunity.Lib.Downloader.DASH.downloader import DASH_Download
+from StreamingCommunity import DASH_Downloader
 
 
 start_message()
@@ -23,7 +23,7 @@ license_url = ""
 mpd_url = ""
 
 
-r_proc = DASH_Download(
+r_proc = DASH_Downloader(
     cdm_device=get_wvd_path(),
     license_url=license_url,
     mpd_url=mpd_url,

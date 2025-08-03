@@ -111,7 +111,7 @@ python run_streaming.py
 Download HTTP Live Streaming (HLS) content from m3u8 URLs.
 
 ```python
-from StreamingCommunity.Download import HLS_Downloader
+from StreamingCommunity import HLS_Downloader
 
 # Initialize with m3u8 URL and optional output path
 downloader = HLS_Downloader(
@@ -132,7 +132,7 @@ See [HLS example](./Test/Download/HLS.py) for complete usage.
 Direct MP4 file downloader with support for custom headers and referrer.
 
 ```python
-from StreamingCommunity.Download import MP4_downloader
+from StreamingCommunity import MP4_downloader
 
 # Basic usage
 downloader = MP4_downloader(
@@ -164,7 +164,7 @@ See [MP4 example](./Test/Download/MP4.py) for complete usage.
 Download content via torrent magnet links.
 
 ```python
-from StreamingCommunity.Download import TOR_downloader
+from StreamingCommunity import TOR_downloader
 
 # Initialize torrent client
 client = TOR_downloader()
@@ -488,8 +488,6 @@ To enable qBittorrent integration, follow the setup guide [here](https://github.
         "default_video_workser": 12,
         "default_audio_workser": 12,
         "segment_timeout": 8,
-        "download_audio": true,
-        "merge_audio": true,
         "specific_list_audio": [
             "ita"
         ],
@@ -514,7 +512,6 @@ To enable qBittorrent integration, follow the setup guide [here](https://github.
 
 #### Audio Settings
 - `download_audio`: Whether to download audio tracks
-- `merge_audio`: Whether to merge audio with video
 - `specific_list_audio`: List of audio languages to download
   * Can be changed with `--specific_list_audio ita,eng`
 

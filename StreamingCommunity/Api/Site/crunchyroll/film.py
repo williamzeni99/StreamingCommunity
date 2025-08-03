@@ -9,11 +9,9 @@ from rich.console import Console
 
 
 # Internal utilities
-from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
 from StreamingCommunity.Util.config_json import config_manager
-from StreamingCommunity.Util.os import get_wvd_path
-from StreamingCommunity.Lib.Downloader.DASH.downloader import DASH_Download
+from StreamingCommunity.Util.os import os_manager, get_wvd_path
 
 
 # Logic class
@@ -22,6 +20,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import DASH_Downloader
 from .util.get_license import get_playback_session, get_auth_token, generate_device_id
 
 
@@ -55,7 +54,7 @@ def download_film(select_title: MediaItem) -> str:
     query_params = parse_qs(parsed_url.query)
 
     # Download the episode
-    r_proc = DASH_Download(
+    r_proc = DASH_Downloader(
         cdm_device=get_wvd_path(),
         license_url='https://www.crunchyroll.com/license/v1/license/widevine',
         mpd_url=mpd_url,

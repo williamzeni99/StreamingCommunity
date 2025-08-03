@@ -10,11 +10,9 @@ from rich.prompt import Prompt
 
 
 # Internal utilities
-from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.headers import get_headers
-from StreamingCommunity.Util.os import get_wvd_path
-from StreamingCommunity.Lib.Downloader.DASH.downloader import DASH_Download
+from StreamingCommunity.Util.message import start_message
+from StreamingCommunity.Util.os import os_manager, get_wvd_path
 
 
 # Logic class
@@ -32,6 +30,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 # Player
 from .util.fix_mpd import get_manifest
+from StreamingCommunity import DASH_Downloader
 from .util.get_license import get_bearer_token, get_playback_url, get_tracking_info, generate_license_url
 
 
@@ -65,14 +64,23 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
 
     # Generate mpd and license URLs
     bearer = get_bearer_token()
-    playback_json = get_playback_url(bearer, obj_episode.url.split('_')[-1])
+    
+    # Extract ID from the episode URL
+    episode_id = obj_episode.url.split('_')[-1]
+    if "http" in episode_id:
+        try: episode_id = obj_episode.url.split('/')[-1]
+        except Exception:
+            console.print(f"[red]Error:[/red] Failed to parse episode ID from URL: {obj_episode.url}")
+            return None, True
+
+    playback_json = get_playback_url(bearer, episode_id)
     tracking_info = get_tracking_info(bearer, playback_json)[0]
 
     license_url = generate_license_url(bearer, tracking_info)
     mpd_url = get_manifest(tracking_info['video_src'])
 
     # Download the episode
-    r_proc = DASH_Download(
+    r_proc = DASH_Downloader(
         cdm_device=get_wvd_path(),
         license_url=license_url,
         mpd_url=mpd_url,

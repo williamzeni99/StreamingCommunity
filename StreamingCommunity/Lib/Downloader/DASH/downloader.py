@@ -2,12 +2,14 @@
 
 import os
 import shutil
+
+
+# External libraries
 from rich.console import Console
 
 
 # Internal utilities
 from StreamingCommunity.Util.config_json import config_manager
-from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Lib.FFmpeg.command import join_audios, join_video
 
 
@@ -19,17 +21,16 @@ from .cdm_helpher import get_widevine_keys
 
 
 # Config
-ENABLE_AUDIO = config_manager.get_bool('M3U8_DOWNLOAD', 'download_audio')
 DOWNLOAD_SPECIFIC_AUDIO = config_manager.get_list('M3U8_DOWNLOAD', 'specific_list_audio')
-CLEANUP_TMP = config_manager.get_bool('M3U8_DOWNLOAD', 'cleanup_tmp_folder')
 FILTER_CUSTOM_REOLUTION = str(config_manager.get('M3U8_PARSER', 'force_resolution')).strip().lower()
+CLEANUP_TMP = config_manager.get_bool('M3U8_DOWNLOAD', 'cleanup_tmp_folder')
 
 
 # Variable
 console = Console()
 
 
-class DASH_Download:
+class DASH_Downloader:
     def __init__(self, cdm_device, license_url, mpd_url, output_path):
         self.cdm_device = cdm_device
         self.license_url = license_url
@@ -69,17 +70,14 @@ class DASH_Download:
         )
         self.selected_video = selected_video
 
-        # Audio info (only if enabled)
-        if ENABLE_AUDIO:
-            selected_audio, list_available_audio_langs, filter_custom_audio, downloadable_audio = self.parser.select_audio(DOWNLOAD_SPECIFIC_AUDIO)
-            console.print(
-                f"[cyan bold]Audio    [/cyan bold] [green]Available:[/green] [purple]{', '.join(list_available_audio_langs)}[/purple] | "
-                f"[red]Set:[/red] [purple]{filter_custom_audio}[/purple] | "
-                f"[yellow]Downloadable:[/yellow] [purple]{downloadable_audio}[/purple]"
-            )
-            self.selected_audio = selected_audio
-        else:
-            self.selected_audio = None
+        # Audio info 
+        selected_audio, list_available_audio_langs, filter_custom_audio, downloadable_audio = self.parser.select_audio(DOWNLOAD_SPECIFIC_AUDIO)
+        console.print(
+            f"[cyan bold]Audio    [/cyan bold] [green]Available:[/green] [purple]{', '.join(list_available_audio_langs)}[/purple] | "
+            f"[red]Set:[/red] [purple]{filter_custom_audio}[/purple] | "
+            f"[yellow]Downloadable:[/yellow] [purple]{downloadable_audio}[/purple]"
+        )
+        self.selected_audio = selected_audio
 
     def get_representation_by_type(self, typ):
         if typ == "video":

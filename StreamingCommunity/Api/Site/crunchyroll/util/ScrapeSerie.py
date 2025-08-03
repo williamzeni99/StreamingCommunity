@@ -45,6 +45,26 @@ def get_season_episodes(season_id, headers, params):
     )
     return response
 
+def delete_stream_episode(episode_id, stream_id, headers):
+    """
+    Deletes a specific stream episode by episode ID and stream ID.
+    """
+    url = f'https://www.crunchyroll.com/playback/v1/token/{episode_id}/{stream_id}'
+    headers = get_headers()
+    
+    response = requests.delete(
+        url,
+        headers=headers,
+        impersonate="chrome110"
+    )
+    
+    if response.status_code == 204:
+        return True
+    
+    else:
+        logging.error(f"Failed to delete stream episode: {response.status_code} - {response.text}")
+        return False
+
 
 class GetSerieInfo:
     def __init__(self, series_id):

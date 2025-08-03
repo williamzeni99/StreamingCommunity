@@ -14,7 +14,7 @@ sys.path.append(src_path)
 from StreamingCommunity.Util.os import os_summary
 os_summary.get_system_summary()
 from StreamingCommunity.Util.logger import Logger
-from StreamingCommunity.Lib.Downloader import MP4_downloader
+from StreamingCommunity import MP4_downloader
 
 
 

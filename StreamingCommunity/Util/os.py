@@ -448,10 +448,6 @@ def suppress_output():
     with contextlib.redirect_stdout(io.StringIO()):
         yield
 
-def compute_sha1_hash(input_string: str) -> str:
-    """Computes the SHA-1 hash of the input string."""
-    return hashlib.sha1(input_string.encode()).hexdigest()
-
 def get_call_stack():
     """Retrieves the current call stack with details about each call."""
     stack = inspect.stack()

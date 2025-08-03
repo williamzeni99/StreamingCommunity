@@ -1,8 +1,5 @@
 # 4.04.24
 
-import random
-
-
 # External library
 import ua_generator
 

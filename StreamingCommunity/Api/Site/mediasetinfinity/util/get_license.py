@@ -71,10 +71,7 @@ def get_playback_url(BEARER_TOKEN, CONTENT_ID):
     
     json_data = {
         'contentId': CONTENT_ID,
-        'streamType': 'VOD',
-        'delivery': 'Streaming',
-        'createDevice': True,
-        'overrideAppName': 'web//mediasetplay-web/5.11.8-f16d93c',
+        'streamType': 'VOD'
     }
 
     try:

@@ -12,13 +12,11 @@ from rich.prompt import Prompt
 
 # Internal utilities
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Util.os import os_manager
-from StreamingCommunity.Util.os import get_wvd_path
-from StreamingCommunity.Lib.Downloader.DASH.downloader import DASH_Download
+from StreamingCommunity.Util.os import os_manager, get_wvd_path
 
 
 # Logic class
-from .util.ScrapeSerie import GetSerieInfo
+from .util.ScrapeSerie import GetSerieInfo, delete_stream_episode
 from StreamingCommunity.Api.Template.Util import (
     manage_selection, 
     map_episode_title,
@@ -31,6 +29,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import DASH_Downloader
 from .util.get_license import get_playback_session, get_auth_token, generate_device_id
 
 
@@ -65,12 +64,14 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
     # Generate mpd and license URLs
     url_id = obj_episode.get('url').split('/')[-1]
     device_id = generate_device_id()
-    mpd_url, mpd_headers = get_playback_session(get_auth_token(device_id), device_id, url_id)
+    token_mpd = get_auth_token(device_id)
+    
+    mpd_url, mpd_headers = get_playback_session(token_mpd, device_id, url_id)
     parsed_url = urlparse(mpd_url)
     query_params = parse_qs(parsed_url.query)
 
     # Download the episode
-    r_proc = DASH_Download(
+    r_proc = DASH_Downloader(
         cdm_device=get_wvd_path(),
         license_url='https://www.crunchyroll.com/license/v1/license/widevine',
         mpd_url=mpd_url,
@@ -94,6 +95,9 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
     if status['error'] is not None and status['path']:
         try: os.remove(status['path'])
         except Exception: pass
+
+    # Delete episode stream
+    delete_stream_episode(url_id, query_params['playbackGuid'][0], mpd_headers)
 
     return status['path'], status['stopped']
 

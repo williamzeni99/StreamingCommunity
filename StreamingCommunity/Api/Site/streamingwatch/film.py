@@ -10,7 +10,6 @@ from rich.console import Console
 # Internal utilities
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Lib.Downloader import HLS_Downloader
 
 
 # Logic class
@@ -19,6 +18,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import HLS_Downloader
 from StreamingCommunity.Api.Player.hdplayer import VideoSource
 
 

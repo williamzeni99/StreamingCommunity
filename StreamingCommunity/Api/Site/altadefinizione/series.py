@@ -11,7 +11,6 @@ from rich.prompt import Prompt
 
 # Internal utilities
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Lib.Downloader import HLS_Downloader
 from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance, TelegramSession
 
 
@@ -29,6 +28,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import HLS_Downloader
 from StreamingCommunity.Api.Player.supervideo import VideoSource
 
 

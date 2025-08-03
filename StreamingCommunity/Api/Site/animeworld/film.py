@@ -9,7 +9,6 @@ from rich.console import Console
 # Internal utilities
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Lib.Downloader import MP4_downloader
 
 
 # Logic class
@@ -19,6 +18,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import MP4_downloader
 from StreamingCommunity.Api.Player.sweetpixel import VideoSource
 
 
