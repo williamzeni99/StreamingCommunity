@@ -8,7 +8,8 @@
         "not_close": false,
         "telegram_bot": false,
         "download_site_data": true,
-        "validate_github_config": true
+        "validate_github_config": true,
+        "bypass_dns": false
     },
     "OUT_FOLDER": {
         "root_path": "Video",
