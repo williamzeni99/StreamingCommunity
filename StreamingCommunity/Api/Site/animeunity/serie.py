@@ -12,7 +12,6 @@ from rich.prompt import Prompt
 # Internal utilities
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Lib.Downloader import MP4_downloader
 from StreamingCommunity.TelegramHelp.telegram_bot import TelegramSession, get_bot_instance
 
 
@@ -24,6 +23,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import MP4_downloader
 from StreamingCommunity.Api.Player.vixcloud import VideoSourceAnime
 
 

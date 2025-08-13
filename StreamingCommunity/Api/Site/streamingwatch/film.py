@@ -10,7 +10,6 @@ from rich.console import Console
 # Internal utilities
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Lib.Downloader import HLS_Downloader
 
 
 # Logic class
@@ -19,6 +18,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import HLS_Downloader
 from StreamingCommunity.Api.Player.hdplayer import VideoSource
 
 
@@ -26,7 +26,7 @@ from StreamingCommunity.Api.Player.hdplayer import VideoSource
 console = Console()
 
 
-def download_film(select_title: MediaItem, proxy) -> str:
+def download_film(select_title: MediaItem) -> str:
     """
     Downloads a film using the provided film ID, title name, and domain.
 
@@ -41,7 +41,7 @@ def download_film(select_title: MediaItem, proxy) -> str:
     console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [cyan]{select_title.name}[/cyan] \n")
 
     # Get master playlists
-    video_source = VideoSource(proxy)
+    video_source = VideoSource()
     master_playlist = video_source.get_m3u8_url(select_title.url)
 
     # Define the filename and path for the downloaded film

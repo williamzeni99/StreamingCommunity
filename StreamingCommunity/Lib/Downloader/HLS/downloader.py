@@ -17,7 +17,7 @@ from rich.panel import Panel
 # Internal utilities
 from StreamingCommunity.Util.config_json import config_manager
 from StreamingCommunity.Util.headers import get_userAgent
-from StreamingCommunity.Util.os import compute_sha1_hash, os_manager, internet_manager
+from StreamingCommunity.Util.os import os_manager, internet_manager
 from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
 
 
@@ -33,15 +33,12 @@ from .segments import M3U8_Segments
 
 
 # Config
-ENABLE_AUDIO = config_manager.get_bool('M3U8_DOWNLOAD', 'download_audio')
 ENABLE_SUBTITLE = config_manager.get_bool('M3U8_DOWNLOAD', 'download_subtitle')
 DOWNLOAD_SPECIFIC_AUDIO = config_manager.get_list('M3U8_DOWNLOAD', 'specific_list_audio')
 DOWNLOAD_SPECIFIC_SUBTITLE = config_manager.get_list('M3U8_DOWNLOAD', 'specific_list_subtitles')
-MERGE_AUDIO = config_manager.get_bool('M3U8_DOWNLOAD', 'merge_audio')
 MERGE_SUBTITLE = config_manager.get_bool('M3U8_DOWNLOAD', 'merge_subs')
 CLEANUP_TMP = config_manager.get_bool('M3U8_DOWNLOAD', 'cleanup_tmp_folder')
 FILTER_CUSTOM_REOLUTION = str(config_manager.get('M3U8_PARSER', 'force_resolution')).strip().lower()
-GET_ONLY_LINK = config_manager.get_bool('M3U8_PARSER', 'get_only_link')
 RETRY_LIMIT = config_manager.get_int('REQUESTS', 'max_retry')
 MAX_TIMEOUT = config_manager.get_int("REQUESTS", "timeout")
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
@@ -66,6 +63,7 @@ class HLSClient:
             Response content/text or None if all retries fail
         """
         client = httpx.Client(headers=self.headers, timeout=MAX_TIMEOUT, follow_redirects=True)
+
         for attempt in range(RETRY_LIMIT):
             try:
                 response = client.get(url)
@@ -96,11 +94,6 @@ class PathManager:
         Ensures output path is valid and follows expected format.
         Creates a hash-based filename if no path is provided.
         """
-        if not path:
-            root = config_manager.get('OUT_FOLDER', 'root_path')
-            hash_name = compute_sha1_hash(self.m3u8_url) + ".mp4"
-            return os.path.join(root, "undefined", hash_name)
-
         if not path.endswith(".mp4"):
             path += ".mp4"
 
@@ -172,12 +165,11 @@ class M3U8Manager:
                 logging.error("Resolution not recognized.")
                 self.video_url, self.video_res = self.parser._video.get_best_uri()
 
-            self.audio_streams = []
-            if ENABLE_AUDIO:
-                self.audio_streams = [
-                    s for s in (self.parser._audio.get_all_uris_and_names() or [])
-                    if s.get('language') in DOWNLOAD_SPECIFIC_AUDIO
-                ]
+            # Audio info
+            self.audio_streams = [
+                s for s in (self.parser._audio.get_all_uris_and_names() or [])
+                if s.get('language') in DOWNLOAD_SPECIFIC_AUDIO
+            ]
 
             self.sub_streams = []
             if ENABLE_SUBTITLE:
@@ -309,8 +301,8 @@ class DownloadManager:
         Downloads all selected streams (video, audio, subtitles).
         """
         return_stopped = False
-
         video_file = os.path.join(self.temp_dir, 'video', '0.ts')
+        
         if not os.path.exists(video_file):
             if self.download_video(video_url):
                 if not return_stopped:
@@ -375,7 +367,7 @@ class MergeManager:
             )
 
         else:
-            if MERGE_AUDIO and self.audio_streams:
+            if self.audio_streams:
                 audio_tracks = [{
                     'path': os.path.join(self.temp_dir, 'audio', a['language'], '0.ts'),
                     'name': a['language']
@@ -445,19 +437,7 @@ class HLS_Downloader:
                 if TELEGRAM_BOT:
                     bot.send_message(f"Contenuto già scaricato!", None)
                 return response
-            
-            if GET_ONLY_LINK:
-                console.print(f"URL: [bold red]{self.m3u8_url}[/bold red]")
-                return {
-                    'path': None,
-                    'url': self.m3u8_url,
-                    'is_master': getattr(self.m3u8_manager, 'is_master', None),
-                    'msg': None,
-                    'error': None,
-                    'stopped': True
-                }
-
-
+        
             self.path_manager.setup_directories()
 
             # Parse M3U8 and determine if it's a master playlist

@@ -12,10 +12,9 @@ from rich.console import Console
 
 # Internal utilities
 from StreamingCommunity.Util.os import os_manager
-from StreamingCommunity.Util.message import start_message
 from StreamingCommunity.Util.headers import get_headers
+from StreamingCommunity.Util.message import start_message
 from StreamingCommunity.Util.config_json import config_manager
-from StreamingCommunity.Lib.Downloader import HLS_Downloader
 from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance, TelegramSession
 
 
@@ -25,6 +24,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import HLS_Downloader
 from StreamingCommunity.Api.Player.supervideo import VideoSource
 
 

@@ -11,15 +11,14 @@ from rich.prompt import Prompt
 
 # Internal utilities
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Lib.Downloader import HLS_Downloader
 from StreamingCommunity.TelegramHelp.telegram_bot import TelegramSession, get_bot_instance
+
 
 # Logic class
 from .util.ScrapeSerie import GetSerieInfo
 from StreamingCommunity.Api.Template.Util import (
     manage_selection, 
     map_episode_title, 
-    dynamic_format_number, 
     validate_selection, 
     validate_episode_selection, 
     display_episodes_list
@@ -29,6 +28,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import HLS_Downloader
 from StreamingCommunity.Api.Player.vixcloud import VideoSource
 
 
@@ -142,7 +142,7 @@ def download_episode(index_season_selected: int, scrape_serie: GetSerieInfo, vid
                 break
 
 
-def download_series(select_season: MediaItem, season_selection: str = None, episode_selection: str = None, proxy = None) -> None:
+def download_series(select_season: MediaItem, season_selection: str = None, episode_selection: str = None) -> None:
     """
     Handle downloading a complete series.
 
@@ -154,8 +154,8 @@ def download_series(select_season: MediaItem, season_selection: str = None, epis
     start_message()
 
     # Init class
-    video_source = VideoSource(f"{site_constant.FULL_URL}/it", True, select_season.id, proxy)
-    scrape_serie = GetSerieInfo(f"{site_constant.FULL_URL}/it", select_season.id, select_season.slug, proxy)
+    video_source = VideoSource(f"{site_constant.FULL_URL}/it", True, select_season.id)
+    scrape_serie = GetSerieInfo(f"{site_constant.FULL_URL}/it", select_season.id, select_season.slug)
 
     # Collect information about season
     scrape_serie.getNumberSeason()

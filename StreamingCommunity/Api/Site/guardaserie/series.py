@@ -1,7 +1,6 @@
 # 13.06.24
 
 import os
-import logging
 from typing import Tuple
 
 
@@ -12,7 +11,6 @@ from rich.prompt import Prompt
 
 # Internal utilities
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Lib.Downloader import HLS_Downloader
 
 
 # Logic class
@@ -30,6 +28,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 # Player
 from .util.ScrapeSerie import GetSerieInfo
+from StreamingCommunity import HLS_Downloader
 from StreamingCommunity.Api.Player.supervideo import VideoSource
 
 

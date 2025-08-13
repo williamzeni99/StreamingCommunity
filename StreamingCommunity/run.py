@@ -33,6 +33,7 @@ from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance, Teleg
 SHOW_TRENDING = config_manager.get_bool('DEFAULT', 'show_trending')
 NOT_CLOSE_CONSOLE = config_manager.get_bool('DEFAULT', 'not_close')
 TELEGRAM_BOT = config_manager.get_bool('DEFAULT', 'telegram_bot')
+BYPASS_DNS = config_manager.get_bool('DEFAULT', 'bypass_dns')
 
 
 # Variable
@@ -227,16 +228,16 @@ def main(script_id = 0):
     # Get all site hostname
     hostname_list = [hostname for site_info in config_manager.configSite.values() if (hostname := _extract_hostname(site_info.get('full_url')))]
 
-    if not internet_manager.check_dns_resolve(hostname_list):
-        print()
-        console.print("[red]❌ ERROR: DNS configuration is required!")
-        console.print("[red]The program cannot function correctly without proper DNS settings.")
-        console.print("[yellow]Please configure one of these DNS servers:")
-        console.print("[blue]• Cloudflare (1.1.1.1) 'https://developers.cloudflare.com/1.1.1.1/setup/windows/'")
-        console.print("[blue]• Quad9 (9.9.9.9) 'https://docs.quad9.net/Setup_Guides/Windows/Windows_10/'")
-        console.print("\n[yellow]⚠️ The program will not work until you configure your DNS settings.")
+    if not BYPASS_DNS:
+        if not internet_manager.check_dns_resolve(hostname_list):
+            console.print("[red] ERROR: DNS configuration is required!")
+            console.print("[red]The program cannot function correctly without proper DNS settings.")
+            console.print("[yellow]Please configure one of these DNS servers:")
+            console.print("[red]• Cloudflare (1.1.1.1) 'https://developers.cloudflare.com/1.1.1.1/setup/windows/'")
+            console.print("[red]• Quad9 (9.9.9.9) 'https://docs.quad9.net/Setup_Guides/Windows/Windows_10/'")
+            console.print("\n[yellow]⚠️ The program will not work until you configure your DNS settings.")
 
-        os._exit(0)
+            os._exit(0)
 
     # Load search functions
     search_functions = load_search_functions()

@@ -7,11 +7,10 @@ certifi
 psutil
 unidecode
 curl_cffi
-dnspython
 jsbeautifier
 pathvalidate
 pycryptodomex
 ua-generator
 qbittorrent-api
 pyTelegramBotAPI
-beautifulsoup4
+pywidevine

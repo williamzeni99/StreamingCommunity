@@ -10,7 +10,6 @@ from rich.console import Console
 # Internal utilities
 from StreamingCommunity.Util.os import os_manager
 from StreamingCommunity.Util.message import start_message
-from StreamingCommunity.Lib.Downloader import HLS_Downloader
 from StreamingCommunity.TelegramHelp.telegram_bot import TelegramSession, get_bot_instance
 
 
@@ -20,6 +19,7 @@ from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 
 
 # Player
+from StreamingCommunity import HLS_Downloader
 from StreamingCommunity.Api.Player.vixcloud import VideoSource
 
 
@@ -27,7 +27,7 @@ from StreamingCommunity.Api.Player.vixcloud import VideoSource
 console = Console()
 
 
-def download_film(select_title: MediaItem, proxy: str = None) -> str:
+def download_film(select_title: MediaItem) -> str:
     """
     Downloads a film using the provided film ID, title name, and domain.
 
@@ -55,7 +55,7 @@ def download_film(select_title: MediaItem, proxy: str = None) -> str:
     console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [cyan]{select_title.name}[/cyan] \n")
 
     # Init class
-    video_source = VideoSource(f"{site_constant.FULL_URL}/it", False, select_title.id, proxy)
+    video_source = VideoSource(f"{site_constant.FULL_URL}/it", False, select_title.id)
 
     # Retrieve scws and if available master playlist
     video_source.get_iframe(select_title.id)
