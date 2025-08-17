@@ -121,12 +121,6 @@ class M3U8_Ts_Estimator:
             number_file_total_size = file_total_size.split(' ')[0]
             units_file_total_size = file_total_size.split(' ')[1]
             
-            # Reduce lock contention by acquiring data with minimal synchronization
-            retry_count = 0
-            if self.segments_instance:
-                with self.segments_instance.active_retries_lock:
-                    retry_count = self.segments_instance.active_retries
-            
             # Get speed data outside of any locks
             speed_data = ["N/A", ""]
             with self.lock:

@@ -16,12 +16,11 @@ from StreamingCommunity.Api.Template.config_loader import site_constant
 from StreamingCommunity.Api.Template.Class.SearchType import MediaItem
 from StreamingCommunity.TelegramHelp.telegram_bot import get_bot_instance
 
-
 # Logic class
 from .site import title_search, table_show_manager, media_search_manager
 from .film import download_film
 from .series import download_series
-
+from .util.ScrapeSerie import GetSerieInfo
 
 # Variable
 indice = 0
@@ -126,7 +125,7 @@ def search(string_to_search: str = None, get_onlyDatabase: bool = False, direct_
     actual_search_query = get_user_input(string_to_search)
 
     # Handle cases where user input is empty, or 'back' was handled (sys.exit or None return)
-    if not actual_search_query: 
+    if not actual_search_query:
         if bot:
              if actual_search_query is None: # Specifically for timeout from bot.ask or failed restart
                 bot.send_message("Search term not provided or operation cancelled. Returning.", None)
@@ -137,7 +136,7 @@ def search(string_to_search: str = None, get_onlyDatabase: bool = False, direct_
 
     # If only the database object (media_search_manager populated by title_search) is needed
     if get_onlyDatabase:
-        return media_search_manager 
+        return media_search_manager
     
     if len_database > 0:
         select_title = get_select_title(table_show_manager, media_search_manager, len_database)
