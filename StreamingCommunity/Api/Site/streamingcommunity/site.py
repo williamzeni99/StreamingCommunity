@@ -26,6 +26,7 @@ console = Console()
 media_search_manager = MediaManager()
 table_show_manager = TVShowManager()
 max_timeout = config_manager.get_int("REQUESTS", "timeout")
+ssl_verify = config_manager.get_bool("REQUESTS", "verify")
 
 
 def title_search(query: str) -> int:
@@ -49,6 +50,7 @@ def title_search(query: str) -> int:
             f"{site_constant.FULL_URL}/it", 
             headers={'user-agent': get_userAgent()}, 
             timeout=max_timeout,
+            verify=ssl_verify,
 	    follow_redirects=True
         )
         response.raise_for_status()
@@ -57,7 +59,9 @@ def title_search(query: str) -> int:
         version = json.loads(soup.find('div', {'id': "app"}).get("data-page"))['version']
 
     except Exception as e:
-        if "WinError" in str(e) or "Errno" in str(e): console.print("\n[bold yellow]Please make sure you have enabled and configured a valid proxy.[/bold yellow]")
+        if "WinError" in str(e) or "Errno" in str(e): 
+            console.print("\n[bold yellow]Please make sure you have enabled and configured a valid proxy.[/bold yellow]")
+            
         console.print(f"[red]Site: {site_constant.SITE_NAME} version, request error: {e}")
         return 0
 
@@ -73,7 +77,8 @@ def title_search(query: str) -> int:
                 'x-inertia': 'true',
                 'x-inertia-version': version
             },
-            timeout=max_timeout
+            timeout=max_timeout,
+            verify=ssl_verify
         )
         response.raise_for_status()
 
@@ -116,7 +121,7 @@ def title_search(query: str) -> int:
 	
     if site_constant.TELEGRAM_BOT:
         if choices:
-            bot.send_message(f"Lista dei risultati:", choices)
+            bot.send_message("Lista dei risultati:", choices)
           
     # Return the number of titles found
     return media_search_manager.get_length()

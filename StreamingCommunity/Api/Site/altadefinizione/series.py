@@ -54,7 +54,7 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
 
     # Get episode information
     obj_episode = scrape_serie.selectEpisode(index_season_selected, index_episode_selected-1)
-    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [bold magenta]{obj_episode.name}[/bold magenta] ([cyan]S{index_season_selected}E{index_episode_selected}[/cyan]) \n")
+    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [cyan]{scrape_serie.series_name}[/cyan] \\ [bold magenta]{obj_episode.name}[/bold magenta] ([cyan]S{index_season_selected}E{index_episode_selected}[/cyan]) \n")
 
     # Telegram integration
     if site_constant.TELEGRAM_BOT:
@@ -81,16 +81,18 @@ def download_video(index_season_selected: int, index_episode_selected: int, scra
     master_playlist = video_source.get_playlist()
 
     # Download the episode
-    r_proc = HLS_Downloader(
+    hls_process = HLS_Downloader(
         m3u8_url=master_playlist,
         output_path=os.path.join(mp4_path, mp4_name)
     ).start()
 
-    if r_proc['error'] is not None:
-        try: os.remove(r_proc['path'])
-        except: pass
+    if hls_process['error'] is not None:
+        try: 
+            os.remove(hls_process['path'])
+        except Exception: 
+            pass
 
-    return r_proc['path'], r_proc['stopped']
+    return hls_process['path'], hls_process['stopped']
     
 
 def download_episode(index_season_selected: int, scrape_serie: GetSerieInfo, download_all: bool = False, episode_selection: str = None) -> None:
@@ -196,7 +198,7 @@ def download_series(select_season: MediaItem, season_selection: str = None, epis
             download_episode(i_season, scrape_serie, download_all=False, episode_selection=episode_selection)
 
     if site_constant.TELEGRAM_BOT:
-        bot.send_message(f"Finito di scaricare tutte le serie e episodi", None)
+        bot.send_message("Finito di scaricare tutte le serie e episodi", None)
 
         # Get script_id
         script_id = TelegramSession.get_session()

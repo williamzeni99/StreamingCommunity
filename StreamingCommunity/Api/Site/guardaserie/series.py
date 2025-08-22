@@ -55,7 +55,7 @@ def download_video(index_season_selected: int, index_episode_selected: int, scap
     # Get episode information
     obj_episode = scape_info_serie.selectEpisode(index_season_selected, index_episode_selected-1)
     index_season_selected = dynamic_format_number(str(index_season_selected))
-    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [bold magenta]{obj_episode.get('name')}[/bold magenta] ([cyan]S{index_season_selected}E{index_episode_selected}[/cyan]) \n")
+    console.print(f"[bold yellow]Download:[/bold yellow] [red]{site_constant.SITE_NAME}[/red] → [cyan]{scape_info_serie.tv_name}[/cyan] \\ [bold magenta]{obj_episode.get('name')}[/bold magenta] ([cyan]S{index_season_selected}E{index_episode_selected}[/cyan]) \n")
 
     # Define filename and path for the downloaded video
     mp4_name = f"{map_episode_title(scape_info_serie.tv_name, index_season_selected, index_episode_selected, obj_episode.get('name'))}.mp4"
@@ -68,16 +68,18 @@ def download_video(index_season_selected: int, index_episode_selected: int, scap
     master_playlist = video_source.get_playlist()
     
     # Download the film using the m3u8 playlist, and output filename
-    r_proc = HLS_Downloader(
+    hls_process = HLS_Downloader(
         m3u8_url=master_playlist, 
         output_path=os.path.join(mp4_path, mp4_name)
     ).start()
      
-    if r_proc['error'] is not None:
-        try: os.remove(r_proc['path'])
-        except: pass
+    if hls_process['error'] is not None:
+        try: 
+            os.remove(hls_process['path'])
+        except Exception: 
+            pass
 
-    return r_proc['path'], r_proc['stopped']
+    return hls_process['path'], hls_process['stopped']
 
 
 def download_episode(scape_info_serie: GetSerieInfo, index_season_selected: int, download_all: bool = False, episode_selection: str = None) -> None:
