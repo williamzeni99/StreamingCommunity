@@ -1,6 +1,8 @@
 # 25.07.25
 
 import os
+import sys
+
 
 # External libraries
 import httpx
@@ -44,7 +46,7 @@ def title_search(query: str) -> int:
     cdm_device_path = get_wvd_path()
     if not cdm_device_path or not isinstance(cdm_device_path, (str, bytes, os.PathLike)) or not os.path.isfile(cdm_device_path):
         console.print(f"[bold red] CDM file not found or invalid path: {cdm_device_path}[/bold red]")
-        return None
+        sys.exit(0)
 
     search_url = 'https://api-ott-prod-fe.mediaset.net/PROD/play/reco/account/v2.0'
     console.print(f"[cyan]Search url: [yellow]{search_url}")
