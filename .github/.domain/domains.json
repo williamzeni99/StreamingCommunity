@@ -1,15 +1,9 @@
 {
-  "1337xx": {
-    "domain": "to",
-    "full_url": "https://www.1337xx.to/",
-    "old_domain": "to",
-    "time_change": "2025-03-19 12:20:19"
-  },
   "cb01new": {
-    "domain": "guru",
-    "full_url": "https://cb01net.guru/",
-    "old_domain": "buzz",
-    "time_change": "2025-08-20 15:22:34"
+    "domain": "quest",
+    "full_url": "https://cb01net.quest/",
+    "old_domain": "pics",
+    "time_change": "2025-09-01 20:17:16"
   },
   "animeunity": {
     "domain": "so",
@@ -29,12 +23,6 @@
     "old_domain": "app",
     "time_change": "2025-08-20 07:20:06"
   },
-  "ddlstreamitaly": {
-    "domain": "co",
-    "full_url": "https://ddlstreamitaly.co/",
-    "old_domain": "co",
-    "time_change": "2025-03-19 12:20:26"
-  },
   "streamingwatch": {
     "domain": "org",
     "full_url": "https://www.streamingwatch.org/",
@@ -42,21 +30,21 @@
     "time_change": "2025-04-29 12:30:30"
   },
   "altadefinizione": {
-    "domain": "free",
-    "full_url": "https://altadefinizione.free/",
-    "old_domain": "qpon",
-    "time_change": "2025-07-08 13:59:37"
+    "domain": "center",
+    "full_url": "https://altadefinizionegratis.center/",
+    "old_domain": "free",
+    "time_change": "2025-09-04 15:17:04"
   },
   "streamingcommunity": {
-    "domain": "art",
-    "full_url": "https://streamingcommunityz.art/",
-    "old_domain": "app",
-    "time_change": "2025-08-19 15:22:34"
+    "domain": "bid",
+    "full_url": "https://streamingcommunityz.bid/",
+    "old_domain": "chat",
+    "time_change": "2025-09-01 15:16:33"
   },
   "altadefinizionegratis": {
-    "domain": "cool",
-    "full_url": "https://altadefinizionegratis.cool/",
-    "old_domain": "gold",
-    "time_change": "2025-08-19 18:28:05"
+    "domain": "center",
+    "full_url": "https://altadefinizionegratis.center/",
+    "old_domain": "cool",
+    "time_change": "2025-08-25 18:25:44"
   }
 }
