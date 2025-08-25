@@ -1,10 +1,4 @@
 {
-  "1337xx": {
-    "domain": "to",
-    "full_url": "https://www.1337xx.to/",
-    "old_domain": "to",
-    "time_change": "2025-03-19 12:20:19"
-  },
   "cb01new": {
     "domain": "guru",
     "full_url": "https://cb01net.guru/",
@@ -29,12 +23,6 @@
     "old_domain": "app",
     "time_change": "2025-08-20 07:20:06"
   },
-  "ddlstreamitaly": {
-    "domain": "co",
-    "full_url": "https://ddlstreamitaly.co/",
-    "old_domain": "co",
-    "time_change": "2025-03-19 12:20:26"
-  },
   "streamingwatch": {
     "domain": "org",
     "full_url": "https://www.streamingwatch.org/",
@@ -48,10 +36,10 @@
     "time_change": "2025-07-08 13:59:37"
   },
   "streamingcommunity": {
-    "domain": "art",
-    "full_url": "https://streamingcommunityz.art/",
-    "old_domain": "app",
-    "time_change": "2025-08-19 15:22:34"
+    "domain": "chat",
+    "full_url": "https://streamingcommunityz.chat/",
+    "old_domain": "art",
+    "time_change": "2025-08-25 13:31:33"
   },
   "altadefinizionegratis": {
     "domain": "cool",
