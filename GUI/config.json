@@ -2,14 +2,17 @@
     "DEFAULT": {
         "debug": false,
         "show_message": true,
+        "clean_console": true,
         "show_trending": true,
-        "fetch_domain_online": true,
-        "validate_github_config": true,
+        "use_api": true,
+        "not_close": false,
         "telegram_bot": false,
+        "download_site_data": true,
+        "validate_github_config": true,
         "bypass_dns": false
     },
     "OUT_FOLDER": {
-        "root_path": "Video",
+        "root_path": "../Video",
         "movie_folder_name": "Movie",
         "serie_folder_name": "Serie",
         "anime_folder_name": "Anime",
@@ -43,7 +46,9 @@
         "use_acodec": true,
         "use_bitrate": true,
         "use_gpu": false,
-        "default_preset": "ultrafast",
+        "default_preset": "ultrafast"
+    },
+    "M3U8_PARSER": {
         "force_resolution": "Best"
     },
     "REQUESTS": {
@@ -51,17 +56,10 @@
         "timeout": 20,
         "max_retry": 8
     },
-    "HOOKS": {
-        "pre_run": [],
-        "post_run": []
-    },
     "SITE_LOGIN": {
         "crunchyroll": {
             "etp_rt": "",
             "x_cr_tab_id": ""
-        },
-        "mediasetinfinity": {
-            "beToken": ""
         }
     }
 }
