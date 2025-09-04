@@ -29,13 +29,16 @@
         "specific_list_audio": [
             "ita",
             "eng",
-            "jpn"
+            "en",
+            "jpn",
+            "kor"
         ],
         "download_subtitle": true,
         "merge_subs": true,
         "specific_list_subtitles": [
             "ita",
-            "eng"
+            "eng",
+            "en"
         ],
         "cleanup_tmp_folder": true
     },
