@@ -55,3 +55,5 @@ scripts.json
 active_requests.json
 working_proxies.json
 start.sh
+.DS_Store
+GUI/db.sqlite3
