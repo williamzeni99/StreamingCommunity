@@ -48,6 +48,11 @@ def title_search(query: str) -> int:
         console.print(f"[bold red] CDM file not found or invalid path: {cdm_device_path}[/bold red]")
         sys.exit(0)
 
+    # Check if x_cr_tab_id or etp_rt is present
+    if config_manager.get_dict("SITE_LOGIN", "crunchyroll")['x_cr_tab_id'] is None or config_manager.get_dict("SITE_LOGIN", "crunchyroll")['x_cr_tab_id'] == "" or config_manager.get_dict("SITE_LOGIN", "crunchyroll")['etp_rt'] is None or config_manager.get_dict("SITE_LOGIN", "crunchyroll")['etp_rt'] == "":
+        console.print(f"[bold red] x_cr_tab_id or etp_rt is missing or empty.[/bold red]")
+        sys.exit(0)
+
     # Build new Crunchyroll API search URL
     api_url = "https://www.crunchyroll.com/content/v2/discover/search"
 

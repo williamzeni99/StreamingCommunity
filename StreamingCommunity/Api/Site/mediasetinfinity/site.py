@@ -48,6 +48,11 @@ def title_search(query: str) -> int:
         console.print(f"[bold red] CDM file not found or invalid path: {cdm_device_path}[/bold red]")
         sys.exit(0)
 
+    # Check if beToken is present
+    if config_manager.get_dict("SITE_LOGIN", "mediasetinfinity")["beToken"] is None or config_manager.get_dict("SITE_LOGIN", "mediasetinfinity")["beToken"] == "":
+        console.print(f"[bold red] beToken is missing or empty.[/bold red]")
+        sys.exit(0)
+
     search_url = 'https://api-ott-prod-fe.mediaset.net/PROD/play/reco/account/v2.0'
     console.print(f"[cyan]Search url: [yellow]{search_url}")
 
